@@ -1,0 +1,27 @@
+{
+  "name": "lifequestrpg",
+  "version": "1.0.0",
+  "description": "A lightweight, flexible MVC (Model-View-Controller) framework built with vanilla PHP. This framework provides a structured architecture for building web applications without the overhead of larger frameworks, allowing developers to understand exactly what's happening under the hood.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agustinelumandong/LifeQuestRpg.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agustinelumandong/LifeQuestRpg/issues"
+  },
+  "homepage": "https://github.com/agustinelumandong/LifeQuestRpg#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.5",
+    "bootstrap-icons": "^1.11.3"
+  }
+}
