@@ -1,4 +1,3 @@
-
 CREATE DATABASE IF NOT EXISTS `prac_ddbbs`;
 USE `prac_ddbbs`;
 -- --------------------------------------------------------
@@ -12,7 +11,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `role` enum(' admin ', ' user ') DEFAULT ' user ',
+  `role` enum('admin', 'user') DEFAULT 'user', -- Removed spaces from enum definition
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -42,7 +41,7 @@ CREATE TABLE `user_event` (
   `event_name` varchar(255) NOT NULL,
   `event_description` text NOT NULL,
   `start_date` timestamp NOT NULL,
-  `end_date` timestamp NOT NULL,
+  `end_date` timestamp NULL DEFAULT NULL, -- Changed to allow NULL and default to NULL
   `reward_xp` int NOT NULL DEFAULT 0,
   `reward_coins` int NOT NULL DEFAULT 0,
   `status` enum('active', 'inactive') DEFAULT 'active',
@@ -71,8 +70,8 @@ CREATE TABLE `tasks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `title` varchar(255) NOT NULL,
-  `status` enum(' pending ', ' completed ') DEFAULT ' pending ',
-  `difficulty` enum(' easy ', ' medium ', ' hard ') DEFAULT ' easy ',
+  `status` enum('pending', 'completed') DEFAULT 'pending', -- Removed spaces from default
+  `difficulty` enum('easy', 'medium', 'hard') DEFAULT 'easy', -- Removed spaces from default
   PRIMARY KEY (`id`),
   KEY `fk_tasks_user` (`user_id`),
   CONSTRAINT `fk_tasks_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
@@ -84,8 +83,8 @@ CREATE TABLE `daily_tasks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `title` varchar(255) NOT NULL,
-  `status` enum(' pending ', ' completed ') DEFAULT ' pending ',
-  `difficulty` enum(' easy ', ' medium ', ' hard ') NOT NULL,
+  `status` enum('pending', 'completed') DEFAULT 'pending', -- Removed spaces from default, fixed indentation
+  `difficulty` enum('easy', 'medium', 'hard') DEFAULT 'easy', -- Removed spaces from default
   `last_reset` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `fk_dailytasks_user` (`user_id`),
@@ -168,7 +167,7 @@ VALUES (
     NOW()
   );
 END IF;
-END $$
+END $$ 
 DELIMITER ;
 
 DELIMITER $$ 
@@ -202,11 +201,11 @@ WHERE item_id = NEW.item_id;
 INSERT INTO activity_log (user_id, activity_type, activity_details)
 VALUES (
     NEW.user_id,
-    ' ITEM_PURCHASED ',
+    'Item Purchased', -- Standardized activity type
     JSON_OBJECT(
-      ' item_id ',
+      'item_id', -- Standardized key
       NEW.item_id,
-      ' item_name ',
+      'item_name', -- Standardized key
       item_name_var
     )
   );

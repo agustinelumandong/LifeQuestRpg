@@ -9,6 +9,16 @@ class Helpers
   /**
    * Load environment variables from .env file
    */
+
+
+   public static function getDifficultyBadgeColor($difficulty) {
+    return [
+        'easy' => 'success',
+        'medium' => 'warning',
+        'hard' => 'danger'
+    ][$difficulty] ?? 'secondary';
+}
+
   public static function loadEnv(string $path)
   {
     if (!file_exists($path)) {

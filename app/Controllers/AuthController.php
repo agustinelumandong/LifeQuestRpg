@@ -8,6 +8,8 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Input;
 use App\Models\User;
+use App\Models\UserStats;
+
 // use App\Models\Profile;
 use Exception;
 
@@ -15,10 +17,12 @@ class AuthController extends Controller
 {
 
   protected $userModel;
+  protected $userStats;
 
   public function __construct()
   {
     $this->userModel = new User();
+    $this->userStats = new UserStats();
   }
 
   /**
@@ -26,20 +30,20 @@ class AuthController extends Controller
    */
   public function index()
   {
-    if (Auth::check()) {
-      $this->redirect('/');
-    }
-
     return $this->view('auth/login', [
       'title' => 'Login'
     ]);
   }
+
+  //initialize og user Stats every log in
+ 
 
   /**
    * Authenticate the user
    */
   public function login()
   {
+
     // Validate the form
     $data = Input::sanitize([
       'email' => Input::post('email'),
@@ -63,6 +67,8 @@ class AuthController extends Controller
       $_SESSION['error'] = 'Invalid email or password!';
       $this->redirect('/login');
     }
+
+    
   }
 
   /**
@@ -103,6 +109,16 @@ class AuthController extends Controller
     ]);
 
     $userId = $this->userModel->create($user);
+  
+    if($userId){
+      $this->userStats->createUserStats([
+        'user_id' => $userId,
+        'xp' => 0,
+        'level' => 1,
+        'hearts' => 10
+      ]);
+    }
+
 
     if ($userId) {
       $_SESSION['success'] = 'User created successfully!';
