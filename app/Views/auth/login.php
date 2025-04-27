@@ -1,4 +1,3 @@
-<!-- // app/Views/users/create.php -->
 <div class="card w-50 mx-auto">
   <div class="card-header">
     <h1><?= $title ?></h1>
@@ -13,8 +12,8 @@
         <label for="password" class="form-label">Password</label>
         <input type="password" class="form-control" id="password" name="password" required>
       </div>
-      <button type="submit" class="btn btn-primary">Log In</button>
-      <a href="/register" class="btn btn-secondary">Register</a>
+      <button type="submit" class="btn btn-primary" style="margin-right: 10px;">Log In</button>
+      <a href="/register" class="" style="color: black; text-decoration: none;">Register</a>
     </form>
   </div>
 </div>
