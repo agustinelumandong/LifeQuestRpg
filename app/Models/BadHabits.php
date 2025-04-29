@@ -34,4 +34,21 @@ class BadHabits Extends Model {
         return $result['count'] == 0;
     }
 
+    public function resetDailyTasks(/*$forceReset = false*/){
+        // if ($forceReset) {
+        // For testing - resets all tasks regardless of time
+        //     return self::$db->query("
+        //     UPDATE dailytasks 
+        //     SET status = 'pending', last_reset = CURRENT_TIMESTAMP")
+        //     ->execute();
+        // }
+
+        // Normal production code
+    return self::$db->query("
+    UPDATE dailytasks 
+    SET status = 'pending', last_reset = CURRENT_TIMESTAMP
+    WHERE DATE(last_reset) < CURDATE() OR last_reset IS NULL")
+    ->execute();
+    }
+
 }

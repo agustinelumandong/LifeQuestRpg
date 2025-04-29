@@ -28,6 +28,7 @@ class BadHabitsController extends Controller
 
     public function index (){
         $currentUser = Auth::user();
+        $this->BadHabitsM->resetDailyTasks(); 
         $badHabits = $this->BadHabitsM->getBadHabitsByUserId($currentUser['id']);
 
         return $this->view('badHabits/index',[
