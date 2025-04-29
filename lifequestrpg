@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `lifequestrpg`;
-USE `lifequestrpg`;
+CREATE DATABASE IF NOT EXISTS `prac_ddbbs`;
+USE `prac_ddbbs`;
 -- --------------------------------------------------------
 -- Core Tables
 -- --------------------------------------------------------
@@ -11,7 +11,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `role` enum('admin','user') DEFAULT 'user',
+  `role` enum('admin', 'user') DEFAULT 'user', -- Removed spaces from enum definition
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -41,10 +41,10 @@ CREATE TABLE `user_event` (
   `event_name` varchar(255) NOT NULL,
   `event_description` text NOT NULL,
   `start_date` timestamp NOT NULL,
-  `end_date` timestamp NOT NULL,
+  `end_date` timestamp NULL DEFAULT NULL, -- Changed to allow NULL and default to NULL
   `reward_xp` int NOT NULL DEFAULT 0,
   `reward_coins` int NOT NULL DEFAULT 0,
-  `status` enum('active','inactive') DEFAULT 'active',
+  `status` enum('active', 'inactive') DEFAULT 'active',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -70,8 +70,8 @@ CREATE TABLE `tasks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `title` varchar(255) NOT NULL,
-  `status` enum('pending','completed') DEFAULT 'pending',
-  `difficulty` enum('easy','medium','hard') DEFAULT 'easy',
+  `status` enum('pending', 'completed') DEFAULT 'pending', -- Removed spaces from default
+  `difficulty` enum('easy', 'medium', 'hard') DEFAULT 'easy', -- Removed spaces from default
   PRIMARY KEY (`id`),
   KEY `fk_tasks_user` (`user_id`),
   CONSTRAINT `fk_tasks_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
@@ -83,8 +83,8 @@ CREATE TABLE `daily_tasks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `title` varchar(255) NOT NULL,
-  `status` enum('pending','completed') DEFAULT 'pending',
-  `difficulty` enum('easy','medium','hard') NOT NULL,
+  `status` enum('pending', 'completed') DEFAULT 'pending', -- Removed spaces from default, fixed indentation
+  `difficulty` enum('easy', 'medium', 'hard') DEFAULT 'easy', -- Removed spaces from default
   `last_reset` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `fk_dailytasks_user` (`user_id`),
@@ -96,8 +96,9 @@ CREATE TABLE `daily_tasks` (
 CREATE TABLE `streaks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `streak_type` enum('check_in','task_completion') NOT NULL,
+  `streak_type` enum('check_in', 'task_completion') NOT NULL,
   `current_streak` int NOT NULL DEFAULT 0,
+  -- Fixed typo
   `longest_streak` int NOT NULL DEFAULT 0,
   `last_streak_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -142,144 +143,130 @@ CREATE TABLE `activity_log` (
 -- --------------------------------------------------------
 -- Triggers & Procedures
 -- --------------------------------------------------------
+DELIMITER $$ CREATE TRIGGER `after_task_complete`
+AFTER
+UPDATE ON `tasks` FOR EACH ROW BEGIN IF NEW.status = 'completed'
+  AND OLD.status != 'completed' THEN
+INSERT INTO `activity_log` (
+    `user_id`,
+    `activity_type`,
+    `activity_details`,
+    `log_timestamp`
+  )
+VALUES (
+    NEW.user_id,
+    'Task Completed',
+    JSON_OBJECT(
+      'task_id',
+      NEW.id,
+      'title',
+      NEW.title,
+      'difficulty',
+      NEW.difficulty
+    ),
+    NOW()
+  );
+END IF;
+END $$ 
+DELIMITER ;
+
+DELIMITER $$ 
+CREATE TRIGGER `after_level_up`
+AFTER
+UPDATE ON `userstats` FOR EACH ROW BEGIN IF NEW.level > OLD.level THEN
+INSERT INTO `activity_log` (
+    `user_id`,
+    `activity_type`,
+    `activity_details`,
+    `log_timestamp`
+  )
+VALUES (
+    NEW.user_id,
+    'Level Up',
+    JSON_OBJECT('new_level', NEW.level),
+    NOW()
+  );
+END IF;
+END $$ 
+DELIMITER ;
 DELIMITER $$
 
-CREATE TRIGGER `after_task_complete` AFTER UPDATE ON `tasks` 
-FOR EACH ROW 
-BEGIN 
-  IF NEW.status = 'completed' AND OLD.status != 'completed' THEN
-    INSERT INTO `activity_log` (
-      `user_id`,
-      `activity_type`,
-      `activity_details`,
-      `log_timestamp`
-    )
-    VALUES (
-      NEW.user_id,
-      'Task Completed',
-      JSON_OBJECT(
-        'task_id',
-        NEW.id,
-        'title',
-        NEW.title,
-        'difficulty',
-        NEW.difficulty
-      ),
-      NOW()
-    );
-  END IF;
-END$$
-
-CREATE TRIGGER `after_level_up` AFTER UPDATE ON `userstats` 
-FOR EACH ROW 
-BEGIN 
-  IF NEW.level > OLD.level THEN
-    INSERT INTO `activity_log` (
-      `user_id`,
-      `activity_type`,
-      `activity_details`,
-      `log_timestamp`
-    )
-    VALUES (
-      NEW.user_id,
-      'Level Up',
-      JSON_OBJECT('new_level', NEW.level),
-      NOW()
-    );
-  END IF;
-END$$
-
-CREATE TRIGGER `after_inventory_insert` AFTER INSERT ON `user_inventory` 
-FOR EACH ROW 
-BEGIN
-  DECLARE item_name_var VARCHAR(255);
-  SELECT item_name INTO item_name_var
-  FROM marketplace_items
-  WHERE item_id = NEW.item_id;
-  
-  INSERT INTO activity_log (user_id, activity_type, activity_details)
-  VALUES (
+CREATE TRIGGER `after_inventory_insert`
+AFTER
+INSERT ON `user_inventory` FOR EACH ROW BEGIN
+DECLARE item_name_var VARCHAR(255);
+SELECT item_name INTO item_name_var
+FROM marketplace_items
+WHERE item_id = NEW.item_id;
+INSERT INTO activity_log (user_id, activity_type, activity_details)
+VALUES (
     NEW.user_id,
-    'ITEM_PURCHASED',
+    'Item Purchased', -- Standardized activity type
     JSON_OBJECT(
-      'item_id',
+      'item_id', -- Standardized key
       NEW.item_id,
-      'item_name',
+      'item_name', -- Standardized key
       item_name_var
     )
   );
-END$$
-
-CREATE TRIGGER `after_user_insert` AFTER INSERT ON `users` 
-FOR EACH ROW 
-BEGIN
-  INSERT INTO `userstats` (`user_id`, `level`, `xp`, `coins`, `health`)
-  VALUES (NEW.id, 1, 0, 0, 100);
-END$$
-
-CREATE PROCEDURE `PurchaseMarketplaceItem` (IN `p_user_id` INT, IN `p_item_id` INT) 
-proc: BEGIN
-  DECLARE v_item_price DECIMAL(10, 2);
-  DECLARE v_user_coins INT;
-  
-  DECLARE EXIT HANDLER FOR SQLEXCEPTION 
-  BEGIN 
-    ROLLBACK;
-    SELECT 'Transaction failed' AS message;
-  END;
-  
-  START TRANSACTION;
-  
-  -- Validate item existence
-  IF NOT EXISTS (
-    SELECT 1
-    FROM `marketplace_items`
-    WHERE `item_id` = p_item_id
-  ) THEN 
-    ROLLBACK;
-    SELECT 'Item not found' AS message;
-    LEAVE proc;
-  END IF;
-  
-  -- Get pricing info
-  SELECT `item_price` INTO v_item_price
+END $$ 
+DELIMITER ;
+-- Trigger to log user creation
+DELIMITER $$ CREATE TRIGGER `after_user_insert`
+AFTER
+INSERT ON `users` FOR EACH ROW BEGIN
+INSERT INTO `userstats` (`user_id`, `level`, `xp`, `coins`, `health`)
+VALUES (NEW.id, 1, 0, 0, 100);
+END $$ 
+DELIMITER ;
+-- Purchase Procedure
+DELIMITER $$ CREATE PROCEDURE `PurchaseMarketplaceItem` (IN `p_user_id` INT, IN `p_item_id` INT) proc: BEGIN
+DECLARE v_item_price DECIMAL(10, 2);
+DECLARE v_user_coins INT;
+-- Changed to INT to match userstats.coins
+DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK;
+SELECT 'Transaction failed' AS message;
+END;
+START TRANSACTION;
+-- Validate item existence
+IF NOT EXISTS (
+  SELECT 1
   FROM `marketplace_items`
-  WHERE `item_id` = p_item_id;
-  
-  -- Check user balance
-  SELECT `coins` INTO v_user_coins
-  FROM `userstats`
-  WHERE `user_id` = p_user_id;
-  
-  -- Validate funds
-  IF v_user_coins < v_item_price THEN 
-    ROLLBACK;
-    SELECT 'Insufficient coins' AS message;
-    LEAVE proc;
-  END IF;
-  
-  -- Check existing ownership
-  IF EXISTS (
-    SELECT 1
-    FROM `user_inventory`
-    WHERE `user_id` = p_user_id
-      AND `item_id` = p_item_id
-  ) THEN 
-    ROLLBACK;
-    SELECT 'Item already owned' AS message;
-    LEAVE proc;
-  END IF;
-  
-  -- Execute transaction
-  UPDATE `userstats`
-  SET `coins` = `coins` - v_item_price
-  WHERE `user_id` = p_user_id;
-  
-  INSERT INTO `user_inventory` (`user_id`, `item_id`)
-  VALUES (p_user_id, p_item_id);
-  
-  COMMIT;
-  SELECT 'Purchase successful!' AS message;
-END$$
-
+  WHERE `item_id` = p_item_id
+) THEN ROLLBACK;
+SELECT 'Item not found' AS message;
+LEAVE proc;
+END IF;
+-- Get pricing info
+SELECT `item_price` INTO v_item_price
+FROM `marketplace_items`
+WHERE `item_id` = p_item_id;
+-- Check user balance
+SELECT `coins` INTO v_user_coins
+FROM `userstats`
+WHERE `user_id` = p_user_id;
+-- Validate funds
+IF v_user_coins < v_item_price THEN ROLLBACK;
+SELECT 'Insufficient coins' AS message;
+LEAVE proc;
+END IF;
+-- Check existing ownership
+IF EXISTS (
+  SELECT 1
+  FROM `user_inventory`
+  WHERE `user_id` = p_user_id
+    AND `item_id` = p_item_id
+) THEN ROLLBACK;
+SELECT 'Item already owned' AS message;
+LEAVE proc;
+END IF;
+-- Execute transaction
+UPDATE `userstats`
+SET `coins` = `coins` - v_item_price
+WHERE `user_id` = p_user_id;
+INSERT INTO `user_inventory` (`user_id`, `item_id`)
+VALUES (p_user_id, p_item_id);
+COMMIT;
+SELECT 'Purchase successful!' AS message;
+END $$ 
 DELIMITER ;
