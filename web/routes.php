@@ -6,6 +6,7 @@ use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Controllers\BadHabitsController;
 use App\Middleware\AuthMiddleware;
+use App\Middleware\AdminMiddleware;
 use App\Controllers\TaskController;
 use App\Controllers\DailyTaskController;
 use App\Controllers\GoodHabitsController;
