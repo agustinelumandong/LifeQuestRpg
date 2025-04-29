@@ -39,12 +39,30 @@ class DailyTaskController extends Controller
 
     public function store () {
             $currentUser = Auth::user();
+            $difficulty = Input::post('difficulty');
+    
+                 $xpRewards = [
+                    'easy' => 10,
+                    'medium' => 20,
+                    'hard' => 30,
+                    ];
+
+                    $coinRewards = [
+                    'easy' => 5,
+                    'medium' => 10,
+                    'hard' => 15,
+                ];
+
+    $xp = $xpRewards[$difficulty] ?? 0;
+    $coins = $coinRewards[$difficulty] ?? 0;
 
             $data = Input::sanitize([
                 'title' => Input::post('title'),
                 'status' => Input::post('status'),
                 'difficulty' => Input::post('difficulty'),
                 'category' => Input::post('category'),
+                'coins' => $coins,  
+                'xp' => $xp,    
                 'user_id' => $currentUser['id']
 
             ]);
@@ -55,12 +73,31 @@ class DailyTaskController extends Controller
 
     public function update ($id){
         $currentUser = Auth::user();
+        $difficulty = Input::post('difficulty');
+    
+        $xpRewards = [
+           'easy' => 10,
+           'medium' => 20,
+           'hard' => 30,
+           ];
 
-        $data = Input::sanitize([
-            'title' => Input::post('title'),
-            'category' => Input::post('category'),
-            'difficulty' => Input::post('difficulty'),
-            'user_id' => $currentUser['id']
+           $coinRewards = [
+           'easy' => 5,
+           'medium' => 10,
+           'hard' => 15,
+        ];
+
+            $xp = $xpRewards[$difficulty] ?? 0;
+            $coins = $coinRewards[$difficulty] ?? 0;
+
+   $data = Input::sanitize([
+       'title' => Input::post('title'),
+       'status' => Input::post('status'),
+       'difficulty' => Input::post('difficulty'),
+       'category' => Input::post('category'),
+       'coins' => $coins,  
+       'xp' => $xp,    
+       'user_id' => $currentUser['id']
 
         ]);
 
@@ -75,6 +112,7 @@ class DailyTaskController extends Controller
         }
     }
 
+    //done
     public function destroy ($id){
         $currentUser = Auth::user();
         $task = $this->DailyTaskM->find($id);
@@ -97,6 +135,7 @@ class DailyTaskController extends Controller
         $this->redirect('/dailyTask/index');
     }
 
+    //done
     public function toggle($id) {
         $currentUser = Auth::user();
         $dailyTasks = $this->DailyTaskM->find($id);
@@ -112,20 +151,9 @@ class DailyTaskController extends Controller
             $_SESSION['success'] = 'Daily task updated!';
             if($newStatus === 'completed'){
                 
-                $xpRewards = [
-                    'easy' => 10,
-                    'medium' => 20,
-                    'hard' => 30,
-                ];
 
-                $coinRewards = [
-                    'easy' => 5,
-                    'medium' => 10,
-                    'hard' => 15,
-                ];
-
-                $xpReward = $xpRewards[$dailyTasks['difficulty']] ;
-                $coinReward = $coinRewards[$dailyTasks['difficulty']];
+                $xpReward = $dailyTasks['xp'];
+                $coinReward = $dailyTasks['coins'];
                 $user_id = $currentUser['id'];
 
                 $this->UserStatsM->addXp($user_id, $xpReward);

@@ -10,14 +10,14 @@ class UserStats Extends Model {
 
     public function createUserStats(array $data)
     {
-        return self::$db->query("INSERT INTO userStats (user_id, xp, level, hearts) VALUES (:user_id, :xp, :level, :hearts)")
+        return self::$db->query("INSERT INTO userStats (user_id, xp, level, health) VALUES (:user_id, :xp, :level, :health)")
             ->bind($data)
             ->execute();
     }
 
     public function getByUserId ($user_id){
         return self::$db->query("
-        SELECT  userstats.id, userstats.xp, userstats.level, userstats.hearts, userstats.hearts, 
+        SELECT  userstats.id, userstats.xp, userstats.level, userstats.health,
         userstats.physicalHealth, userstats.mentalWellness, userstats.personalGrowth, userstats.careerStudies,
         userstats.finance, userstats.homeEnvironment, userstats.relationshipsSocial, userstats.passionHobbies
         FROM userstats
@@ -82,22 +82,22 @@ class UserStats Extends Model {
         ]);
     }
 
-    public function minusHeart ($user_id) {
+    public function minusHealth ($user_id) {
         $user = $this->getByUserId($user_id);
     
         if(!$user){
           return false;
         }
     
-        $newHeart = $user['hearts'] - 1;
+        $newHealth = $user['health'] - 10;
     
         $updated =  $this->update($user['id'], [
-          'hearts' => $newHeart
+          'health' => $newHealth
         ]);
 
-        if($updated && $newHeart <= 0) {
+        if($updated && $newHealth <= 0) {
             $this->resetStatsPunishment($user_id);
-            $_SESSION['warning' ] = 'Your hearts reached zero! All stat have been reset to 5.';
+            $_SESSION['warning' ] = 'Your health reached zero! All stat have been reset to 5.';
         }   
 
       }
@@ -109,7 +109,7 @@ class UserStats Extends Model {
                 return false;
             }
 
-            if($user['hearts'] <= 0) {
+            if($user['health'] <= 0) {
                 return $this->update($user['id'], [
                     'physicalHealth' => 5,
                     'mentalWellness' => 5,
@@ -119,7 +119,7 @@ class UserStats Extends Model {
                     'homeEnvironment' => 5,
                     'relationShipsSocial' => 5,
                     'passionHobbies' => 5,
-                    'hearts' => 10,
+                    'health' => 10,
                     'level' => 1,
                     'xp' => 0
                 ]);

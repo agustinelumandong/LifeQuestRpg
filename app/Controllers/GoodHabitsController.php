@@ -9,8 +9,6 @@ use App\Models\UserStats;
 use App\Models\User;
 use App\Models\GoodHabits;
 
-
-
 class GoodHabitsController extends Controller 
 {
 
@@ -37,42 +35,78 @@ class GoodHabitsController extends Controller
     }
 
     public function store () {
-            $currentUser = Auth::user();
-
-            $data = Input::sanitize([
-                'title' => Input::post('title'),
-                'status' => Input::post('status'),
-                'difficulty' => Input::post('difficulty'),
-                'category' => Input::post('category'),
-                'user_id' => $currentUser['id']
-
-            ]);
-
-            $this->GoodHabitsM->create($data);
-            $this->redirect('/goodHabits/index');
-    }
-
-    public function update ($id){
         $currentUser = Auth::user();
-
+        $difficulty = Input::post('difficulty');
+    
+        $xpRewards = [
+            'easy' => 10,
+            'medium' => 20,
+            'hard' => 30,
+        ];
+        
+        $coinRewards = [
+            'easy' => 5,
+            'medium' => 10,
+            'hard' => 15,
+        ];
+        
+        $xp = $xpRewards[$difficulty] ?? 0;
+        $coins = $coinRewards[$difficulty] ?? 0;
+    
         $data = Input::sanitize([
             'title' => Input::post('title'),
             'status' => Input::post('status'),
             'difficulty' => Input::post('difficulty'),
+            'category' => Input::post('category'),
+            'coins' => $coins, 
+            'xp' => $xp, 
             'user_id' => $currentUser['id']
-
+        
         ]);
+    
+        $this->GoodHabitsM->create($data);
+        $this->redirect('/goodHabits/index');
+     }
 
+     public function update ($id){
+        $currentUser = Auth::user();
+        $difficulty = Input::post('difficulty');
+        
+        $xpRewards = [
+            'easy' => 10,
+            'medium' => 20,
+            'hard' => 30,
+        ];
+        
+        $coinRewards = [
+            'easy' => 5,
+            'medium' => 10,
+            'hard' => 15,
+        ];
+    
+        $xp = $xpRewards[$difficulty] ?? 0;
+        $coins = $coinRewards[$difficulty] ?? 0;
+    
+        $data = Input::sanitize([
+            'title' => Input::post('title'),
+            'category' => Input::post('category'),
+            'difficulty' => Input::post('difficulty'),
+            'coins' => $coins,  
+            'xp' => $xp,       
+            'user_id' => $currentUser['id']
+    
+        ]);
+    
         $updated = $this->GoodHabitsM->update($id, $data);
-
+        
         if($updated){
-            $_SESSION['success'] = 'GoodHabits Updated Successfully';
-            $this->redirect('/goodHabits/index');
-        }else {
-            $_SESSION['error'] = 'Failed to Update GoodHabits';
+            $_SESSION['success'] = 'Task updated successfully!';    
+            $this->redirect('/task/index');
+        } else{
+            $_SESSION['error'] = 'Failed to update task!';
             $this->redirect('/goodHabits/index');
         }
-    }
+     }
 
     public function destroy ($id){
         $currentUser = Auth::user();

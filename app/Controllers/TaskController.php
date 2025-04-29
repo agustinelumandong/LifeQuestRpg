@@ -10,7 +10,7 @@ use App\Core\Input;
 use App\Models\Tasks;
 use App\Models\UserStats;
 use App\Models\User;
-use App\Models\Activities;
+
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -21,15 +21,13 @@ protected $TaskM;
 protected $UserStatsM;
 protected $UserM;
 
-protected $ActivitiesM;
-
 
 public function  __construct()
 {
 $this->TaskM = new Tasks();
 $this->UserStatsM = new UserStats();
 $this->UserM = new User();
-$this->ActivitiesM = new Activities();
+
 }
 
 public function index()
@@ -38,26 +36,42 @@ public function index()
     $tasks = $this->TaskM->getTasksByUserId($currentUser['id']); // Get only current user's tasks
     $userStats = $this->UserStatsM->getByUserId($currentUser['id']);
 
-    // Fetch recent activities
-    $activities = $this->ActivitiesM->getRecentActivities($currentUser['id'], 10);
-
  return $this->view('task/index', [
     'title' => 'tasks',
     'tasks' => $tasks,
     'userStats' => $userStats,
     'currentUser' => $currentUser,
-    'activities' => $activities
+ 
  ]);
 
  }
 
  public function store () {
     $currentUser = Auth::user();
+    $difficulty = Input::post('difficulty');
+
+    $xpRewards = [
+        'easy' => 10,
+        'medium' => 20,
+        'hard' => 30,
+    ];
+    
+    $coinRewards = [
+        'easy' => 5,
+        'medium' => 10,
+        'hard' => 15,
+    ];
+    
+    $xp = $xpRewards[$difficulty] ?? 0;
+    $coins = $coinRewards[$difficulty] ?? 0;
+
     $data = Input::sanitize([
         'title' => Input::post('title'),
         'status' => Input::post('status'),
         'difficulty' => Input::post('difficulty'),
         'category' => Input::post('category'),
+        'coins' => $coins, 
+        'xp' => $xp, 
         'user_id' => $currentUser['id']
     
     ]);
@@ -69,10 +83,29 @@ public function index()
 
  public function update ($id){
     $currentUser = Auth::user();
+    $difficulty = Input::post('difficulty');
+    
+    $xpRewards = [
+        'easy' => 10,
+        'medium' => 20,
+        'hard' => 30,
+    ];
+    
+    $coinRewards = [
+        'easy' => 5,
+        'medium' => 10,
+        'hard' => 15,
+    ];
+
+    $xp = $xpRewards[$difficulty] ?? 0;
+    $coins = $coinRewards[$difficulty] ?? 0;
+
     $data = Input::sanitize([
         'title' => Input::post('title'),
         'category' => Input::post('category'),
         'difficulty' => Input::post('difficulty'),
+        'coins' => $coins,  
+        'xp' => $xp,       
         'user_id' => $currentUser['id']
 
     ]);
@@ -88,6 +121,7 @@ public function index()
     }
  }
 
+ //done
  public function destroy($id) {
     $currentUser = Auth::user();
     $task = $this->TaskM->find($id);
@@ -110,6 +144,7 @@ public function index()
     $this->redirect('/task/index');
 }
 
+//done
 public function toggle ($id){
     $currentUser = Auth::user();
     $task = $this->TaskM->find($id);
@@ -125,21 +160,9 @@ public function toggle ($id){
         $_SESSION['success'] = 'Task status updated!';
         if($newStatus === 'completed')
         {
-            $xpRewards = [
-                'easy' => 10,
-                'medium' => 20,
-                'hard' => 30,
-            ];
-
-            
-            $coinRewards = [
-                'easy' => 5,
-                'medium' => 10,
-                'hard' => 15,
-            ];
-            
-            $xpReward = $xpRewards[$task['difficulty']];
-            $coinReward = $coinRewards[$task['difficulty']];
+                      
+            $xpReward = $task['xp'];
+            $coinReward = $task['coins'];
             $user_id = $currentUser['id'];
 
             $this->UserStatsM->addXp($user_id, $xpReward);

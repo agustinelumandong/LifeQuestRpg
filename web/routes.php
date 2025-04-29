@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\ActivityLogController;
 use App\Controllers\HomeController;
 use App\Controllers\UserController;
 use App\Controllers\AuthController;
@@ -70,4 +71,7 @@ use App\Controllers\JournalController;
    $router->put('/journal/{id}', [JournalController::class, 'update'], [AuthMiddleware::class]);
    $router->delete('/journal/{id}/delete', [JournalController::class, 'destroy'], [AuthMiddleware::class]);
    $router->post('/journal/{id}/toggle', [JournalController::class, 'toggle'], [AuthMiddleware::class]);
+
+   $router->get('/activityLog/index',[ActivityLogController::class, 'index'], [AuthMiddleware::class]);
+
    

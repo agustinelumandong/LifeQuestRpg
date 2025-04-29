@@ -12,7 +12,7 @@
                     </div>
                 </div>
                 <p class="mb-0">Level: <?= $userStats['level'] ?></p>
-                <p class="mb-0">Hearts: <?= $userStats['hearts'] ?></p>
+                <p class="mb-0">Hearts: <?= $userStats['health'] ?></p>
                 <p class="mb-0">Physical Health: <?= $userStats['physicalHealth'] ?></p>
                 <p class="mb-0">Mental Wellness: <?= $userStats['mentalWellness'] ?></p>
                 <p class="mb-0">Personal Growth: <?= $userStats['personalGrowth'] ?></p>

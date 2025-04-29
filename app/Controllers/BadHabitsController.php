@@ -8,7 +8,6 @@ use App\Core\Input;
 use App\Models\BadHabits;
 use App\Models\User;
 use App\Models\UserStats;
-use App\Models\Activities;
 
 
 class BadHabitsController extends Controller 
@@ -114,7 +113,7 @@ class BadHabitsController extends Controller
             
                $user_id = $currentUser['id'];
 
-               $this->UserStatsM->minusHeart($user_id);
+               $this->UserStatsM->minusHealth($user_id);
 
             }
         }else{
