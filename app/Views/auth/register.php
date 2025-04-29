@@ -1,5 +1,4 @@
-<!-- // app/Views/users/create.php -->
-<div class="card">
+<div class="card w-50 mx-auto">
   <div class="card-header">
     <h1><?= $title ?></h1>
   </div>
@@ -21,8 +20,8 @@
         <label for="password_confirmation" class="form-label">Confirm Password</label>
         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
       </div>
-      <button type="submit" class="btn btn-primary">Create User</button>
-      <a href="/login" class="btn btn-secondary">back</a>
+      <button type="submit" class="btn btn-primary" style="margin-left:10px;">Create User</button>
+      <a href="/login" class="" style="color: black; text-decoration: none;">back</a>
     </form>
   </div>
 </div>

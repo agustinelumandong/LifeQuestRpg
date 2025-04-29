@@ -12,7 +12,7 @@
         </li>
         <?php if (App\Core\Auth::check()): ?>
           <li class="nav-item">
-            <a class="nav-link" href="/contact">Contact</a>
+            <a class="nav-link" href="#">nothing</a>
           </li>
           <?php if (App\Core\Auth::isAdmin()): ?>
             <li class="nav-item">

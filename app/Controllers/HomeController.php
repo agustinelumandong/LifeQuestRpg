@@ -21,9 +21,12 @@ class HomeController extends Controller
    */
   public function index()
   {
-    return $this->view('home', [
-      'title' => 'Welcome to MVC Framework',
-      'message' => 'A simple MVC framework for PHP'
+    $currentUser = Auth::user();
+    $view = !$currentUser ? 'home' : 'dashboard';
+
+    return $this->view($view, [
+      'title' => 'LifeQuestRPG',
+      'message' => 'Mag LifeQuestRPG na!!'
     ]);
   }
 
