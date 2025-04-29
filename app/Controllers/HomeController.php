@@ -3,7 +3,6 @@
 
 namespace App\Controllers;
 
-use App\Core\Auth;
 use App\Core\Controller;
 use App\Models\User;
 
@@ -36,18 +35,39 @@ class HomeController extends Controller
    */
   public function profile()
   {
-    $currentUser = Auth::user();
-    $userId = Auth::getByUserId();
+    $sessionUser = $_SESSION['user'] ?? null;
+    $currentUser = null; // Initialize currentUser
 
+    if ($sessionUser) {
+      $userId = null;
+      // Extract user ID whether it's an array or object
+      if (is_array($sessionUser) && isset($sessionUser['id'])) {
+        $userId = $sessionUser['id'];
+      } elseif (is_object($sessionUser) && isset($sessionUser->id)) {
+        $userId = $sessionUser->id;
+      }
 
-    // Get user stats
-    $userStats = $this->userModel->getUserStats($userId);
+      if ($userId !== null) {
+        // Get fresh user data using the extracted ID
+        $freshUser = $this->userModel->find($userId);
+        if ($freshUser) {
+          // Use the fresh data if found
+          $currentUser = $freshUser;
+        } else {
+          // Fallback to session data if fresh data fetch fails,
+          // but ensure it's the full data, not just ID
+          $currentUser = $sessionUser;
+        }
+      } else {
+        // If session data exists but has no ID, treat as invalid
+        $currentUser = null;
+      }
+    }
 
     return $this->view('profile', [
       'title' => 'Profile',
       'content' => 'Welcome to your profile page!',
-      'currentUser' => $currentUser,
-      'userStats' => $userStats,
+      'currentUser' => $currentUser, // Pass the determined user data (or null)
     ]);
   }
 

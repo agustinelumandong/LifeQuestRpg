@@ -55,6 +55,21 @@ class User extends Model
       ->fetch();
   }
 
+  public function addCoin ($user_id, $coinRewards){
+    $user = $this->find($user_id); 
+
+    if(!$user){
+      return false;
+    }
+
+    $newCoins = $user['coins'] + $coinRewards;
+
+    return $this->update($user['id'],[
+      'coins' => $newCoins
+    ]);
+
+  }
+
 
 
 
