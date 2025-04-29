@@ -7,20 +7,22 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/">Home</a>
-        </li>
+
         <?php if (App\Core\Auth::check()): ?>
-          <li class="nav-item">
-            <a class="nav-link" href="#">nothing</a>
-          </li>
           <?php if (App\Core\Auth::isAdmin()): ?>
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="/users">Users</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">nothing</a>
+            </li>
           <?php endif; ?>
           <li class="nav-item">
-            <a class="nav-link" href="/logout">logout</a>
+            <a class="nav-link " style="font-size: 21px; color: red;" href="/logout"> <i class="bi bi-door-open me-1"></i>
+            </a>
           </li>
         <?php else: ?>
           <li class="nav-item">
