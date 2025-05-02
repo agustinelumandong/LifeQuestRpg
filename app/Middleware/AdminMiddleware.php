@@ -19,8 +19,6 @@ class AdminMiddleware extends Middleware
       exit;
     }
 
-    // Check if user is admin
-
     // Get the user ID from the session array/object
     $userId = $_SESSION['users']['id'] ?? $_SESSION['users']->id ?? null;
 

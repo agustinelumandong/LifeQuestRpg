@@ -42,10 +42,10 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
 // Update last activity timestamp
 $_SESSION['last_activity'] = time();
 
-if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
+if (isset($_SESSION['users']['id']) && !empty($_SESSION['users']['id'])) {
   if (!empty($_SERVER['REQUEST_URI']) && preg_match('/^\/(login|register)(\?.*)?$/', $_SERVER['REQUEST_URI'])) {
     // Redirect to home page or dashboard
-    header('Location: /dashboard');
+    header('Location: /');
     exit;
   }
 }

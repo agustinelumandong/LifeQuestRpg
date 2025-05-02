@@ -8,8 +8,7 @@
 }
 
 body {
-  /* font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; */
-  font-family: Pixelify Sans 'Nunito Sans', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;
   color: var(--text-color);
   background-color: var(--background-color);
@@ -104,7 +103,7 @@ footer a:hover {
   }
 }
 
-/* Toast styling for session messages */
+/* Toast styling from layouts/main.php */
 .toast {
   opacity: 1 !important;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -123,7 +122,84 @@ footer a:hover {
   transform: translateY(-10px);
 }
 
-/* Error page styling */
+/* Gamified UI styles from taskevents/show.php and other files */
+.btn-hover-effect {
+  transition: all 0.2s ease;
+  font-weight: bold;
+}
+
+.btn-hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-row {
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.event-row:hover {
+  background-color: #f8f9fa;
+  transform: scale(1.005);
+  border-left: 3px solid #212529;
+}
+
+.description-cell {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.action-btn {
+  margin: 0 2px;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.card {
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.table-dark th {
+  background-color: #212529;
+  color: white;
+  border-color: #32383e;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.game-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Error page styling from 404.php */
 .error-page {
   min-height: 80vh;
   display: flex;
@@ -163,18 +239,283 @@ footer a:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Basic form styling */
+/* Task styling from task/index.php */
+/* .task-list { */
+/*  overflow: hidden; */
+/* } */
+
+
+.task-row {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: white;
+  transition: all 0.2s ease;
+  margin-bottom: 0.75rem;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.task-row:hover {
+  z-index: 20;
+  background-color: rgba(0, 0, 0, 0.02);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.task-row.completed {
+  background-color: #f8f9fa;
+}
+
+.task-left {
+  margin-right: 1.25rem;
+}
+
+.task-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 24px;
+}
+
+.task-check {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.task-center {
+  flex-grow: 1;
+}
+
+.task-title {
+  margin-bottom: 0.25rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #212529;
+}
+
+.task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.task-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.difficulty-easy {
+  background-color: rgba(25, 135, 84, 0.1);
+  color: #198754;
+}
+
+.difficulty-medium {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: #fd7e14;
+}
+
+.difficulty-hard {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.status-completed {
+  background-color: rgba(25, 135, 84, 0.1);
+  color: #198754;
+}
+
+.status-pending {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: #fd7e14;
+}
+
+.reward-badge {
+  background-color: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
+}
+
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-check-input:checked {
+  background-color: #212529;
+  border-color: #212529;
+}
+
+/* Activity Log Styles */
+.activity-timeline {
+  position: relative;
+}
+
+.activity-item {
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+  margin-left: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.activity-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.activity-dot {
+  position: absolute;
+  left: -8px;
+  top: 22px;
+  width: 14px;
+  height: 14px;
+  background-color: #212529;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+/* Task creation form styles */
+.info-box {
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.info-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
 .form-control:focus,
 .form-select:focus {
   border-color: #212529;
   box-shadow: 0 0 0 0.25rem rgba(33, 37, 41, 0.25);
 }
 
-/* Table styling */
+/* Profile page styles */
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stat-box {
+  transition: transform 0.2s;
+}
+
+.stat-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.quest-card {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.quest-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.quest-description {
+  min-height: 60px;
+}
+
+.activity-details {
+  padding-top: 0.5rem;
+  color: #6c757d;
+}
+
+.activity-summary .badge {
+  transition: transform 0.2s;
+}
+
+.activity-summary .badge:hover {
+  transform: scale(1.1);
+}
+
+/* Inventory styles */
+.c {
+  width: 250px;
+  height: 250px;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Products marketplace styles */
+.marketplace-item {
+  transition: transform 0.2s;
+  background-color: white;
+}
+
+.marketplace-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.price-tag {
+  display: flex;
+  align-items: center;
+}
+
+.purchase-btn:hover {
+  transform: scale(1.05);
+}
+
+.btn-dark:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.table-dark {
+  background-color: #212529;
+  color: white;
+}
+
+.admin-table-row {
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.admin-table-row:hover {
+  background-color: rgba(33, 37, 41, 0.05);
+}
+
+.price-badge {
+  display: inline-block;
+  font-weight: bold;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.25rem;
+}
+
+.product-row {
+  transition: transform 0.2s, background-color 0.2s;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.product-row:hover {
+  transform: scale(1);
+  background-color: rgba(33, 37, 41, 0.05);
+}
+
 .table th,
 .table td {
   vertical-align: middle;
 }
+
 
 /* Minimalist pagination styling */
 .pagination {

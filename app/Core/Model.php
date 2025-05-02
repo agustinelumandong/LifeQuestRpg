@@ -1,6 +1,4 @@
 <?php
-// app/Core/Model.php
-
 namespace App\Core;
 
 abstract class Model
@@ -47,11 +45,11 @@ abstract class Model
 
     $sql = "INSERT INTO " . static::$table . " ({$columns}) VALUES ({$placeholders})";
 
-    self::$db->query($sql)
+    return self::$db->query($sql)
       ->bind($data)
-      ->execute();
+      ->execute()
+      ->lastInsertId();
 
-    return self::$db->lastInsertId();
   }
 
   /**
@@ -297,17 +295,4 @@ abstract class Model
     }
     return $query->execute()->fetchAll();
   }
-
-  // EXMPLE USAGE
-  // Get all products sorted by price in ascending order
-  // $products = $productModel->fetch([], 'item_price', 'ASC');
-
-  // Get products sorted by name in descending order
-  // $products = $productModel->fetch([], 'item_name', 'DESC');
-
-  // Get products with conditions and sorting
-  // $products = $productModel->fetch(['category_id' => 5], 'item_price', 'DESC', 10);
-
-  // Get the 10 most recent products
-  // $products = $productModel->fetch([], 'created_at', 'DESC', 10);
 }

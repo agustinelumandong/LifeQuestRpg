@@ -1,8 +1,6 @@
 <?php
-
-// app/Core/Controller.php
-
 namespace App\Core;
+
 use Exception;
 
 class Controller

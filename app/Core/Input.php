@@ -1,6 +1,4 @@
 <?php
-// app/Core/Input.php
-
 namespace App\Core;
 
 class Input

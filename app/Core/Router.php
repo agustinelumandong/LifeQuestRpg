@@ -1,6 +1,4 @@
 <?php
-// app/Core/Router.php
-
 namespace App\Core;
 
 use Exception;

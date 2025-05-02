@@ -1,6 +1,8 @@
 /**
- * Global JavaScript file for test-101 application
+ * Global JavaScript file for  application
  */
+
+// main
 
 // Toast initialization for session messages
 document.addEventListener('DOMContentLoaded', function () {
@@ -102,14 +104,61 @@ document.addEventListener('DOMContentLoaded', function () {
  * @returns {boolean} - Returns false to prevent form submission
  */
 function toggleTaskStatus(taskId, checkbox) {
-  // Placeholder: Add logic to update task status via AJAX or form submission
-  console.log(`Toggling status for task ${taskId}. New checked state: ${checkbox.checked}`);
-  // Example: You might want to submit a form or make an AJAX call here
-  // const form = checkbox.closest('form');
-  // if (form) {
-  //   form.submit();
-  // }
-  return false; // Prevent default form submission if necessary
+  // Prevent default checkbox behavior
+  event.preventDefault();
+  
+  // Determine if this is a daily task or a regular task based on URL
+  const taskType = window.location.pathname.includes('dailytask') ? 'dailytask' : 'task';
+  
+  // Create a form and submit it via AJAX
+  fetch(`/${taskType}/${taskId}/toggle`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(response => {
+    if (response.ok) {
+      // If successful, toggle the checkbox and update UI
+      const taskRow = checkbox.closest('.task-row');
+      const taskTitle = taskRow.querySelector('.task-title');
+      const statusBadge = taskRow.querySelector('.status-badge');
+      
+      if (checkbox.checked) {
+        // Task was completed
+        taskRow.classList.remove('completed');
+        taskTitle.classList.remove('text-decoration-line-through');
+        statusBadge.textContent = 'Pending';
+        statusBadge.classList.remove('status-completed');
+        statusBadge.classList.add('status-pending');
+        checkbox.checked = false;
+        
+        // Show success toast
+        showTaskToast('Task marked as pending', 'success', taskTitle.textContent);
+      } else {
+        // Task was marked as completed
+        taskRow.classList.add('completed');
+        taskTitle.classList.add('text-decoration-line-through');
+        statusBadge.textContent = 'Completed';
+        statusBadge.classList.remove('status-pending');
+        statusBadge.classList.add('status-completed');
+        checkbox.checked = true;
+        
+        // Show success toast
+        showTaskToast('Task completed successfully!', 'success', taskTitle.textContent);
+      }
+    } else {
+      console.error('Failed to toggle task status');
+      showTaskToast('Failed to update task status', 'danger');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    showTaskToast('Error updating task status', 'danger');
+  });
+  
+  return false;
 }
 
 /**
@@ -119,7 +168,6 @@ function toggleTaskStatus(taskId, checkbox) {
  */
 function taskRowClick(row, taskId) {
   const checkbox = row.querySelector('.task-check');
-  checkbox.checked = !checkbox.checked;
   toggleTaskStatus(taskId, checkbox);
 }
 
