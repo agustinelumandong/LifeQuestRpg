@@ -26,6 +26,7 @@ class GoodHabitsController extends Controller
 
     public function index()
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $GoodHabits = $this->GoodHabitsModel->getGoodHabitsByUserId($currentUser['id']);
 
@@ -49,6 +50,7 @@ class GoodHabitsController extends Controller
 
     public function store()
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $difficulty = Input::post('difficulty');
 
@@ -97,6 +99,7 @@ class GoodHabitsController extends Controller
 
     public function update($id)
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $goodHabit = $this->GoodHabitsModel->find($id);
 
@@ -153,6 +156,7 @@ class GoodHabitsController extends Controller
 
     public function destroy($id)
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $goodHabits = $this->GoodHabitsModel->find($id);
 
@@ -181,6 +185,7 @@ class GoodHabitsController extends Controller
 
     public function toggle($id)
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $goodHabits = $this->GoodHabitsModel->find($id);
 
