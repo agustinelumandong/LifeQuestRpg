@@ -1,6 +1,6 @@
 <div class="container py-4">
     <div class="mb-4">
-        <a href="/journal/index" class="btn btn-outline-secondary">
+        <a href="/journal" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left"></i> Back to Journal
         </a>
     </div>
@@ -63,7 +63,7 @@
         
         <div class="mb-3">
             <button type="submit" class="btn btn-primary">Save Entry</button>
-            <a href="/journal/index" class="btn btn-outline-secondary ms-2">Cancel</a>
+            <a href="/journal" class="btn btn-outline-secondary ms-2">Cancel</a>
         </div>
     </form>
 </div>
