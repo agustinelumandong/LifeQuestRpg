@@ -8,167 +8,202 @@ use App\Core\Input;
 use App\Models\DailyTasks;
 use App\Models\UserStats;
 use App\Models\User;
-use App\Models\Activities;
+use Exception;
 
 
-class DailyTaskController extends Controller 
+class DailyTaskController extends Controller
 {
 
-    protected $DailyTaskM;
-    protected $UserStatsM;
-    protected $UserM;
+    protected $DailyTaskModel;
+    protected $UserStatsModel;
+    protected $UserModel;
 
-
-
-    public function __construct(){
-        $this->DailyTaskM = new DailyTasks();
-        $this->UserStatsM = new UserStats();
-        $this->UserM = new User();
+    public function __construct()
+    {
+        $this->DailyTaskModel = new DailyTasks();
+        $this->UserStatsModel = new UserStats();
+        $this->UserModel = new User();
     }
 
-    public function index (){
+    public function index()
+    {
         $currentUser = Auth::user();
 
-        $this->DailyTaskM->resetDailyTasks(); 
-        $dailyTasks = $this->DailyTaskM->getDailyTasksByUserId($currentUser['id']);
-        return $this->view('dailyTask/index',[
+        $this->DailyTaskModel->resetDailyTasks();
+        $dailyTasks = $this->DailyTaskModel->getDailyTasksByUserId($currentUser['id']);
+
+        return $this->view('dailytask/index', [
             'title' => 'Daily Task',
             'dailyTasks' => $dailyTasks
-        ]); 
+        ]);
     }
 
-    public function store () {
-            $currentUser = Auth::user();
-            $difficulty = Input::post('difficulty');
-    
-                 $xpRewards = [
-                    'easy' => 10,
-                    'medium' => 20,
-                    'hard' => 30,
-                    ];
-
-                    $coinRewards = [
-                    'easy' => 5,
-                    'medium' => 10,
-                    'hard' => 15,
-                ];
-
-    $xp = $xpRewards[$difficulty] ?? 0;
-    $coins = $coinRewards[$difficulty] ?? 0;
-
-            $data = Input::sanitize([
-                'title' => Input::post('title'),
-                'status' => Input::post('status'),
-                'difficulty' => Input::post('difficulty'),
-                'category' => Input::post('category'),
-                'coins' => $coins,  
-                'xp' => $xp,    
-                'user_id' => $currentUser['id']
-
-            ]);
-
-            $this->DailyTaskM->create($data);
-            $this->redirect('/dailyTask/index');
-    }
-
-    public function update ($id){
+    public function store()
+    {
         $currentUser = Auth::user();
         $difficulty = Input::post('difficulty');
-    
-        $xpRewards = [
-           'easy' => 10,
-           'medium' => 20,
-           'hard' => 30,
-           ];
 
-           $coinRewards = [
-           'easy' => 5,
-           'medium' => 10,
-           'hard' => 15,
+        $xpRewards = [
+            'easy' => 10,
+            'medium' => 20,
+            'hard' => 30,
         ];
 
-            $xp = $xpRewards[$difficulty] ?? 0;
-            $coins = $coinRewards[$difficulty] ?? 0;
+        $coinRewards = [
+            'easy' => 5,
+            'medium' => 10,
+            'hard' => 15,
+        ];
 
-   $data = Input::sanitize([
-       'title' => Input::post('title'),
-       'status' => Input::post('status'),
-       'difficulty' => Input::post('difficulty'),
-       'category' => Input::post('category'),
-       'coins' => $coins,  
-       'xp' => $xp,    
-       'user_id' => $currentUser['id']
+        $xp = $xpRewards[$difficulty] ?? 0;
+        $coins = $coinRewards[$difficulty] ?? 0;
 
+        $data = Input::sanitize([
+            'title' => Input::post('title'),
+            'status' => Input::post('status'),
+            'difficulty' => Input::post('difficulty'),
+            'category' => Input::post('category'),
+            'coins' => $coins,
+            'xp' => $xp,
+            'user_id' => $currentUser['id']
         ]);
 
-        $updated = $this->DailyTaskM->update($id, $data);
+        try {
+            $created = $this->DailyTaskModel->create($data);
 
-        if($updated){
-            $_SESSION['success'] = 'Daily Task Updated Successfully';
-            $this->redirect('/dailyTask/index');
-        }else {
-            $_SESSION['error'] = 'Failed to Update Daily Task';
-            $this->redirect('/dailyTask/index');
+            if ($created) {
+                $_SESSION['success'] = 'Daily Task Created Successfully';
+                $this->redirect('/dailytask');
+            } else {
+                $_SESSION['error'] = 'Failed to Create Daily Task';
+                $this->redirect('/dailytask');
+            }
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Failed to create daily task: ' . $e->getMessage();
+            $this->redirect('/dailytask');
         }
     }
 
-    //done
-    public function destroy ($id){
+    public function update($id)
+    {
         $currentUser = Auth::user();
-        $task = $this->DailyTaskM->find($id);
-    
-        // Check if task exists and belongs to current user
-        if (!$task || $task['user_id'] !== $currentUser['id']) {
+        $difficulty = Input::post('difficulty');
+        $dailyTasks = $this->DailyTaskModel->find($id);
+
+        if ($currentUser !== $id && $dailyTasks['user_id'] !== $currentUser['id']) {
             $_SESSION['error'] = 'Unauthorized access!';
-            $this->redirect('dailyTask/index');
+            $this->redirect('/dailytask');
             return;
         }
-    
-        $deleted = $this->DailyTaskM->delete($id);
-    
-        if ($deleted) {
-            $_SESSION['success'] = 'Task deleted successfully!';
-        } else {
-            $_SESSION['error'] = 'Failed to delete task!';
-        }
-    
-        $this->redirect('/dailyTask/index');
-    }
 
-    //done
-    public function toggle($id) {
-        $currentUser = Auth::user();
-        $dailyTasks = $this->DailyTaskM->find($id);
+        $xpRewards = [
+            'easy' => 10,
+            'medium' => 20,
+            'hard' => 30,
+        ];
 
-        $newStatus = $dailyTasks['status'] === 'completed' ? 'pending' : 'completed';
-        
-        $updated = $this->DailyTaskM->update($id, [
-            "status" => $newStatus,
-            "user_id" => $currentUser['id']
+        $coinRewards = [
+            'easy' => 5,
+            'medium' => 10,
+            'hard' => 15,
+        ];
+
+        $xp = $xpRewards[$difficulty] ?? 0;
+        $coins = $coinRewards[$difficulty] ?? 0;
+
+        $data = Input::sanitize([
+            'title' => Input::post('title'),
+            'status' => Input::post('status'),
+            'difficulty' => Input::post('difficulty'),
+            'category' => Input::post('category'),
+            'coins' => $coins,
+            'xp' => $xp,
+            'user_id' => $currentUser['id']
+
         ]);
 
-        if($updated){
-            $_SESSION['success'] = 'Daily task updated!';
-            if($newStatus === 'completed'){
-                
+        try {
+            $updated = $this->DailyTaskModel->update($id, $data);
 
-                $xpReward = $dailyTasks['xp'];
-                $coinReward = $dailyTasks['coins'];
-                $user_id = $currentUser['id'];
-
-                $this->UserStatsM->addXp($user_id, $xpReward);
-                $this->UserStatsM->addSp($currentUser['id'], $dailyTasks['category'], $dailyTasks['difficulty']);
-                $this->UserM->addCoin($user_id, $coinReward);
-
-
-            }
-        }else{
-                $_SESSION['error'] = 'Daily task failed to update!';
+            if ($updated) {
+                $_SESSION['success'] = 'Daily Task Updated Successfully';
+            } else {
+                $_SESSION['error'] = 'Failed to Update Daily Task';
             }
 
-
-             $this->redirect('/dailyTask/index');
+            $this->redirect('/dailytask');
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Failed to update daily task: ' . $e->getMessage();
+            $this->redirect('/dailytask');
         }
     }
 
-?>
+    public function destroy($id)
+    {
+        $currentUser = Auth::user();
+        $task = $this->DailyTaskModel->find($id);
+        if ($currentUser !== $id && $task['user_id'] !== $currentUser['id']) {
+            $_SESSION['error'] = 'Unauthorized access!';
+            $this->redirect('dailytask');
+            return;
+        }
+
+        try {
+            $deleted = $this->DailyTaskModel->delete($id);
+
+            if ($deleted) {
+                $_SESSION['success'] = 'Daily Task deleted successfully!';
+                $this->redirect('/dailytask');
+            } else {
+                $_SESSION['error'] = 'Failed to delete daily task!';
+                $this->redirect('/dailytask');
+            }
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Failed to delete daily task: ' . $e->getMessage();
+            $this->redirect('/dailytask');
+        }
+
+    }
+
+    public function toggle($id)
+    {
+        $currentUser = Auth::user();
+        $dailyTasks = $this->DailyTaskModel->find($id);
+        if ($currentUser !== $id && $dailyTasks['user_id'] !== $currentUser['id']) {
+            $_SESSION['error'] = 'Unauthorized access!';
+            $this->redirect('dailytask');
+            return;
+        }
+        try {
+            $newStatus = $dailyTasks['status'] === 'completed' ? 'pending' : 'completed';
+
+            $updated = $this->DailyTaskModel->update($id, [
+                "status" => $newStatus,
+                "user_id" => $currentUser['id']
+            ]);
+
+            if ($updated) {
+                if ($newStatus === 'completed') {
+
+                    $xpReward = $dailyTasks['xp'];
+                    $coinReward = $dailyTasks['coins'];
+                    $user_id = $currentUser['id'];
+
+                    $this->UserStatsModel->addXp($user_id, $xpReward);
+                    $this->UserStatsModel->addSkillPoints($currentUser['id'], $dailyTasks['category'], $dailyTasks['difficulty']);
+                    $this->UserModel->addCoin($user_id, $coinReward);
+
+                    $_SESSION['success'] = 'Daily task updated!';
+                    $this->redirect('/dailytask');
+                }
+            } else {
+                $_SESSION['error'] = 'Daily task failed to update!';
+                $this->redirect('/dailytask');
+            }
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Failed to update daily task: ' . $e->getMessage();
+            $this->redirect('/dailytask');
+        }
+
+    }
+}
