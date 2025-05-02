@@ -27,6 +27,7 @@ class DailyTaskController extends Controller
 
     public function index()
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
 
         $this->DailyTaskModel->resetDailyTasks();
@@ -40,6 +41,7 @@ class DailyTaskController extends Controller
 
     public function store()
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $difficulty = Input::post('difficulty');
 
@@ -86,6 +88,7 @@ class DailyTaskController extends Controller
 
     public function update($id)
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $difficulty = Input::post('difficulty');
         $dailyTasks = $this->DailyTaskModel->find($id);
@@ -140,6 +143,7 @@ class DailyTaskController extends Controller
 
     public function destroy($id)
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $task = $this->DailyTaskModel->find($id);
         if ($currentUser !== $id && $task['user_id'] !== $currentUser['id']) {
@@ -167,6 +171,7 @@ class DailyTaskController extends Controller
 
     public function toggle($id)
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $dailyTasks = $this->DailyTaskModel->find($id);
         if ($currentUser !== $id && $dailyTasks['user_id'] !== $currentUser['id']) {

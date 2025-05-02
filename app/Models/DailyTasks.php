@@ -29,6 +29,7 @@ class DailyTasks extends Model
 
     public function getDailyTasks()
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
 
         if ($currentUser) {

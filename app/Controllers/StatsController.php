@@ -25,6 +25,7 @@ class StatsController extends Controller
 
     public function index()
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $userStats = $this->UserStatsModel->getByUserId($currentUser['id']);
 

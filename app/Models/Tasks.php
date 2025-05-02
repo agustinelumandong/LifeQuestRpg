@@ -20,6 +20,7 @@ class Tasks extends Model
 
     public function getTasks()
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
 
         if ($currentUser) {

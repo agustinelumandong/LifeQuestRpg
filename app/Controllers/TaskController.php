@@ -29,6 +29,7 @@ class TaskController extends Controller
 
     public function index()
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $tasks = $this->TaskModel->getTasksByUserId($currentUser['id']);
         $userStats = $this->UserStatsModel->getByUserId($currentUser['id']);
@@ -38,13 +39,13 @@ class TaskController extends Controller
             'tasks' => $tasks,
             'userStats' => $userStats,
             'currentUser' => $currentUser,
-
         ]);
 
     }
 
     public function store()
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $difficulty = Input::post('difficulty');
 
@@ -91,6 +92,7 @@ class TaskController extends Controller
 
     public function update($id)
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $difficulty = Input::post('difficulty');
         $task = $this->TaskModel->find($id);
@@ -144,6 +146,7 @@ class TaskController extends Controller
 
     public function destroy($id)
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $task = $this->TaskModel->find($id);
 
@@ -172,6 +175,7 @@ class TaskController extends Controller
 
     public function toggle($id)
     {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
         $task = $this->TaskModel->find($id);
         if ($currentUser !== $id && $task['user_id'] !== $currentUser['id']) {
