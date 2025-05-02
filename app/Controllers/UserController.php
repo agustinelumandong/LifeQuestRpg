@@ -1,26 +1,26 @@
 <?php
 
-// app/Controllers/UserController.php
-// main php file
-
 namespace App\Controllers;
 
+use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Input;
+use App\Models\Inventory;
 use App\Models\User;
+use Exception;
 
 class UserController extends Controller
 {
   protected $userModel;
+  protected $userInventoryModel;
 
   public function __construct()
   {
+    $this->userInventoryModel = new Inventory();
     $this->userModel = new User();
   }
 
-  /**
-   * Display a listing of users
-   */
+
   public function index()
   {
     $users = $this->userModel->all();
@@ -33,9 +33,6 @@ class UserController extends Controller
     ]);
   }
 
-  /**
-   * Show the form for creating a new user
-   */
   public function create()
   {
     return $this->view('users/create', [
@@ -43,9 +40,7 @@ class UserController extends Controller
     ]);
   }
 
-  /**
-   * Store a newly created user
-   */
+
   public function store()
   {
     $data = Input::sanitize([
@@ -57,7 +52,6 @@ class UserController extends Controller
     $userId = $this->userModel->create($data);
 
     if ($userId) {
-      // Flash message in session
       $_SESSION['success'] = 'User created successfully!';
       $this->redirect('/users');
     } else {
@@ -66,9 +60,6 @@ class UserController extends Controller
     }
   }
 
-  /**
-   * Display the specified user
-   */
   public function show($id)
   {
     $user = $this->userModel->find($id);
@@ -84,9 +75,7 @@ class UserController extends Controller
     ]);
   }
 
-  /**
-   * Show the form for editing the specified user
-   */
+
   public function edit($id)
   {
     $user = $this->userModel->find($id);
@@ -102,9 +91,7 @@ class UserController extends Controller
     ]);
   }
 
-  /**
-   * Update the specified user
-   */
+
   public function update($id)
   {
     $data = Input::sanitize([
@@ -112,7 +99,6 @@ class UserController extends Controller
       'email' => Input::post('email')
     ]);
 
-    // Only update password if provided
     if (Input::post('password')) {
       $data['password'] = password_hash(Input::post('password'), PASSWORD_DEFAULT);
     }
@@ -128,9 +114,6 @@ class UserController extends Controller
     }
   }
 
-  /**
-   * Delete the specified user
-   */
   public function destroy($id): void
   {
     $deleted = $this->userModel->delete($id);
@@ -144,4 +127,61 @@ class UserController extends Controller
     $this->redirect('/users');
   }
 
+  public function showTaskDailyPage()
+  {
+    return $this->view('daily-task/task');
+  }
+
+  public function inventory()
+  {
+    // Get the logged-in user
+    $user = Auth::user();
+
+    // Check if user exists
+    if (!$user) {
+      $_SESSION['error'] = 'User not found or not logged in.';
+      $this->redirect('/');
+      return;
+    }
+
+    // Get user ID more reliably
+    $userId = $user['id'] ?? $user->id ?? null;
+
+    if (!$userId) {
+      $_SESSION['error'] = 'Invalid user data.';
+      $this->redirect('/');
+      return;
+    }
+
+    try {
+      // Get user inventory items
+      $items = $this->userInventoryModel->getUserItemNames($userId);
+    } catch (Exception $e) {
+      $_SESSION['error'] = 'Failed to fetch user items: ' . $e->getMessage();
+      $items = [];
+    }
+
+    return $this->view('users/inventory', [
+      'title' => 'Inventory',
+      'items' => $items,
+    ]);
+  }
+
+
+
+  public function profile()
+  {
+    $currentUser = Auth::user();
+    $user = $this->userModel->find($currentUser['id']);
+
+    if (!$user) {
+      $_SESSION['error'] = 'User not found.';
+      $this->redirect('/users');
+    }
+
+    return $this->view('users/profile', [
+      'title' => 'Profile',
+      'user' => $user
+    ]);
+  }
 }

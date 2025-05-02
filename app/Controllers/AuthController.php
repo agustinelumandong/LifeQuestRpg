@@ -10,8 +10,6 @@ use App\Core\Input;
 use App\Models\User;
 use App\Models\UserStats;
 
-// use App\Models\Profile;
-use Exception;
 
 class AuthController extends Controller
 {
@@ -25,6 +23,7 @@ class AuthController extends Controller
     $this->userStats = new UserStats();
   }
 
+
   /**
    * Display the login page
    */
@@ -35,15 +34,12 @@ class AuthController extends Controller
     ]);
   }
 
-  //initialize og user Stats every log in
- 
 
   /**
-   * Authenticate the user
+   * Login & Authenticate the user
    */
   public function login()
   {
-
     // Validate the form
     $data = Input::sanitize([
       'email' => Input::post('email'),
@@ -67,9 +63,8 @@ class AuthController extends Controller
       $_SESSION['error'] = 'Invalid email or password!';
       $this->redirect('/login');
     }
-
-    
   }
+
 
   /**
    * Display the registration page
@@ -81,8 +76,9 @@ class AuthController extends Controller
     ]);
   }
 
+
   /**
-   * Store the new user
+   * Store the user in the database
    */
   public function store()
   {
@@ -91,16 +87,19 @@ class AuthController extends Controller
       $_SESSION['error'] = 'All fields are required!';
       $this->redirect('/register');
     }
+
     // Check if the email already exists
     if (Input::post('email') && $this->userModel->findByEmail(Input::post('email'))) {
       $_SESSION['error'] = 'Email already exists!';
       $this->redirect('/register');
     }
+
     // Check if the password and confirmation match
     if (Input::post('password') !== Input::post('password_confirmation')) {
       $_SESSION['error'] = 'Passwords do not match!';
       $this->redirect('/register');
     }
+
     // Create the user
     $user = Input::sanitize([
       'name' => Input::post('name'),
@@ -109,8 +108,8 @@ class AuthController extends Controller
     ]);
 
     $userId = $this->userModel->create($user);
-  
-    if($userId){
+
+    if ($userId) {
       $this->userStats->createUserStats([
         'user_id' => $userId,
         'xp' => 0,
@@ -129,8 +128,9 @@ class AuthController extends Controller
     }
   }
 
+
   /**
-   * Display the registration page
+   * Logout the user
    */
   public function logout()
   {

@@ -1,10 +1,12 @@
 <?php
-// app/Controllers/HomeController.php
 
 namespace App\Controllers;
 
+use App\Core\Auth;
 use App\Core\Controller;
 use App\Models\User;
+use Exception;
+use Vtiful\Kernel\Excel;
 
 class HomeController extends Controller
 {
@@ -26,59 +28,31 @@ class HomeController extends Controller
 
     return $this->view($view, [
       'title' => 'LifeQuestRPG',
-      'message' => 'Mag LifeQuestRPG na!!'
+      'message' => 'Mag LifeQuestRPG na!!',
+      'currentUser' => $currentUser
     ]);
   }
 
   /**
-   * Display the about page
+   * Display the profile page
    */
   public function profile()
   {
-    $sessionUser = $_SESSION['user'] ?? null;
-    $currentUser = null; // Initialize currentUser
+    try {
+      $currentUser = Auth::user();
 
-    if ($sessionUser) {
-      $userId = null;
-      // Extract user ID whether it's an array or object
-      if (is_array($sessionUser) && isset($sessionUser['id'])) {
-        $userId = $sessionUser['id'];
-      } elseif (is_object($sessionUser) && isset($sessionUser->id)) {
-        $userId = $sessionUser->id;
+      if (!$currentUser) {
+        return $this->redirect('/login');
       }
 
-      if ($userId !== null) {
-        // Get fresh user data using the extracted ID
-        $freshUser = $this->userModel->find($userId);
-        if ($freshUser) {
-          // Use the fresh data if found
-          $currentUser = $freshUser;
-        } else {
-          // Fallback to session data if fresh data fetch fails,
-          // but ensure it's the full data, not just ID
-          $currentUser = $sessionUser;
-        }
-      } else {
-        // If session data exists but has no ID, treat as invalid
-        $currentUser = null;
-      }
+      return $this->view('profile', [
+        'title' => 'Profile',
+        'content' => 'Welcome to your profile page!',
+        'currentUser' => $currentUser,
+      ]);
+    } catch (Exception $e) {
+      $_SESSION['error'] = 'An error occurred while loading your profile.';
+      return $this->redirect('/');
     }
-
-    return $this->view('profile', [
-      'title' => 'Profile',
-      'content' => 'Welcome to your profile page!',
-      'currentUser' => $currentUser, // Pass the determined user data (or null)
-    ]);
-  }
-
-  /**
-   * Display the contact page
-   */
-  public function contact()
-  {
-    return $this->view('contact', [
-      'title' => 'Contact Us',
-      'email' => 'info@example.com'
-    ]);
   }
 }

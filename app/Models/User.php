@@ -1,6 +1,4 @@
 <?php
-// app/Models/User.php
-
 namespace App\Models;
 
 use App\Core\Model;
@@ -11,7 +9,6 @@ class User extends Model
 
   public function __construct()
   {
-    // Empty constructor - no need to set table here
   }
 
   public function getAllUserIds(): array
@@ -46,7 +43,10 @@ class User extends Model
 
     return password_verify($password, $user['password']) ? $user : false;
   }
-
+  /**
+   * Summary of getUserStats
+   * @param mixed $userId
+   */
   public function getUserStats($userId)
   {
     return self::$db->query("SELECT * FROM userstats WHERE id = ?")
@@ -55,22 +55,26 @@ class User extends Model
       ->fetch();
   }
 
-  public function addCoin ($user_id, $coinRewards){
-    $user = $this->find($user_id); 
+  /**
+   * Summary of addCoin
+   * @param mixed $user_id
+   * @param mixed $coinRewards
+   * @return bool|int
+   */
+  public function addCoin($user_id, $coinRewards)
+  {
+    $user = $this->find($user_id);
 
-    if(!$user){
+    if (!$user) {
       return false;
     }
 
     $newCoins = $user['coins'] + $coinRewards;
 
-    return $this->update($user['id'],[
+    return $this->update($user['id'], [
       'coins' => $newCoins
     ]);
 
   }
-
-
-
 
 }
