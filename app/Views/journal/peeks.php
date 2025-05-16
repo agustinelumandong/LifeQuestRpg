@@ -52,17 +52,6 @@
     </div>
   </div>
 
-  <!-- NAVIGATION BUTTONS -->
-  <div class="d-flex justify-content-between">
-    <a href="/journal" class="btn btn-dark">
-      <i class="bi bi-journals"></i> Back to My Journal
-    </a>
-    <div>
-      <a href="/journal/<?= $journal['id'] ?>/edit" class="btn btn-outline-dark">
-        <i class="bi bi-pencil"></i> Edit Entry
-      </a>
-    </div>
-  </div>
 </div>
 
 <style>

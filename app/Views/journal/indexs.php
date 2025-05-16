@@ -1,4 +1,4 @@
-<div>
+<div id="pagination-content">
   <a href="/" class="back-button">
     <i class="bi bi-arrow-left"></i>
     Back to Dashboard
@@ -47,17 +47,15 @@
           </div>
         <?php else: ?>
           <div class="row row-cols-1 row-cols-md-3 g-4">
-            <?php foreach ($journals as $journal): ?>
-
+            <?php foreach ($paginator->items() as $journal): ?>
               <div class="col">
                 <div class="journal-card card h-100 border-dark shadow-sm clickable-card"
-                  onclick="window.location.href='/journal/<?= $journal['id'] ?>/peek'">
+                  onclick="window.location.href='/journal/<?= $journal['id'] ?>/peek' ">
                   <div
                     class="card-header bg-white border-bottom border-dark d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0" style="font-family: 'Pixelify Sans', serif;">
                       <?= htmlspecialchars($journal['title']) ?>
                     </h5>
-
                   </div>
                   <div class="card-body">
                     <h6 class="card-subtitle mb-3 text-muted">
@@ -83,6 +81,8 @@
             <?php endforeach; ?>
           </div>
         <?php endif; ?>
+        <?= $paginator->links() ?>
+
       </div>
     </div>
 
@@ -232,5 +232,66 @@
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl)
     })
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const contentContainer = document.getElementById('pagination-content');
+
+    // Handle pagination clicks
+    contentContainer.addEventListener('click', function (e) {
+      const link = e.target.closest('a');
+      if (link && link.getAttribute('href').includes('page=')) {
+        e.preventDefault();
+        const url = link.getAttribute('href');
+
+        // Show loading state
+        contentContainer.style.opacity = '0.5';
+
+        // Fetch the new page content
+        fetch(url)
+          .then(response => response.text())
+          .then(html => {
+            // Create a temporary element to parse the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            // Extract just the pagination content
+            const newContent = tempDiv.querySelector('#pagination-content');
+
+            if (newContent) {
+              // Replace only the content inside the container
+              contentContainer.innerHTML = newContent.innerHTML;
+            } else {
+              console.error('Could not find pagination content in response');
+            }
+
+            contentContainer.style.opacity = '1';
+
+            // Update browser history
+            window.history.pushState({}, '', url);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            contentContainer.style.opacity = '1';
+          });
+      }
+    });
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function () {
+      fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+
+          const newContent = tempDiv.querySelector('#pagination-content');
+          if (newContent) {
+            contentContainer.innerHTML = newContent.innerHTML;
+          }
+        });
+    });
   });
 </script>

@@ -10,11 +10,12 @@ class Journal extends Model
 
     public function getJournalsByUserId($userId)
     {
-        return self::$db->query("SELECT * FROM journals WHERE user_id = ? ORDER BY date DESC")
+        return self::$db->query("SELECT * FROM journals WHERE user_id = ? ORDER BY created_at DESC")
             ->bind([1 => $userId])
             ->execute()
             ->fetchAll();
     }
+
 
     public function getJournalByDate($userId, $date)
     {

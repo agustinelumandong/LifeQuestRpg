@@ -7,33 +7,50 @@ use App\Core\Controller;
 use App\Core\Input;
 use App\Models\Journal;
 use App\Models\UserStats;
+use App\Models\Streak;
 use Exception;
 
 class JournalController extends Controller
 {
     protected $JournalModel;
     protected $UserStatsModel;
+    protected $streakModel;
 
     public function __construct()
     {
         $this->JournalModel = new Journal;
         $this->UserStatsModel = new UserStats;
+        $this->streakModel = new Streak;
     }
+
 
     public function index()
     {
         /** @var array $currentUser */
         $currentUser = Auth::user();
         $journals = $this->JournalModel->getJournalsByUserId($currentUser['id']);
-        if (!$currentUser) {
+
+        if (!empty($journals) && $currentUser['id'] !== $journals[0]['user_id']) {
             $_SESSION['error'] = 'Journal entry not found.';
-            $this->redirect('/');
+            $this->redirect('/journal');
             return;
         }
 
+        $paginator = $this->JournalModel->paginate(
+            page: 1,
+            perPage: 6,
+            orderBy: 'id',
+            direction: 'DESC',
+            conditions: [
+                'user_id' => $currentUser['id']
+            ]
+        )->setTheme('game');
+
         return $this->view('journal/indexs', [
             'title' => 'My Journal',
-            'journals' => $journals
+            'journals' => $paginator->items(),
+            'currentUser' => $currentUser,
+            'paginator' => $paginator
         ]);
     }
 
@@ -61,10 +78,12 @@ class JournalController extends Controller
         try {
             $created = $this->JournalModel->create($data);
 
-            if ($created) {
-                // Award XP for creating a journal entry
+            if ($created) {                // Award XP for creating a journal entry
                 $xpAmount = 15; // 15 XP per journal entry as shown in the UI
                 $this->UserStatsModel->addXp($currentUser['id'], $xpAmount);
+
+                // Record streak activity for journal writing
+                $this->streakModel->recordActivity($currentUser['id'], 'journal_writing');
 
                 $_SESSION['success'] = 'Journal Entry saved successfully! You earned +15 XP';
             } else {
@@ -80,9 +99,13 @@ class JournalController extends Controller
 
     public function peek($id)
     {
-        /** @var array $currentUser */
+        /** 
+         * @var array $currentUser 
+         * @var array $journal
+         */
         $currentUser = Auth::user();
         $journal = $this->JournalModel->find($id);
+
         if ($currentUser['id'] !== $id && $journal['user_id'] !== $currentUser['id']) {
             $_SESSION['error'] = 'Journal entry not found.';
             $this->redirect('/journal');
@@ -91,7 +114,8 @@ class JournalController extends Controller
 
         return $this->view('journal/peeks', [
             'title' => $journal['title'],
-            'journal' => $journal
+            'journal' => $journal,
+            'currentUser' => $currentUser
         ]);
     }
 
