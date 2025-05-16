@@ -34,9 +34,30 @@ class BadHabitsController extends Controller
 
     $badHabits = $this->BadHabitModel->getBadHabitsByUserId($currentUser['id']);
 
+    $paginator = $this->BadHabitModel->paginate(
+      page: 1,
+      perPage: 6,
+      orderBy: 'id',
+      direction: 'DESC',
+      conditions: [
+        'user_id' => $currentUser['id']
+      ],
+      columns: [
+        'id',
+        'title',
+        'status',
+        'difficulty',
+        'category',
+        'coins',
+        'xp',
+        'user_id'
+      ]
+    )->setTheme('game');
+
     return $this->view('badhabit/index', [
       'title' => 'Bad Habit',
-      'badHabits' => $badHabits
+      'badHabits' => $paginator->items(),
+      'paginator' => $paginator,
     ]);
   }
 

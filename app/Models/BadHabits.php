@@ -10,6 +10,12 @@ class BadHabits extends Model
 
     protected static $table = 'badhabits';
 
+    /**
+     * Get all bad habits for a specific user
+     *
+     * @param int $userId The user ID to retrieve bad habits for
+     * @return array|null Bad habits or null if not found
+     */
     public function getBadHabitsByUserId($userId)
     {
         return self::$db->query("SELECT * FROM badhabits WHERE user_id = ?")
