@@ -1,7 +1,7 @@
 <?php
 
 use App\Controllers\ActivityLogController;
-use App\Controllers\ApiController;
+use App\Controllers\CharacterController;
 use App\Controllers\HomeController;
 use App\Controllers\LeaderboardController;
 use App\Controllers\MarketplaceController;
@@ -9,12 +9,14 @@ use App\Controllers\TaskEventController;
 use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Controllers\BadHabitsController;
+use App\Controllers\StreakController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\AdminMiddleware;
 use App\Controllers\TaskController;
 use App\Controllers\DailyTaskController;
 use App\Controllers\GoodHabitsController;
 use App\Controllers\JournalController;
+use App\Controllers\ExamplePaginationController;
 
 // Define routes
 $router->get('/', [HomeController::class, 'index']);
@@ -26,16 +28,20 @@ $router->get('/logout', [AuthController::class, 'logout'], [AuthMiddleware::clas
 $router->get('/register', [AuthController::class, 'register']);
 $router->post('/register', [AuthController::class, 'store']);
 
+// Character creation stepper routes
+$router->get('/character/stepper', [CharacterController::class, 'showStepper'], [AuthMiddleware::class]);
+$router->post('/character/create', [CharacterController::class, 'create'], [AuthMiddleware::class]);
+$router->post('/character/process-step', [CharacterController::class, 'processStep'], [AuthMiddleware::class]);
 
 // User routes
-$router->get('/users', [UserController::class, 'index'], [AdminMiddleware::class]);
+$router->get('/users', [UserController::class, 'index'], [AuthMiddleware::class]);
 $router->get('/users/create', [UserController::class, 'create'], [AdminMiddleware::class]);
 $router->post('/users', [UserController::class, 'store'], [AdminMiddleware::class]);
-$router->get('/users/{id}', [UserController::class, 'show'], [AdminMiddleware::class]);
+$router->get('/users/{id}', [UserController::class, 'show'], [AuthMiddleware::class]);
+$router->post('/users/{id}/poke', [UserController::class, 'poke'], [AuthMiddleware::class]);
 $router->get('/users/{id}/edit', [UserController::class, 'edit'], [AdminMiddleware::class]);
 $router->put('/users/{id}', [UserController::class, 'update'], [AdminMiddleware::class]);
 $router->delete('/users/{id}', [UserController::class, 'destroy'], [AdminMiddleware::class]);
-
 
 //task routes (done)
 $router->get('/task', [TaskController::class, 'index'], [AuthMiddleware::class]);
@@ -97,6 +103,19 @@ $router->get('/inventory', [UserController::class, 'inventory'], [AuthMiddleware
 // Profile routes
 $router->get('/profile', [UserController::class, 'profile'], [AuthMiddleware::class]);
 
+// Settings routes
+$router->get('/settings', [UserController::class, 'settings'], [AuthMiddleware::class]);
+$router->post('/settings/update', [UserController::class, 'updateSettings'], [AuthMiddleware::class]);
+$router->get('/settings/export', [UserController::class, 'exportData'], [AuthMiddleware::class]);
+$router->post('/settings/delete', [UserController::class, 'deleteAccount'], [AuthMiddleware::class]);
+
+// Example Pagination routes
+$router->get('/examples/pagination', [ExamplePaginationController::class, 'index']);
+$router->get('/examples/pagination/bootstrap', [ExamplePaginationController::class, 'bootstrap']);
+$router->get('/examples/pagination/tailwind', [ExamplePaginationController::class, 'tailwind']);
+$router->get('/examples/pagination/ajax', [ExamplePaginationController::class, 'ajax']);
+$router->get('/examples/pagination/generate', [ExamplePaginationController::class, 'generate']);
+
 // Leaderboard routes
 $router->get('/leaderboard', [LeaderboardController::class, 'index'], [AuthMiddleware::class]);
 
@@ -107,3 +126,8 @@ $router->post('/marketplace/store', [MarketplaceController::class, 'store'], [Ad
 $router->get('/marketplace/edit/{id}', [MarketplaceController::class, 'edit'], [AdminMiddleware::class]);
 $router->put('/marketplace/{id}', [MarketplaceController::class, 'update'], [AdminMiddleware::class]);
 $router->put('/marketplace/purchase/{user_id}/{item_id}', [MarketplaceController::class, 'purchase'], [AuthMiddleware::class]);
+
+// Streak routes
+$router->get('/streaks', [StreakController::class, 'index'], [AuthMiddleware::class]);
+$router->post('/streaks/record', [StreakController::class, 'recordActivity'], [AuthMiddleware::class]);
+$router->get('/streaks/{streakType}/{streakCount}/rewards', [StreakController::class, 'grantRewards'], [AuthMiddleware::class]);

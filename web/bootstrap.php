@@ -16,6 +16,9 @@ Helpers::loadEnv(__DIR__ . '/../.env');
 $config = require_once __DIR__ . '/../config/config.php';
 $database = require_once __DIR__ . '/../config/database.php';
 
+// Load view helper functions
+require_once __DIR__ . '/../app/Core/view_helpers.php';
+
 // Set up error handling
 ini_set('display_errors', $config['debug'] ? 1 : 0);
 error_reporting($config['debug'] ? E_ALL : 0);
