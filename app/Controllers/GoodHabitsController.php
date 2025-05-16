@@ -8,6 +8,7 @@ use App\Core\Input;
 use App\Models\UserStats;
 use App\Models\User;
 use App\Models\GoodHabits;
+use App\Models\Streak;
 use Exception;
 
 class GoodHabitsController extends Controller
@@ -16,12 +17,14 @@ class GoodHabitsController extends Controller
     protected $GoodHabitsModel;
     protected $UserStatsModel;
     protected $UserModel;
+    protected $streakModel;
 
     public function __construct()
     {
         $this->GoodHabitsModel = new GoodHabits();
         $this->UserStatsModel = new UserStats();
         $this->UserModel = new User();
+        $this->streakModel = new Streak();
     }
 
     public function index()
@@ -30,9 +33,20 @@ class GoodHabitsController extends Controller
         $currentUser = Auth::user();
         $GoodHabits = $this->GoodHabitsModel->getGoodHabitsByUserId($currentUser['id']);
 
+        $paginator = $this->GoodHabitsModel->paginate(
+            page: 1,
+            perPage: 6,
+            orderBy: 'id',
+            direction: 'DESC',
+            conditions: [
+                'user_id' => $currentUser['id']
+            ]
+        )->setTheme('game');
+
         return $this->view('goodhabit/index', [
             'title' => 'Good Habits',
-            'goodHabits' => $GoodHabits
+            'goodHabits' => $paginator->items(),
+            'paginator' => $paginator
         ]);
     }
 
@@ -217,6 +231,9 @@ class GoodHabitsController extends Controller
                 $this->UserStatsModel->addXP($user_id, $xpReward);
                 $this->UserStatsModel->addSkillPoints($user_id, $goodHabits['category'], $goodHabits['difficulty']);
                 $this->UserModel->addCoin($user_id, $coinReward);
+
+                // Record streak activity for good habits
+                $this->streakModel->recordActivity($user_id, 'GoodHabits_completion');
 
                 $_SESSION['success'] = "Habit completed! You earned {$xpReward} XP and {$coinReward} coins!";
             } else {
