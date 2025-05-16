@@ -1,4 +1,4 @@
-<div class="container py-4">
+<div class="container py-4" id="pagination-content">
 
   <a href="/" class="back-button">
     <i class="bi bi-arrow-left"></i>
@@ -58,7 +58,7 @@
         </div>
       <?php else: ?>
         <div class="task-list">
-          <?php foreach ($dailyTasks as $dailyTask): ?>
+          <?php foreach ($paginator->items() as $dailyTask): ?>
             <?php
             $isCompleted = $dailyTask['status'] === 'completed';
             $difficultyClass = getDifficultyClass($dailyTask['difficulty']);
@@ -137,6 +137,7 @@
             </div>
           <?php endforeach; ?>
         </div>
+        <?= $paginator->links() ?>
       <?php endif; ?>
     </div>
   </div>
@@ -169,3 +170,64 @@ function getDifficultyPoints($difficulty)
   ][$difficulty] ?? 5;
 }
 ?>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const contentContainer = document.getElementById('pagination-content');
+
+    // Handle pagination clicks
+    contentContainer.addEventListener('click', function (e) {
+      const link = e.target.closest('a');
+      if (link && link.getAttribute('href').includes('page=')) {
+        e.preventDefault();
+        const url = link.getAttribute('href');
+
+        // Show loading state
+        contentContainer.style.opacity = '0.5';
+
+        // Fetch the new page content
+        fetch(url)
+          .then(response => response.text())
+          .then(html => {
+            // Create a temporary element to parse the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            // Extract just the pagination content
+            const newContent = tempDiv.querySelector('#pagination-content');
+
+            if (newContent) {
+              // Replace only the content inside the container
+              contentContainer.innerHTML = newContent.innerHTML;
+            } else {
+              console.error('Could not find pagination content in response');
+            }
+
+            contentContainer.style.opacity = '1';
+
+            // Update browser history
+            window.history.pushState({}, '', url);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            contentContainer.style.opacity = '1';
+          });
+      }
+    });
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function () {
+      fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+
+          const newContent = tempDiv.querySelector('#pagination-content');
+          if (newContent) {
+            contentContainer.innerHTML = newContent.innerHTML;
+          }
+        });
+    });
+  });
+</script>

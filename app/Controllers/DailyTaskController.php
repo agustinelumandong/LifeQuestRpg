@@ -8,21 +8,23 @@ use App\Core\Input;
 use App\Models\DailyTasks;
 use App\Models\UserStats;
 use App\Models\User;
+use App\Models\Streak;
 use Exception;
 
 
 class DailyTaskController extends Controller
 {
-
     protected $DailyTaskModel;
     protected $UserStatsModel;
     protected $UserModel;
+    protected $streakModel;
 
     public function __construct()
     {
         $this->DailyTaskModel = new DailyTasks();
         $this->UserStatsModel = new UserStats();
         $this->UserModel = new User();
+        $this->streakModel = new Streak();
     }
 
     public function index()
@@ -33,9 +35,20 @@ class DailyTaskController extends Controller
         $this->DailyTaskModel->resetDailyTasks();
         $dailyTasks = $this->DailyTaskModel->getDailyTasksByUserId($currentUser['id']);
 
+        $paginator = $this->DailyTaskModel->paginate(
+            page: 1,
+            perPage: 5,
+            orderBy: 'id',
+            direction: 'DESC',
+            conditions: [
+                'user_id' => $currentUser['id']
+            ]
+        )->setTheme('game');
+
         return $this->view('dailytask/index', [
             'title' => 'Daily Task',
-            'dailyTasks' => $dailyTasks
+            'dailyTasks' => $paginator->items(),
+            'paginator' => $paginator,
         ]);
     }
 
@@ -168,39 +181,73 @@ class DailyTaskController extends Controller
         }
 
     }
-
     public function toggle($id)
     {
         /** @var array $currentUser */
         $currentUser = Auth::user();
-        $dailyTasks = $this->DailyTaskModel->find($id);
-        if ($currentUser !== $id && $dailyTasks['user_id'] !== $currentUser['id']) {
-            $_SESSION['error'] = 'Unauthorized access!';
-            $this->redirect('dailytask');
+        if (!$currentUser) {
+            $_SESSION['error'] = 'You must be logged in to perform this action!';
+            $this->redirect('/dailytask');
             return;
         }
-        try {
-            $newStatus = $dailyTasks['status'] === 'completed' ? 'pending' : 'completed';
 
-            $updated = $this->DailyTaskModel->update($id, [
-                "status" => $newStatus,
-                "user_id" => $currentUser['id']
-            ]);
+        $task = $this->DailyTaskModel->find($id);
+
+        if (!$task || $task['user_id'] !== $currentUser['id']) {
+            $_SESSION['error'] = 'Task not found or unauthorized!';
+            $this->redirect('/dailytask');
+            return;
+        }
+
+        try {
+            $newStatus = $task['completed'] == 'completed' ? 'pending' : 'completed';
+
+            $updated = $this->DailyTaskModel->update(
+                $id,
+                [
+                    "status" => $newStatus,
+                    "user_id" => $currentUser['id']
+                ]
+            );
 
             if ($updated) {
-                if ($newStatus === 'completed') {
+                if ($newStatus == 'completed') {
+                    // Calculate rewards based on difficulty
+                    $xpReward = 0;
+                    $coinReward = 0;
 
-                    $xpReward = $dailyTasks['xp'];
-                    $coinReward = $dailyTasks['coins'];
-                    $user_id = $currentUser['id'];
+                    switch ($task['difficulty']) {
+                        case 'easy':
+                            $xpReward = 10;
+                            $coinReward = 5;
+                            break;
+                        case 'medium':
+                            $xpReward = 20;
+                            $coinReward = 10;
+                            break;
+                        case 'hard':
+                            $xpReward = 30;
+                            $coinReward = 15;
+                            break;
+                        default:
+                            $xpReward = 10;
+                            $coinReward = 5;
+                    }
 
-                    $this->UserStatsModel->addXp($user_id, $xpReward);
-                    $this->UserStatsModel->addSkillPoints($currentUser['id'], $dailyTasks['category'], $dailyTasks['difficulty']);
-                    $this->UserModel->addCoin($user_id, $coinReward);
+                    $userId = $currentUser['id'];                    // Add XP reward consistently using the correct method
+                    $this->UserStatsModel->addXp($userId, $xpReward);
 
-                    $_SESSION['success'] = 'Daily task updated!';
-                    $this->redirect('/dailytask');
+                    $this->UserStatsModel->addSkillPoints($userId, $task['category'], $task['difficulty']);
+                    $this->UserModel->addCoin($userId, $coinReward);
+
+                    // Record streak activity for daily task completion
+                    $this->streakModel->recordActivity($userId, 'dailtask_completion');
+
+                    $_SESSION['success'] = "Daily task marked as completed! You earned {$xpReward} XP and {$coinReward} coins!";
+                } else {
+                    $_SESSION['success'] = "Daily task marked as pending.";
                 }
+                $this->redirect('/dailytask');
             } else {
                 $_SESSION['error'] = 'Daily task failed to update!';
                 $this->redirect('/dailytask');
@@ -209,6 +256,5 @@ class DailyTaskController extends Controller
             $_SESSION['error'] = 'Failed to update daily task: ' . $e->getMessage();
             $this->redirect('/dailytask');
         }
-
     }
 }
