@@ -8,6 +8,7 @@ use App\Core\Input;
 use App\Models\Tasks;
 use App\Models\UserStats;
 use App\Models\User;
+use App\Models\Streak;
 
 use Exception;
 
@@ -17,6 +18,7 @@ class TaskController extends Controller
     protected $TaskModel;
     protected $UserStatsModel;
     protected $UserModel;
+    protected $streakModel;
 
 
     public function __construct()
@@ -24,7 +26,7 @@ class TaskController extends Controller
         $this->TaskModel = new Tasks();
         $this->UserStatsModel = new UserStats();
         $this->UserModel = new User();
-
+        $this->streakModel = new Streak();
     }
 
     public function index()
@@ -32,13 +34,24 @@ class TaskController extends Controller
         /** @var array $currentUser */
         $currentUser = Auth::user();
         $tasks = $this->TaskModel->getTasksByUserId($currentUser['id']);
-        $userStats = $this->UserStatsModel->getByUserId($currentUser['id']);
+        $userStats = $this->UserStatsModel->getUserStatsByUserId($currentUser['id']);
+
+        $paginator = $this->TaskModel->paginate(
+            page: 1,
+            perPage: 5,
+            orderBy: 'id',
+            direction: 'DESC',
+            conditions: [
+                'user_id' => $currentUser['id']
+            ]
+        )->setTheme('game');
 
         return $this->view('task/index', [
             'title' => 'tasks',
-            'tasks' => $tasks,
+            'tasks' => $paginator->items(),
             'userStats' => $userStats,
             'currentUser' => $currentUser,
+            'paginator' => $paginator
         ]);
 
     }
@@ -178,20 +191,23 @@ class TaskController extends Controller
         /** @var array $currentUser */
         $currentUser = Auth::user();
         $task = $this->TaskModel->find($id);
-        if ($currentUser !== $id && $task['user_id'] !== $currentUser['id']) {
+
+        if ($task['user_id'] !== $currentUser['id']) {
             $_SESSION['error'] = 'Unauthorized access!';
             $this->redirect('/task');
             return;
         }
 
-
         try {
             $newStatus = $task['status'] === 'completed' ? 'pending' : 'completed';
 
-            $updated = $this->TaskModel->update($id, [
-                'status' => $newStatus,
-                'user_id' => $currentUser['id']
-            ]);
+            $updated = $this->TaskModel->update(
+                $id,
+                [
+                    'status' => $newStatus,
+                    'user_id' => $currentUser['id']
+                ]
+            );
 
             if ($updated) {
                 if ($newStatus === 'completed') {
@@ -203,7 +219,14 @@ class TaskController extends Controller
                     $this->UserStatsModel->addXp($user_id, $xpReward);
                     $this->UserStatsModel->addSkillPoints($currentUser['id'], $task['category'], $task['difficulty']);
                     $this->UserModel->addCoin($user_id, $coinReward);
+                    
+                    // Record streak activity for daily task completion
+                    $this->streakModel->recordActivity($currentUser['id'], 'task_completion');
+
                 }
+
+
+
                 $_SESSION['success'] = 'Task status updated!';
                 $this->redirect('/task');
 
