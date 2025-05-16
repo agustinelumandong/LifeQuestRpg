@@ -1,7 +1,5 @@
 <?php
 
-// app/Controllers/UserController.php
-
 namespace App\Controllers;
 
 use App\Core\Auth;
@@ -10,23 +8,36 @@ use App\Core\Input;
 use App\Models\ActivityLog;
 
 
-class ActivityLogController extends Controller 
+class ActivityLogController extends Controller
 {
+    protected $ActivityLogModel;
 
-    protected $ActivityLogM;
-
-    public function __construct() {
-        $this->ActivityLogM = new ActivityLog();
+    public function __construct()
+    {
+        $this->ActivityLogModel = new ActivityLog();
     }
-
-    public function index() {
+    public function index()
+    {
+        /** @var array $currentUser */
         $currentUser = Auth::user();
+        $activities = $this->ActivityLogModel->getRecentActivities($currentUser['id']);
 
-       $activities = $this->ActivityLogM->getRecentActivities($currentUser['id']);
+        $currentPage = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 
-        return $this->view('ActivityLog/Activities', [
+        $paginator = $this->ActivityLogModel->paginates(
+            $currentUser['id'],
+            $currentPage,
+            5,
+            'log_timestamp',
+            'DESC'
+        );
+
+
+        return $this->view('activitylogs/activities', [
             'title' => 'Activity Log',
-            'activities' => $activities
+            'activities' => $paginator->items(),
+            'user' => $currentUser,
+            'paginator' => $paginator
         ]);
     }
 

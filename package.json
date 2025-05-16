@@ -21,6 +21,9 @@
   },
   "homepage": "https://github.com/agustinelumandong/LifeQuestRpg#readme",
   "dependencies": {
+    "@fontsource/adlam-display": "^5.2.5",
+    "@fontsource/nunito-sans": "^5.2.5",
+    "@fontsource/pixelify-sans": "^5.2.5",
     "bootstrap": "^5.3.5",
     "bootstrap-icons": "^1.11.3"
   }

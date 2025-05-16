@@ -21,7 +21,7 @@
                             <h6 class="card-subtitle mb-2 text-muted">
                                 <?= date('F j, Y', strtotime($journal['date'])) ?>
                             </h6>
-               
+
                         </div>
                         <div class="card-footer bg-transparent d-flex justify-content-end">
                             <a href="/journal/<?= $journal['id'] ?>/peek" class="btn btn-sm btn-outline-secondary me-2">
@@ -31,8 +31,9 @@
                                 <i class="fas fa-edit"></i> Edit
                             </a>
                             <form action="/journal/<?= $journal['id'] ?>/delete" method="post" class="d-inline">
-                            <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this entry?')">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Are you sure you want to delete this entry?')">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>
                             </form>

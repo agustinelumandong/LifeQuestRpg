@@ -1,13 +1,13 @@
 <div class="container py-4">
 
-<div class="card mb-4">
+    <div class="card mb-4">
         <div class="card-body">
             <h2 class="card-title">Welcome, <?= htmlspecialchars($currentUser['name'] ?? 'User') ?></h2>
-            
+
             <?php if ($userStats): ?>
                 <div class="progress mb-2" style="height: 20px;">
-                    <div class="progress-bar" role="progressbar" 
-                         style="width: <?= ($userStats['xp'] / ($userStats['level'] * 100)) * 100 ?>%">
+                    <div class="progress-bar" role="progressbar"
+                        style="width: <?= ($userStats['xp'] / ($userStats['level'] * 100)) * 100 ?>%">
                         <?= $userStats['xp'] ?>/<?= $userStats['level'] * 100 ?> XP
                     </div>
                 </div>
@@ -25,7 +25,7 @@
             <?php else: ?>
                 <p class="text-muted mb-0">No stats available.</p>
             <?php endif; ?>
-           
+
         </div>
     </div>
 

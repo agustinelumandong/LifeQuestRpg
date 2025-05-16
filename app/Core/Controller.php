@@ -1,8 +1,6 @@
 <?php
-
-// app/Core/Controller.php
-
 namespace App\Core;
+
 use Exception;
 
 class Controller
@@ -33,8 +31,7 @@ class Controller
         }
     }
 
-    /**
-     * Return JSON response
+    /**     * Return JSON response
      */
     protected function json(array $data, int $statusCode = 200)
     {
@@ -45,10 +42,44 @@ class Controller
     }
 
     /**
-     * Redirect to another URL
+     * Render a view as JSON response
      */
-    protected function redirect(string $url)
+    protected function viewAsJson(string $name, array $data = [], int $statusCode = 200)
     {
+        header('Content-Type: application/json');
+        http_response_code($statusCode);
+
+        // Extract data to make it available in the view
+        extract($data);
+
+        // Capture the output from the view
+        ob_start();
+        $viewPath = "../app/Views/{$name}.php";
+
+        if (!file_exists($viewPath)) {
+            throw new Exception("View {$name} not found");
+        }
+
+        require $viewPath;
+        $output = ob_get_clean();
+
+        // Output the result directly since the view might contain JSON
+        echo $output;
+        exit;
+    }    /**
+         * Redirect to another URL
+         * 
+         * @param string $url The URL to redirect to
+         * @param array $flashData Optional flash data to store in session
+         * @return void
+         */
+    protected function redirect(string $url, array $flashData = [])
+    {
+        // Store any flash data in the session
+        foreach ($flashData as $key => $value) {
+            $_SESSION[$key] = $value;
+        }
+
         header("Location: {$url}");
         exit;
     }

@@ -1,0 +1,203 @@
+/* Import theme variables - actual values will be provided by themes.css */
+:root {
+  /* Fallback values - theme.css will override these */
+  --primary-color: var(--text-primary, #111827);
+  --secondary-color: var(--bg-primary, #ffffff);
+  --accent-color: var(--accent-color, #4b5563);
+  --text-color: var(--text-primary, #374151);
+  --background-color: var(--bg-primary, #ffffff);
+  --border-color: #e5e7eb;
+  --highlight-color: #2196F3;
+}
+
+body.login-page {
+  background-image: url('../images/light background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+body.login-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.login-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 0 15px;
+}
+
+.login-card {
+  background-color: var(--card-bg, #ffffff);
+  color: var(--text-primary);
+  border-radius: 12px;
+  box-shadow: var(--box-shadow, 0 15px 30px rgba(0, 0, 0, 0.3));
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+  transform: translateY(0);
+  transition: all 0.3s ease;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.login-header {
+  background-color: var(--accent-color, var(--primary-color));
+  color: white;
+  padding: 25px 30px;
+  text-align: center;
+  border-bottom: 4px solid var(--accent-color-hover, var(--accent-color));
+}
+
+.login-header h1 {
+  margin: 0;
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.login-body {
+  padding: 30px;
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 8px;
+  font-family: 'Pixelify Sans', sans-serif;
+}
+
+.form-control {
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+  transition: all 0.3s ease;
+  background-color: var(--input-bg, rgba(255, 255, 255, 0.8));
+  color: var(--input-text, inherit);
+}
+
+.form-control:focus {
+  border-color: var(--accent-color, var(--highlight-color));
+  box-shadow: 0 0 0 0.25rem rgba(var(--accent-color-rgb, 33, 150, 243), 0.25);
+  background-color: var(--input-focus-bg, #fff);
+}
+
+.btn-login {
+  background-color: var(--accent-color, var(--primary-color));
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 700;
+  padding: 12px 25px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  font-family: 'Pixelify Sans', sans-serif;
+}
+
+.btn-login:hover {
+  background-color: var(--accent-color-hover, var(--accent-color));
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: var(--box-shadow, 0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.register-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 12px 20px;
+  display: inline-block;
+  font-family: 'Pixelify Sans', sans-serif;
+}
+
+.register-link:hover {
+  color: var(--accent-color);
+  transform: translateY(-2px);
+  text-decoration: underline;
+}
+
+.login-footer {
+  margin-top: 20px;
+  text-align: center;
+  color: white;
+  font-size: 0.9rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  position: relative;
+  z-index: 2;
+}
+
+/* Decorative RPG elements */
+.rpg-icon {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  opacity: 0.2;
+  z-index: -1;
+}
+
+.icon-sword {
+  top: 20px;
+  right: 50px;
+  transform: rotate(45deg);
+}
+
+.icon-shield {
+  bottom: 30px;
+  left: 40px;
+}
+
+/* Additional styles for registration page */
+.register-card {
+  max-width: 550px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .login-card {
+    max-width: 100%;
+  }
+
+  .login-header h1 {
+    font-size: 2rem;
+  }
+
+  .rpg-icon {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .d-flex.align-items-center.flex-wrap {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .register-link {
+    margin-left: 0 !important;
+    margin-top: 1rem;
+  }
+
+  .btn-login {
+    width: 100%;
+  }
+}

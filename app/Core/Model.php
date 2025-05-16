@@ -1,6 +1,4 @@
 <?php
-// app/Core/Model.php
-
 namespace App\Core;
 
 abstract class Model
@@ -28,6 +26,29 @@ abstract class Model
   }
 
   /**
+   * Find a specific column by ID
+   *
+   * @param int $id The ID of the record to find
+   * @param string $columnName The name of the column to retrieve
+   * @return mixed The value of the specified column or false if not found
+   */
+  public static function findByColumn(int $id, string $columnName)
+  {
+    // Sanitize the column name slightly to prevent issues if it contains backticks,
+    // though proper validation against known column names is recommended for security.
+    $safeColumnName = str_replace('`', '', $columnName);
+
+    // Construct the SQL query to select the specific column.
+    // Using backticks around the column name is good practice for SQL identifiers.
+    $sql = "SELECT `{$safeColumnName}` FROM " . static::$table . " WHERE id = ?";
+
+    return self::$db->query($sql)
+      ->bind([1 => $id])
+      ->execute()
+      ->fetch();
+  }
+
+  /**
    * Get all records
    */
   public function all()
@@ -47,11 +68,11 @@ abstract class Model
 
     $sql = "INSERT INTO " . static::$table . " ({$columns}) VALUES ({$placeholders})";
 
-    self::$db->query($sql)
+    return self::$db->query($sql)
       ->bind($data)
-      ->execute();
+      ->execute()
+      ->lastInsertId();
 
-    return self::$db->lastInsertId();
   }
 
   /**
@@ -118,6 +139,15 @@ abstract class Model
       ->fetch();
     return is_array($result) ? reset($result) : 0;
   }
+
+  /**
+   * Check If record exists
+   */
+  public function exists(int $id)
+  {
+    return self::find($id) !== false;
+  }
+
 
   /**
    * Get the last inserted ID
@@ -202,21 +232,48 @@ abstract class Model
   {
     return strlen($password) >= 8;
   }
-
   /**
    * Get paginated items with proper database-level pagination
+   * 
+   * @param int $page Current page number
+   * @param int $perPage Number of items per page
+   * @param string|null $orderBy Column to order by
+   * @param string $direction Sort direction (ASC or DESC)
+   * @param array $conditions Where conditions as associative array
+   * @param string $pageName Name of the page parameter in URL 
+   * @param array|null $columns Columns to select (default is all)
+   * @return Paginator
    */
   public function paginate(
     int $page = 1,
     int $perPage = 10,
     ?string $orderBy = null,
     string $direction = 'DESC',
-    array $conditions = []
+    array $conditions = [],
+    string $pageName = 'page',
+    ?array $columns = null
   ) {
-    $offset = ($page - 1) * $perPage;
+    // Create a new Paginator instance
+    $paginator = new Paginator($perPage, $pageName);
 
-    $items = $this->fetch($conditions, $orderBy, $direction, $perPage, $offset);
+    // If page was manually specified, set it
+    if ($page > 1) {
+      $paginator->setPage($page);
+    }
 
+    // Set the ordering
+    if ($orderBy) {
+      $paginator->setOrderBy($orderBy, $direction);
+    }
+
+    // Get pagination info
+    $paginationInfo = $paginator->getPageInfo();
+    $offset = ($paginationInfo['currentPage'] - 1) * $perPage;
+
+    // Get the data
+    $items = $this->fetch($conditions, $orderBy, $direction, $perPage, $offset, $columns);
+
+    // Count total items
     $countSql = "SELECT COUNT(*) as count FROM " . static::$table;
     $params = [];
 
@@ -224,12 +281,13 @@ abstract class Model
       $countSql .= " WHERE ";
       $whereClauses = [];
 
-      foreach ($conditions as $colum => $value) {
-        $paramName = "{$colum}";
-        $whereClauses[] = "{$colum} = {$paramName}";
+      foreach ($conditions as $column => $value) {
+        $paramName = "{$column}";
+        $whereClauses[] = "{$column} = :{$paramName}";
         $params[$paramName] = $value;
       }
-      $countSql .= implode(" AND ", $whereClauses);
+
+      $countSql .= implode(' AND ', $whereClauses);
     }
 
     $countQuery = self::$db->query($countSql);
@@ -238,46 +296,52 @@ abstract class Model
       $countQuery->bind($params);
     }
 
-    $totalItems = $countQuery->execute()->fetch()['count'];
-    $totalPages = ceil($totalItems / $perPage);
+    $totalItems = (int) $countQuery->execute()->fetch()['count'];
 
-    return [
-      'items' => $items,
-      'currentPage' => $page,
-      'perPage' => $perPage,
-      'totalItems' => $totalItems,
-      'totalPages' => $totalPages
-    ];
+    // Set the data and return the paginator
+    return $paginator->setData($items, $totalItems);
   }
 
   /**
-   * Fetch records with conditions, sorting, and pagination
+   * Fetch records with conditions, sorting, and pagination.
+   * 
+   * @param array $conditions Conditions for the WHERE clause
+   * @param string|null $orderBy Column to order by
+   * @param string $direction Sort direction (ASC or DESC)
+   * @param int|null $limit Number of records to fetch
+   * @param int|null $offset Offset for pagination
+   * @param array|null $columns Columns to select (default is all)
+   * @return array Fetched records
    */
+
   public function fetch(
     array $conditions = [],
     ?string $orderBy = null,
     string $direction = 'ASC',
     ?int $limit = null,
-    ?int $offset = null
+    ?int $offset = null,
+    ?array $columns = null
   ) {
-    $sql = "SELECT * FROM " . static::$table;
+
+    $columnsString = $columns ? implode(', ', array_map(fn($col) => "`{$col}`", $columns)) : '*';
+    $sql = "SELECT {$columnsString} FROM " . static::$table;
     $params = [];
 
     if (!empty($conditions)) {
       $sql .= " WHERE ";
       $whereClauses = [];
 
-      foreach ($conditions as $colum => $value) {
-        $paramName = "{$colum}";
-        $whereClauses[] = "{$colum} = {$paramName}";
-        $params[$paramName] = $value;
+      foreach ($conditions as $column => $value) {
+        $paramName = "{$column}";
+        $whereClauses[] = "{$column} = :{$paramName}";
+        $params[":{$paramName}"] = $value;
       }
       $sql .= implode(" AND ", $whereClauses);
     }
 
-    if ($orderBy !== 'null') {
+    if ($orderBy !== null) {
       $direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
-      $sql .= " ORDER BY {$orderBy} {$direction}";
+      $sql .= " ORDER BY `{$orderBy}` {$direction}";
     }
 
     if ($limit !== null) {
@@ -288,26 +352,14 @@ abstract class Model
         $sql .= " OFFSET :offset";
         $params[':offset'] = $offset;
       }
-
-      $query = self::$db->query($sql);
-
-      if (!empty($params)) {
-        $query->bind($params);
-      }
     }
+
+    $query = self::$db->query($sql);
+
+    if (!empty($params)) {
+      $query->bind($params);
+    }
+
     return $query->execute()->fetchAll();
   }
-
-  // EXMPLE USAGE
-  // Get all products sorted by price in ascending order
-  // $products = $productModel->fetch([], 'item_price', 'ASC');
-
-  // Get products sorted by name in descending order
-  // $products = $productModel->fetch([], 'item_name', 'DESC');
-
-  // Get products with conditions and sorting
-  // $products = $productModel->fetch(['category_id' => 5], 'item_price', 'DESC', 10);
-
-  // Get the 10 most recent products
-  // $products = $productModel->fetch([], 'created_at', 'DESC', 10);
 }

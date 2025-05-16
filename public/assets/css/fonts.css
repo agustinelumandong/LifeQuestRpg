@@ -1,0 +1,25 @@
+/* Nunito Sans */
+@font-face {
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/nunito-sans/nunito-sans-latin-400-normal.woff2') format('woff2');
+}
+
+/* Add more weights as needed */
+
+/* ADLaM Display */
+@font-face {
+  font-family: 'ADLaM Display';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/adlam-display/nunito-sans-latin-400-normal.woff2') format('woff2');
+}
+
+/* Pixelify Sans */
+@font-face {
+  font-family: 'Pixelify Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/pixelify-sans/pixelify-sans-latin-400-normal.woff2') format('woff2');
+}

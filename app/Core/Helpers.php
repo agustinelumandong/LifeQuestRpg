@@ -1,7 +1,4 @@
 <?php
-
-// app/Core/Helpers.php
-
 namespace App\Core;
 
 class Helpers
@@ -9,15 +6,14 @@ class Helpers
   /**
    * Load environment variables from .env file
    */
-
-
-   public static function getDifficultyBadgeColor($difficulty) {
+  public static function getDifficultyBadgeColor($difficulty)
+  {
     return [
-        'easy' => 'success',
-        'medium' => 'warning',
-        'hard' => 'danger'
+      'easy' => 'success',
+      'medium' => 'warning',
+      'hard' => 'danger'
     ][$difficulty] ?? 'secondary';
-}
+  }
 
   public static function loadEnv(string $path)
   {
@@ -95,9 +91,6 @@ class Helpers
     $path = ltrim($path, '/');
     return self::url("assets/{$path}");  // Remove the duplicate "public/"
   }
-
-  // D:\proprojects\mvc\public
-
   /**
    * Format date
    */
@@ -105,5 +98,12 @@ class Helpers
   {
     return date($format, strtotime($date));
   }
+
+  /**
+   * Get site URL
+   */
+  public static function siteUrl(string $path = '')
+  {
+    return self::url($path);
+  }
 }
-?>

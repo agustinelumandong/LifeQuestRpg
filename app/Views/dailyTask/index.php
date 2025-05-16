@@ -1,170 +1,233 @@
-<div class="container py-4">
-    <!-- User Welcome Card -->
+<div class="container py-4" id="pagination-content">
 
-    <!-- Tasks Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3"><?= ucfirst($title) ?></h1>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">
-     <i class="fas fa-plus"></i> Create new Tasks
-        </button>
+  <a href="/" class="back-button">
+    <i class="bi bi-arrow-left"></i>
+    Back to Dashboard
+  </a>
+
+  <!-- HEADER SECTION -->
+  <div class="card border-dark mb-4 shadow">
+    <div class="card-header bg-white">
+      <h2 class="my-2"><i class="bi bi-check2-square"></i> <?= ucfirst($title) ?></h2>
+    </div>
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-md-2 text-center mb-3 mb-md-0">
+          <div class="rounded p-3 d-inline-block">
+            <i class="bi bi-list-check fs-1"></i>
+          </div>
+        </div>
+        <div class="col-md-10">
+          <p class="mb-0">Manage your daily tasks and track your progress here.</p>
+          <div class="mt-2">
+            <i class="bi bi-info-circle"></i> Complete tasks to earn XP and level up your profile
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS NAVIGATION -->
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link" href="/task">
+        <i class="bi bi-list-task"></i> Regular Tasks
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="/dailytask">
+        <i class="bi bi-calendar-check"></i> Daily Tasks
+      </a>
+    </li>
+  </ul>
+
+  <!-- TASKS SECTION -->
+  <div class="card border-dark mb-4 shadow">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h3 class="my-2"><i class="bi bi-list-check"></i> Your Daily Tasks</h3>
+      <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+        <i class="bi bi-plus-circle"></i> Create New Daily Task
+      </button>
     </div>
 
-    <!-- Tasks List -->
-    <?php if (empty($dailyTasks)): ?>
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> No tasks found. Create your first task!
+    <div class="card-body">
+      <?php if (empty($dailyTasks)): ?>
+        <div class="alert alert-dark text-center" role="alert">
+          <i class="bi bi-emoji-neutral display-4 d-block mb-3"></i>
+          <p class="mb-0">No daily tasks found. Create your first daily task!</p>
         </div>
-    <?php else: ?>
-        <div class="list-group">
-            <?php foreach ($dailyTasks as $dailyTask): ?>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-    <form action="/dailyTask/<?= $dailyTask['id'] ?>/toggle" method="POST" class="me-3" style="<?= $dailyTask['status'] === 'completed' ? 'display: none;' : '' ?>">
-        <input type="checkbox" class="form-check-input" 
-               onchange="this.form.submit()" 
-               <?= $dailyTask['status'] === 'completed' ? 'checked' : '' ?>>
-    </form>
-    
-    <div style="<?= $dailyTask['status'] === 'completed' ? 'display: none;' : '' ?>">
-        <span>
-            <?= htmlspecialchars($dailyTask['title']) ?>
-        </span>
-        <!-- category -->
-        <span class="badge bg-secondary ms-2">
-            <?= ucfirst($dailyTask['category']) ?>
-        </span>
-        <!-- difficulty -->
-        <span class="badge bg-<?= \App\Core\Helpers::getDifficultyBadgeColor($dailyTask['difficulty']) ?> ms-2">
-            <?= ucfirst($dailyTask['difficulty']) ?>
-        </span>
-    </div>
-    
-    <?php if ($dailyTask['status'] === 'completed'): ?>
-        <div>
-            <span class="text-muted">
-                (<?=$dailyTask['title'] ?>) 
-            </span>
-        </div>
-    <?php endif; ?>
-</div>
-                    <div class="btn-group">
-
-                    <button class="btn btn-sm btn-outline-primary edit-task-btn" type="button"
-                         data-bs-toggle="modal"
-                         data-bs-target="#editTaskModal"
-                         data-task-id="<?= $dailyTask['id'] ?>"
-                         data-task-title="<?= htmlspecialchars($dailyTask['title']) ?>"
-                         data-task-category="<?= $dailyTask['category'] ?>"
-                         data-task-difficulty="<?= $dailyTask['difficulty'] ?>"
-                         data-form-action="/dailyTask">        
-                       <i class="fas fa-edit"></i> Edit
-                    </button>
-    
-    <form action="/dailyTask/<?= $dailyTask['id'] ?>/delete" method="post" class="d-inline">
-        <input type="hidden" name="_method" value="DELETE">
-        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-    </form>
-</div>
+      <?php else: ?>
+        <div class="task-list">
+          <?php foreach ($paginator->items() as $dailyTask): ?>
+            <?php
+            $isCompleted = $dailyTask['status'] === 'completed';
+            $difficultyClass = getDifficultyClass($dailyTask['difficulty']);
+            $difficultyLabel = ucfirst($dailyTask['difficulty']);
+            $points = getDifficultyPoints($dailyTask['difficulty']);
+            ?>
+            <div class="task-row <?= $isCompleted ? 'completed' : '' ?> border border-dark rounded mb-2"
+              onclick="taskRowClick(this, <?= $dailyTask['id'] ?>)">
+              <div class="task-left">
+                <div class="task-checkbox">
+                  <input type="checkbox" class="form-check-input task-check" <?= $isCompleted ? 'checked' : '' ?>
+                    onclick="event.stopPropagation()" onchange="return toggleTaskStatus(<?= $dailyTask['id'] ?>, this)">
                 </div>
-            <?php endforeach; ?>
+              </div>
+              <div class="task-center">
+                <h5 class="task-title <?= $isCompleted ? 'text-decoration-line-through' : '' ?>">
+                  <?= htmlspecialchars($dailyTask['title']) ?>
+                </h5>
+                <div class="task-meta">
+                  <span class="task-badge <?= $difficultyClass ?>">
+                    <?= $difficultyLabel ?>
+                  </span>
+                  <span class="task-badge status-badge <?= $isCompleted ? 'status-completed' : 'status-pending' ?>">
+                    <?= ucfirst($dailyTask['status']) ?>
+                  </span>
+                  <span class="task-badge reward-badge">
+                    <i class="bi bi-stars"></i> <?= $points ?> XP
+                  </span>
+                </div>
+              </div>
+              <div class="task-actions">
+                <div class="dropdown d-inline-block">
+                  <button class="btn btn-sm btn-outline-dark " type="button" id="dropdownMenu<?= $dailyTask['id'] ?>"
+                    data-bs-toggle="dropdown" aria-expanded="false" onclick="event.stopPropagation()">
+                    <i class="bi bi-three-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenu<?= $dailyTask['id'] ?>">
+                    <li>
+                      <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#editTaskModal"
+                        data-task-id="<?= $dailyTask['id'] ?>"
+                        data-task-title="<?= htmlspecialchars($dailyTask['title']) ?>"
+                        data-task-category="<?= $dailyTask['category'] ?>"
+                        data-task-difficulty="<?= $dailyTask['difficulty'] ?>" data-form-action="/dailytask"
+                        title="Edit Task" onclick="event.stopPropagation()">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                      </button>
+                    </li>
+                    <form action="/dailytask/<?= $dailyTask['id'] ?>/delete" method="post">
+                      <input type="hidden" name="_method" value="DELETE">
+                      <button type="submit" class="dropdown-item text-danger" title="Delete Task"
+                        onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this task?')">
+                        <i class="bi bi-trash"></i> Delete
+                      </button>
+                    </form>
+                    </li>
+                    <li>
+                      <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#editTaskModal"
+                        data-task-id="<?= $dailyTask['id'] ?>"
+                        data-task-title="<?= htmlspecialchars($dailyTask['title']) ?>"
+                        data-task-category="<?= $dailyTask['category'] ?>"
+                        data-task-difficulty="<?= $dailyTask['difficulty'] ?>" data-form-action="/dailytask"><i
+                          class="bi bi-pencil"></i>
+                        Edit
+                      </button>
+                    </li>
+                    <li>
+                      <form action="/dailytask/<?= $dailyTask['id'] ?>/delete" method="post" class="d-inline">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="dropdown-item text-danger"><i class="bi bi-trash"></i> Delete</button>
+                      </form>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
         </div>
-    <?php endif; ?>
-</div>
-
-<!-- Create Task Modal -->
-<div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="createTaskModalLabel">Create New Task</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form method="post" action="/dailyTask" id="createTaskForm">
-          <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="title" name="title" required>
-          </div>
-          <div class="mb-3">
-            <label for="category" class="form-label">Category</label>
-            <input type="hidden" name="status" value="pending">
-            <select name="category" class="form-select">
-              <option value="Physical Health">Physical Health</option>
-              <option value="Mental Wellness">Mental Wellness</option>
-              <option value="Personal Growth">Personal Growth</option>
-              <option value="Career / Studies">Career / Studies</option>
-              <option value="Finance">Finance</option>
-              <option value="Home Environment">Home & Environment</option>
-              <option value="Relationships Social">Relationships & Social</option>
-              <option value="Passion Hobbies">Passion & Hobbies</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="difficulty" class="form-label">Difficulty</label>
-            <select name="difficulty" class="form-select">
-              <option value="easy" selected>Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" form="createTaskForm" class="btn btn-primary">Create Task</button>
-      </div>
+        <?= $paginator->links() ?>
+      <?php endif; ?>
     </div>
   </div>
 </div>
 
-<!-- Edit Task Modal -->
-<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editTaskModalLabel">Edit Bad Habits</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form method="post" id="editTaskForm">
-          <input type="hidden" name="_method" value="PUT">
-          <input type="hidden" id="edit-task-id" name="task_id">
-          
-          <div class="mb-3">
-            <label for="edit-title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="edit-title" name="title" required>
-          </div>
-          
-          <div class="mb-3">
-            <label for="edit-category" class="form-label">Category</label>
-            <select name="category" id="edit-category" class="form-select">
-              <option value="Physical Health">Physical Health</option>
-              <option value="Mental Wellness">Mental Wellness</option>
-              <option value="Personal Growth">Personal Growth</option>
-              <option value="Career / Studies">Career / Studies</option>
-              <option value="Finance">Finance</option>
-              <option value="Home Environment">Home & Environment</option>
-              <option value="Relationships Social">Relationships & Social</option>
-              <option value="Passion Hobbies">Passion & Hobbies</option>
-            </select>
-          </div>
-          
-          <div class="mb-3">
-            <label for="edit-difficulty" class="form-label">Difficulty</label>
-            <select name="difficulty" id="edit-difficulty" class="form-select">
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-          </div>
-          <input type="hidden" name="status" value="pending">
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" form="editTaskForm" class="btn btn-primary">Update Bad Habits</button>
-      </div>
-    </div>
-  </div>
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer">
 </div>
 
+<?php include __DIR__ . '/modals/create.php'; ?>
+<?php include __DIR__ . '/modals/edit.php'; ?>
+
+<?php
+// Helper function for difficulty badge colors
+function getDifficultyClass($difficulty)
+{
+  return [
+    'easy' => 'difficulty-easy',
+    'medium' => 'difficulty-medium',
+    'hard' => 'difficulty-hard'
+  ][$difficulty] ?? '';
+}
+
+// Helper function to get point values for difficulties
+function getDifficultyPoints($difficulty)
+{
+  return [
+    'easy' => 5,
+    'medium' => 10,
+    'hard' => 15
+  ][$difficulty] ?? 5;
+}
+?>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const contentContainer = document.getElementById('pagination-content');
+
+    // Handle pagination clicks
+    contentContainer.addEventListener('click', function (e) {
+      const link = e.target.closest('a');
+      if (link && link.getAttribute('href').includes('page=')) {
+        e.preventDefault();
+        const url = link.getAttribute('href');
+
+        // Show loading state
+        contentContainer.style.opacity = '0.5';
+
+        // Fetch the new page content
+        fetch(url)
+          .then(response => response.text())
+          .then(html => {
+            // Create a temporary element to parse the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            // Extract just the pagination content
+            const newContent = tempDiv.querySelector('#pagination-content');
+
+            if (newContent) {
+              // Replace only the content inside the container
+              contentContainer.innerHTML = newContent.innerHTML;
+            } else {
+              console.error('Could not find pagination content in response');
+            }
+
+            contentContainer.style.opacity = '1';
+
+            // Update browser history
+            window.history.pushState({}, '', url);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            contentContainer.style.opacity = '1';
+          });
+      }
+    });
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function () {
+      fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+
+          const newContent = tempDiv.querySelector('#pagination-content');
+          if (newContent) {
+            contentContainer.innerHTML = newContent.innerHTML;
+          }
+        });
+    });
+  });
+</script>

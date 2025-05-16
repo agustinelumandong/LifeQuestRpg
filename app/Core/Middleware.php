@@ -1,6 +1,4 @@
 <?php
-// app/Core/Middleware.php
-
 namespace App\Core;
 
 abstract class Middleware

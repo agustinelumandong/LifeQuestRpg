@@ -1,7 +1,4 @@
 <?php
-
-// app/Core/Database.php
-//main
 namespace App\Core;
 
 use PDO;
@@ -44,11 +41,20 @@ class Database
   public function bind(array $parameters)
   {
     foreach ($parameters as $key => $value) {
+      // Check if $value is an array and handle it appropriately
+      if (is_array($value)) {
+        // Convert array to JSON string or handle it in some other way
+        $value = json_encode($value);
+        $paramType = PDO::PARAM_STR;
+      } else {
+        // Keep the original logic for non-array values
+        $paramType = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
+      }
+
       $this->statement->bindValue(
-        // $key ->  Just use the key as is
         is_numeric($key) ? $key : $key,
         $value,
-        is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR
+        $paramType
       );
     }
 

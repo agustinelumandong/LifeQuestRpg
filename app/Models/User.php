@@ -1,6 +1,4 @@
 <?php
-// app/Models/User.php
-
 namespace App\Models;
 
 use App\Core\Model;
@@ -11,7 +9,14 @@ class User extends Model
 
   public function __construct()
   {
-    // Empty constructor - no need to set table here
+  }
+
+  public function getUserById($userId)
+  {
+    return self::$db->query("SELECT * FROM " . static::$table . " WHERE id = ?")
+      ->bind([1 => $userId])
+      ->execute()
+      ->fetch();
   }
 
   public function getAllUserIds(): array
@@ -47,6 +52,10 @@ class User extends Model
     return password_verify($password, $user['password']) ? $user : false;
   }
 
+  /**
+   * Summary of getUserStats
+   * @param mixed $userId
+   */
   public function getUserStats($userId)
   {
     return self::$db->query("SELECT * FROM userstats WHERE id = ?")
@@ -55,22 +64,44 @@ class User extends Model
       ->fetch();
   }
 
-  public function addCoin ($user_id, $coinRewards){
-    $user = $this->find($user_id); 
+  /**
+   * Special update method that can handle both user array and user ID
+   * for backward compatibility
+   */
+  public function update($user, array $data)
+  {
+    // Handle case where $user is an array (the whole user object)
+    $userId = is_array($user) ? ($user['id'] ?? null) : $user;
 
-    if(!$user){
+    if (!$userId) {
+      error_log("User::update - Invalid user ID: " . var_export($user, true));
+      return false;
+    }
+
+    error_log("User::update - Using ID: " . var_export($userId, true) . " with data: " . var_export($data, true));
+
+    // Call the parent update method
+    return parent::update($userId, $data);
+  }
+
+  /**
+   * Summary of addCoin
+   * @param mixed $user_id
+   * @param mixed $coinRewards
+   * @return bool|int
+   */
+  public function addCoin($user_id, $coinRewards)
+  {
+    $user = $this->find($user_id);
+
+    if (!$user) {
       return false;
     }
 
     $newCoins = $user['coins'] + $coinRewards;
 
-    return $this->update($user['id'],[
+    return $this->update($user['id'], [
       'coins' => $newCoins
     ]);
-
   }
-
-
-
-
 }
