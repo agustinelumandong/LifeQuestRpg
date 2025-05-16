@@ -3,39 +3,27 @@
     <!-- Left Panel - Character Profile -->
     <div class="col-md-3 col-lg-3 mb-4">
       <div class="profile-panel p-3 mb-4">
+
         <!-- Character Avatar -->
         <div class="text-center mb-3">
           <div class="profile-avatar bg-white text-dark mb-2">
-            <img
-              src="https://cdn11.bigcommerce.com/s-7va6f0fjxr/images/stencil/1280x1280/products/59261/75500/Details-About-Truck-Car-Video-Games-Super-Mario-1Up-Toadstool-Mushroom-Decal__81968.1506656287.jpg?c=2"
-              alt="Character Avatar" class="img-fluid rounded-circle">
+            <?php $avatarId = isset($userStats['avatar_id']) ? $userStats['avatar_id'] : 1; ?>
+            <img src="/assets/images/avatars/avatar<?= $avatarId ?>.svg" alt="Character Avatar"
+              class="img-fluid rounded-circle " id="profile-avatar">
           </div>
-          <h4 class="mb-0" style="font-family: 'Pixelify Sans', serif;"><?= $currentUser['name'] ?></h4>
-          <div class="badge bg-dark">Level 2</div>
+          <h4 class="mb-0" style="font-family: 'Pixelify Sans', serif;"><?= $userStats['username'] ?></h4>
+          <div class="badge bg-dark">Level: <?= $userStats['level'] ?></div>
         </div>
 
         <!-- Health Bar -->
         <div class="stat-box">
           <div class="d-flex justify-content-between align-items-center mb-1">
             <span><i class="bi bi-heart-fill"></i> Health</span>
-            <span class="badge bg-dark">80/100</span>
+            <span class="badge bg-dark"><?= $userStats['health'] ?>/100</span>
           </div>
           <div class="progress">
-            <div class="progress-bar bg-dark" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0"
-              aria-valuemax="100"></div>
-          </div>
-        </div>
-
-        <!-- Goal Completion -->
-        <div class="stat-box">
-          <div class="d-flex justify-content-between align-items-center mb-1">
-            <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-flag-fill"></i> Goal
-              Completion</span>
-            <span class="badge bg-dark">10%</span>
-          </div>
-          <div class="progress">
-            <div class="progress-bar bg-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0"
-              aria-valuemax="100"></div>
+            <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $userStats['health'] ?>%"
+              aria-valuenow="<?= $userStats['health'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
         </div>
 
@@ -44,13 +32,78 @@
           <div class="d-flex justify-content-between align-items-center mb-1">
             <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-arrow-up-circle"></i>
               Level UP</span>
-            <span class="badge bg-dark">10/100</span>
+            <span class="badge bg-dark"><?= $userStats['xp'] ?>/100</span>
           </div>
           <div class="progress">
-            <div class="progress-bar bg-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0"
-              aria-valuemax="100"></div>
+            <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $userStats['xp'] ?>%"
+              aria-valuenow="<?= $userStats['xp'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
         </div>
+
+        <!-- Goal Completion -->
+        <div class="stat-box">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-flag-fill"></i> Goal</span>
+            <!-- <span class="badge bg-dark">10%</span> -->
+          </div>
+
+          <h6><?= $userStats['objective'] ?></h6>
+          <!-- <div class="progress-bar bg-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0"
+              aria-valuemax="100"></div> -->
+
+        </div>
+
+        <?php if (!empty($userStreaks)): ?>
+          <!-- Streak Summary -->
+          <div class="stat-box mt-3">
+            <h5 class="mb-2"><i class="bi bi-lightning-fill text-warning"></i> Streaks</h5>
+            <div class="streak-summary">
+              <?php foreach ($userStreaks as $type => $streak): ?>
+                <?php
+                $label = '';
+                switch ($type) {
+                  case 'check_in':
+                    $label = 'Login';
+                    break;
+                  case 'task_completion':
+                    $label = 'Tasks';
+                    break;
+                  case 'dailtask_completion':
+                    $label = 'Daily';
+                    break;
+                  case 'GoodHabits_completion':
+                    $label = 'Habits';
+                    break;
+                  case 'journal_writing':
+                    $label = 'Journal';
+                    break;
+                }
+
+                // Determine flame class based on streak count
+                $flameClass = '';
+                if ($streak['current_streak'] > 30) {
+                  $flameClass = 'text-danger';
+                } else if ($streak['current_streak'] > 7) {
+                  $flameClass = 'text-warning';
+                } else {
+                  $flameClass = 'text-secondary';
+                }
+                ?>
+                <div class="d-flex justify-content-between align-items-center mb-1 streak-item">
+                  <span><?= $label ?></span>
+                  <span class="streak-count">
+                    <i class="bi bi-fire <?= $flameClass ?>"></i>
+                    <span class="badge bg-dark"><?= $streak['current_streak'] ?> days</span>
+                  </span>
+                </div>
+              <?php endforeach; ?>
+            </div>
+            <div class="text-center mt-2">
+              <a href="/streaks" class="btn btn-sm btn-outline-light">View All Streaks</a>
+            </div>
+          </div>
+        <?php endif; ?>
+
       </div>
 
       <!-- POMODORO TIMER -->
@@ -67,6 +120,8 @@
 
         </div>
       </div>
+
+      <!-- SPOTIFY -->
       <div class="spotify-panel">
         <iframe class="spotify" id="spotify"
           src="https://open.spotify.com/embed/playlist/4Zjli1P13J5mmSCD5iKAXK?theme=0" width="100%" height="80"
@@ -148,7 +203,7 @@
 
             <!-- Row 3: AMBOT -->
             <div class="box col-md-4 d-flex justify-content-center">
-              <a href="#" class="habit-box">
+              <a href="/settings" class="habit-box">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-32 0 512 512" width="1em" height="1em"
                   fill="currentColor" style="font-size: 116px;color: var(--bs-dark);" class="mb-3">
                   <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
@@ -191,7 +246,7 @@
     <!-- Right Panel - Activities & Quests -->
     <div class="col-md-3 col-lg-3">
       <!-- Activity Logs -->
-      <div class="activity-panel mb-4">
+      <!-- <div class="activity-panel mb-4">
         <h5 class="d-flex align-items-center border-bottom pb-2 mb-3" style="font-family: 'Pixelify Sans', serif;">
           <i class="bi bi-activity me-2"></i> Activities
         </h5>
@@ -215,69 +270,76 @@
             <div class="text-success mt-1">+ 100 EXP & 100 Coins!</div>
           </div>
         </div>
+      </div> -->
+
+      <div class="activity-panel mb-4">
+        <h5 class="d-flex align-items-center border-bottom pb-2 mb-3" style="font-family: 'Pixelify Sans', serif;">
+          <i class="bi bi-activity me-2"></i> <a href="/activityLog/index" class="text-decoration-none text-dark">Recent
+            Activities</a>
+        </h5>
+
+        <div class="activity-timeline" style="max-height: 280px; overflow-y: auto;">
+          <?php
+          $count = 0;
+          foreach ($activities as $activity):
+            if ($count >= 2)
+              break; // Limit to 2 most recent activities
+            $count++;
+            ?>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div class="small text-muted mb-1">
+                <?= date('M d, Y g:i A', strtotime($activity['log_timestamp'])) ?>
+              </div>
+              <div class="activity-details small">
+                <?php if (isset($activity['coins']) && $activity['xp'] == 0): ?>
+                  <div>You got <strong><span class="text-danger">N/A</span></strong> for committing
+                    <strong><?= htmlspecialchars($activity['task_title'] ?? $activity['activity_title']) ?></strong>
+                  </div>
+                <?php else: ?>
+                  <div>You gained <strong><span class="text-success"><?= htmlspecialchars($activity['xp']) ?>
+                        XP</span></strong> and <strong><span
+                        class="text-warning"><?= htmlspecialchars($activity['coins']) ?> Coins</span></strong> in
+                    <strong><?= htmlspecialchars($activity['task_title'] ?? $activity['activity_title']) ?></strong>
+                  </div>
+                <?php endif; ?>
+                <div class="text-muted mt-1">
+                  <?= htmlspecialchars(ucfirst($activity['difficulty'] ?? 'No Difficulty')) ?> -
+                  <?= htmlspecialchars($activity['category'] ?? 'No Category') ?>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
       </div>
 
       <!-- Community Quests -->
       <div class="quest-panel">
-        <h5 class="border-bottom pb-2 mb-3" style="font-family: 'Pixelify Sans', serif;">
-          <i class="bi bi-map me-2"></i> Community Quests
-        </h5>
-        <a href="/taskevent" class="event-card-btn">
-          <div class="event-card">
-            <div class="fw-bold mb-1" style="font-family: 'Pixelify Sans', serif;">
-              <i class="bi bi-joystick"></i> Quest 1
-            </div>
-            <div class="small text-muted">
-              <div>Apr 10 - Apr 15, 2023</div>
-            </div>
-            <div class="d-flex mt-2">
-              <div class="me-3 small">
-                <i class="bi bi-stars"></i> 0 XP
-              </div>
-              <div class="small">
-                <i class="bi bi-coin"></i> 10 Coins
-              </div>
-            </div>
-
-          </div>
+        <a href="/taskevents" class="text-decoration-none text-dark">
+          <h5 class="border-bottom pb-2 mb-3" style="font-family: 'Pixelify Sans', serif;">
+            <i class="bi bi-map me-2"></i> Community Quests
+          </h5>
         </a>
-        <a href="/taskevent" class="event-card-btn">
-          <div class="event-card">
-            <div class="fw-bold mb-1" style="font-family: 'Pixelify Sans', serif;">
-              <i class="bi bi-joystick"></i> Quest 2
-            </div>
-            <div class="small text-muted">
-              <div>Apr 10 - Apr 15, 2023</div>
-            </div>
-            <div class="d-flex mt-2">
-              <div class="me-3 small">
-                <i class="bi bi-stars"></i> 0 XP
+        <?php foreach ($events as $event): ?>
+          <a href="/taskevents/<?= $event['id'] ?>" class="event-card-btn">
+            <div class="event-card">
+              <div class="fw-bold mb-1" style="font-family: 'Pixelify Sans', serif;">
+                <i class="bi bi-joystick"></i> <?= $event['event_name'] ?>
               </div>
-              <div class="small">
-                <i class="bi bi-coin"></i> 10 Coins
+              <div class="small text-muted">
+                <div>Apr 10 - Apr 15, 2023</div>
               </div>
-            </div>
-
-          </div>
-        </a>
-        <!-- <a href="/taskevent" class="event-card-btn">
-          <div class="event-card">
-            <div class="fw-bold mb-1" style="font-family: 'Pixelify Sans', serif;">
-              <i class="bi bi-joystick"></i> Quest 3
-            </div>
-            <div class="small text-muted">
-              <div>Apr 10 - Apr 15, 2023</div>
-            </div>
-            <div class="d-flex mt-2">
-              <div class="me-3 small">
-                <i class="bi bi-stars"></i> 0 XP
-              </div>
-              <div class="small">
-                <i class="bi bi-coin"></i> 10 Coins
+              <div class="d-flex mt-2">
+                <div class="me-3 small">
+                  <i class="bi bi-stars"></i> <?= $event['reward_xp'] ?>
+                </div>
+                <div class="small">
+                  <i class="bi bi-coin"></i> <?= $event['reward_coins'] ?>
+                </div>
               </div>
             </div>
-          </div>
-        </a> -->
+          </a>
+        <?php endforeach; ?>
 
       </div>
     </div>
@@ -574,5 +636,19 @@
     align-items: center;
     height: 100%;
     width: 198px;
+  }
+
+  #profile-avatar {
+    width: 120px;
+    height: 120px;
+    background-size: auto;
+    background-position: center;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
