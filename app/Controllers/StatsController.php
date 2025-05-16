@@ -27,7 +27,7 @@ class StatsController extends Controller
     {
         /** @var array $currentUser */
         $currentUser = Auth::user();
-        $userStats = $this->UserStatsModel->getByUserId($currentUser['id']);
+        $userStats = $this->UserStatsModel->getUserStatsByUserId($currentUser['id']);
 
         return $this->view('UserStats/statsBar', [
             'title' => 'StatsBar',
