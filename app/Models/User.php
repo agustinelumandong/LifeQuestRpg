@@ -11,6 +11,14 @@ class User extends Model
   {
   }
 
+  public function getUserById($userId)
+  {
+    return self::$db->query("SELECT * FROM " . static::$table . " WHERE id = ?")
+      ->bind([1 => $userId])
+      ->execute()
+      ->fetch();
+  }
+
   public function getAllUserIds(): array
   {
     $results = self::$db->query("SELECT id FROM " . static::$table)
@@ -43,6 +51,7 @@ class User extends Model
 
     return password_verify($password, $user['password']) ? $user : false;
   }
+
   /**
    * Summary of getUserStats
    * @param mixed $userId
@@ -53,6 +62,26 @@ class User extends Model
       ->bind([1 => $userId])
       ->execute()
       ->fetch();
+  }
+
+  /**
+   * Special update method that can handle both user array and user ID
+   * for backward compatibility
+   */
+  public function update($user, array $data)
+  {
+    // Handle case where $user is an array (the whole user object)
+    $userId = is_array($user) ? ($user['id'] ?? null) : $user;
+
+    if (!$userId) {
+      error_log("User::update - Invalid user ID: " . var_export($user, true));
+      return false;
+    }
+
+    error_log("User::update - Using ID: " . var_export($userId, true) . " with data: " . var_export($data, true));
+
+    // Call the parent update method
+    return parent::update($userId, $data);
   }
 
   /**
@@ -74,7 +103,5 @@ class User extends Model
     return $this->update($user['id'], [
       'coins' => $newCoins
     ]);
-
   }
-
 }

@@ -5,6 +5,7 @@
 <!-- Main Content -->
 <main>
   <div class="container">
+    <!-- back button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <a href="/" class="back-button">
         <i class="bi bi-arrow-left"></i>
@@ -16,6 +17,7 @@
       </button>
     </div>
 
+    <!-- User Profile -->
     <div class="card">
       <div class="card-header">
         <h2 class="mb-0"><i class="bi bi-person-badge"></i> Character Profile</h2>
@@ -29,18 +31,19 @@
                 alt="Character avatar" class="character-avatar" id="character-avatar">
 
               <div class="character-info">
-                <p class="mb-0 fw-bold">HeyAlbert • Level 1 • 100 Coins</p>
+                <p class="mb-0 fw-bold"><?= $user['name'] ?> • Level <?= $userStats['level'] ?> • <?= $user['coins'] ?>
+                  Coins</p>
               </div>
 
               <!-- Health Bar -->
               <div class="stat-box">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                   <span><i class="bi bi-heart-fill"></i> Health</span>
-                  <span class="badge bg-dark">80/100</span>
+                  <span class="badge bg-dark"><?= $userStats['health'] ?>/100</span>
                 </div>
                 <div class="progress">
-                  <div class="progress-bar bg-dark" role="progressbar" style="width: 80%" aria-valuenow="80"
-                    aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $userStats['health'] ?>%"
+                    aria-valuenow="<?= $userStats['health'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
               <!-- Goal Completion -->
@@ -61,11 +64,11 @@
                 <div class="d-flex justify-content-between align-items-center mb-1">
                   <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-arrow-up-circle"></i>
                     Level UP</span>
-                  <span class="badge bg-dark">10/100</span>
+                  <span class="badge bg-dark"><?= $userStats['xp'] ?>/100</span>
                 </div>
                 <div class="progress">
-                  <div class="progress-bar bg-dark" role="progressbar" style="width: 10%" aria-valuenow="10"
-                    aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $userStats['xp'] ?>%"
+                    aria-valuenow="<?= $userStats['xp'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
 
@@ -101,6 +104,7 @@
       </div>
     </div>
 
+    <!-- User Stats -->
     <div class="card">
       <div class="card-header">
         <h2 class="mb-0"><i class="bi bi-tools"></i> Skill Points</h2>
@@ -114,7 +118,7 @@
                 <div class="skill-header">
                   <div class="skill-name">
                     <i class="bi <?= $skill['icon'] ?> skill-icon"></i>
-                    <?= htmlspecialchars($skill['name']) ?>
+                    <?= htmlspecialchars(string: $skill['name']) ?>
                   </div>
                   <div class="skill-level">• LV <?= $skill['level'] ?></div>
                 </div>
@@ -133,9 +137,56 @@
         </div>
       </div>
     </div>
+
+    <!-- User Streaks  -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="mb-0"><i class="bi bi-fire"></i> Activity Streaks</h2>
+      </div>
+      <div class="card-body">
+        <div class="streak-container profile-streak-container">
+          <div class="streak-grid">
+            <?php foreach ($streakLabels as $key => $title): ?>
+              <?php
+              $streakData = $userStreaks[$key] ?? null;
+              $streakCount = $streakData ? $streakData['current_streak'] : 0;
+              $longestStreak = $streakData ? $streakData['longest_streak'] : 0;
+
+              // Determine flame class based on streak count
+              $flameClass = 'flame-small';
+              if ($streakCount > 30) {
+                $flameClass = 'flame-intense';
+              } else if ($streakCount > 7) {
+                $flameClass = 'flame-medium';
+              }
+
+              // Determine if this is a milestone (weekly or monthly)
+              $isMilestone = ($streakCount > 0 && ($streakCount % 7 === 0 || $streakCount % 30 === 0));
+              ?>
+              <div class="streak-card <?= $streakData ? 'active' : 'inactive' ?> animate__animated animate__fadeInUp">
+                <div class="streak-title"><?= $title ?></div>
+                <div class="streak-flame <?= $flameClass ?>">
+                  <i class="bi bi-fire"></i>
+                </div>
+                <div class="streak-count"><?= $streakCount ?> days</div>
+                <div class="streak-best">Best: <?= $longestStreak ?> days</div>
+
+                <?php if ($isMilestone): ?>
+                  <div class="streak-milestone">
+                    <span class="badge bg-dark">Milestone!</span>
+                  </div>
+                <?php endif; ?>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </main>
 
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
   // Radar Chart
@@ -162,6 +213,7 @@
   const skillLabels = <?= json_encode(array_column($skills ?? [], 'name')) ?>;
   const skillValues = <?= json_encode(array_column($skills ?? [], 'chart_value')) ?>;
 
+  // Create the radar chart with custom styling
   const skillsChart = new Chart(ctx, {
     type: 'radar',
     data: {
@@ -169,12 +221,15 @@
       datasets: [{
         label: 'Skills',
         data: skillValues,
-        backgroundColor: 'rgba(33, 37, 41, 0.2)',
+        backgroundColor: 'rgba(33, 37, 41, 0.3)', // Slightly more opaque
         borderColor: '#212529',
+        borderWidth: 2,
         pointBackgroundColor: '#212529',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: '#212529'
+        pointHoverBorderColor: '#212529',
+        pointRadius: 4,
+        pointHoverRadius: 6
       }]
     },
     options: {
@@ -182,37 +237,73 @@
       maintainAspectRatio: false,
       elements: {
         line: {
-          borderWidth: 3
+          borderWidth: 2,
+          tension: 0.1 // Slightly smoothed lines
         }
       },
       scales: {
         r: {
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
           angleLines: {
-            display: true
+            display: true,
+            color: 'rgba(33, 37, 41, 0.2)' // More subtle angle lines
+          },
+          grid: {
+            color: 'rgba(33, 37, 41, 0.1)' // More subtle grid
           },
           suggestedMin: 0,
           suggestedMax: 3,
           ticks: {
-            stepSize: 0.5,
+            stepSize: 1,
+            backdropColor: 'transparent', // Remove tick backgrounds
             font: {
-              size: 12
-            }
+              size: 10,
+              family: "'Pixelify Sans', serif" // Match your theme fonts
+            },
+            color: '#6b7280' // More subtle tick labels
           },
           pointLabels: {
             font: {
-              size: 14,
-              weight: 'bold'
-            }
+              size: 13,
+              weight: 'bold',
+              family: "'Pixelify Sans', serif" // Match your theme fonts
+            },
+            color: '#212529',
+            padding: 10
           }
         }
       },
       plugins: {
         legend: {
           display: false
+        },
+        tooltip: {
+          backgroundColor: 'rgba(33, 37, 41, 0.8)',
+          titleFont: {
+            family: "'Pixelify Sans', serif",
+            size: 14
+          },
+          bodyFont: {
+            family: "'Pixelify Sans', serif",
+            size: 12
+          },
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: false,
+          callbacks: {
+            label: function (context) {
+              const label = context.dataset.label || '';
+              const value = context.raw || 0;
+              const levelValue = value * 33; // Convert back from chart_value to skill value
+              const level = Math.floor(levelValue / 20) + 1;
+              return `Level ${level} (${Math.round(levelValue)} points)`;
+            }
+          }
         }
       },
       animation: {
-        duration: 1500
+        duration: 1800,
+        easing: 'easeOutQuart'
       }
     }
   });
