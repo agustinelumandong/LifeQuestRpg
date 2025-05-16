@@ -1,0 +1,693 @@
+:root {
+  --primary-color: #111827;
+  --secondary-color: #ffffff;
+  --accent-color: #4b5563;
+  --text-color: #374151;
+  --background-color: #ffffff;
+  --border-color: #e5e7eb;
+}
+
+.logo-image {
+  width: 50px !important;
+  height: 50px !important;
+  object-fit: cover;
+  padding-left: 0.25rem;
+  margin-left: 0.75rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+/* Brand styles */
+.rpg-brand {
+  color: var(--bs-dark);
+  font-family: 'Pixelify Sans', serif;
+  font-size: 25px !important;
+  text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.5);
+  padding-left: 0.75rem;
+  padding-right: 0;
+  margin-right: 1rem;
+  margin-left: 0.25rem;
+}
+
+img {
+  width: 120px;
+  height: auto;
+}
+
+#LifeRpgImage {
+  width: 70px;
+  height: auto;
+}
+
+[data-bs-theme=dark] header.masthead {
+  background-image: url('../images/art-8396377_1280.jpg');
+}
+
+header.masthead {
+  text-align: center;
+  color: #fff;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: center center;
+  background-size: cover;
+  background-image: url('../images/light background.jpg');
+  padding: 300px 0 250px;
+  position: relative;
+}
+
+header.masthead::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+header.masthead .container {
+  position: relative;
+  z-index: 2;
+}
+
+header.masthead .intro-text {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+header.masthead .intro-lead-in {
+  font-size: 24px;
+  font-style: italic;
+  margin-bottom: 20px;
+  font-family: 'Pixelify Sans', serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+header.masthead .intro-heading {
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 30px;
+  font-family: 'Pixelify Sans', serif;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+header.masthead .hero-description {
+  font-size: 20px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+header.masthead .hero-cta {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Services Section */
+#services {
+  padding: 100px 0 80px;
+}
+
+#services .section-heading {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-family: 'Pixelify Sans', serif;
+}
+
+#services .section-subheading {
+  max-width: 750px;
+  margin: 0 auto 60px;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.service-items {
+  margin-top: 40px;
+}
+
+.service-item {
+  padding: 30px 20px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  height: 100%;
+}
+
+.service-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.service-icon {
+  margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+}
+
+.service-icon::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: rgba(33, 150, 243, 0.1);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  transition: all 0.3s ease;
+}
+
+.service-item:hover .service-icon::after {
+  width: 110px;
+  height: 110px;
+  background-color: rgba(33, 150, 243, 0.2);
+}
+
+.service-item h4 {
+  margin: 20px 0;
+  font-weight: 600;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.service-item p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Portfolio Section */
+#portfolio {
+  padding: 100px 0;
+  background-color: #f8f9fa;
+}
+
+#portfolio .section-heading {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.portfolio-grid {
+  margin-top: 40px;
+}
+
+/* Portfolio filter styles */
+.portfolio-filter ul {
+  margin-bottom: 30px;
+}
+
+.portfolio-filter a {
+  color: #555;
+  padding: 5px 15px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.portfolio-filter a:hover,
+.portfolio-filter li.active a {
+  background-color: #fed136;
+  color: #fff;
+}
+
+/* Portfolio card styles */
+.portfolio-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.portfolio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.portfolio-image-container {
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 180px;
+}
+
+.portfolio-image-container img {
+  max-width: 120px;
+  max-height: 120px;
+  transition: all 0.3s ease;
+}
+
+.portfolio-card:hover .portfolio-image-container img {
+  transform: scale(1.1);
+}
+
+/* Portfolio item styles */
+.portfolio-item {
+  margin-bottom: 30px;
+  position: relative;
+}
+
+/* Portfolio caption styles */
+.portfolio-caption {
+  padding: 20px;
+  text-align: center;
+  background-color: #fff;
+  border-top: 1px solid #f5f5f5;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.portfolio-caption h4 {
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.portfolio-caption p {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+/* Portfolio hover effects */
+.portfolio-hover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background-color: var(--accent-color);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portfolio-link {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.portfolio-link:hover .portfolio-hover {
+  opacity: 1;
+}
+
+.portfolio-hover-content {
+  color: white;
+}
+
+/* About Section */
+#about {
+  padding: 100px 0;
+}
+
+#about .section-heading {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.timeline {
+  position: relative;
+  padding: 0;
+  list-style: none;
+  margin-top: 50px;
+}
+
+.timeline:before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  margin-left: -2px;
+  content: '';
+  background-color: #e9ecef;
+}
+
+.timeline>li {
+  position: relative;
+  min-height: 170px;
+  margin-bottom: 50px;
+  border: none;
+  background: transparent;
+}
+
+.timeline>li:after,
+.timeline>li:before {
+  display: table;
+  content: ' ';
+}
+
+.timeline>li:after {
+  clear: both;
+}
+
+.timeline>li .timeline-image {
+  position: absolute;
+  z-index: 100;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  margin-left: -60px;
+  text-align: center;
+  border: 7px solid #e9ecef;
+  border-radius: 100%;
+  background-color: #2196F3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline>li .timeline-image h4 {
+  font-size: 16px;
+  line-height: 1.4;
+  color: #fff;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.timeline>li .timeline-panel {
+  position: relative;
+  float: left;
+  width: 41%;
+  padding: 20px;
+  text-align: right;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.timeline>li.timeline-inverted .timeline-panel {
+  float: right;
+  text-align: left;
+}
+
+.timeline>li .timeline-panel:before {
+  position: absolute;
+  top: 30px;
+  right: -15px;
+  display: inline-block;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  content: ' ';
+  border-left: 15px solid #ccc;
+}
+
+.timeline>li.timeline-inverted .timeline-panel:before {
+  right: auto;
+  left: -15px;
+  border-right: 15px solid #ccc;
+  border-left: 0;
+}
+
+/* Additional About section enhancements */
+
+/* Timeline animations */
+.wow {
+  visibility: hidden;
+}
+
+.timeline-image {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.timeline-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(33, 150, 243, 0.4);
+}
+
+.timeline-image img {
+  transition: transform 0.5s ease;
+}
+
+.timeline-image:hover img {
+  transform: scale(1.1);
+}
+
+/* Custom styling for the call-to-action circle */
+.cta-circle {
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cta-circle:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
+  box-shadow: 0 0 30px rgba(33, 150, 243, 0.6);
+}
+
+.cta-circle h4 {
+  font-size: 18px;
+}
+
+/* Enhance timeline panel on hover */
+.timeline-panel {
+  transition: all 0.3s ease;
+}
+
+.timeline-panel:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Fix timeline appearance on smaller screens */
+@media (max-width: 768px) {
+  .timeline>li .timeline-image:hover {
+    transform: scale(1.05);
+  }
+
+  .timeline-panel:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* Team Section */
+#team {
+  padding: 100px 0;
+  background-color: #f8f9fa;
+}
+
+#team .section-heading {
+  font-size: 40px;
+  font-weight: 700;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.team-grid {
+  margin-top: 40px;
+}
+
+.team-member {
+  text-align: center;
+  margin-bottom: 50px;
+  transition: all 0.3s ease;
+}
+
+.team-member:hover {
+  transform: translateY(-10px);
+}
+
+.team-member img {
+  width: 200px;
+  height: 200px;
+  border: 7px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 25px;
+  object-fit: cover;
+}
+
+.team-member h4 {
+  margin-bottom: 5px;
+  font-size: 22px;
+  font-weight: 600;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.team-member p {
+  margin-bottom: 15px;
+}
+
+.social-buttons {
+  margin-bottom: 0;
+}
+
+.social-buttons li a {
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  font-size: 18px;
+  line-height: 40px;
+  display: block;
+  background-color: #222;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.social-buttons li a:hover {
+  background-color: #2196F3;
+  transform: scale(1.1);
+}
+
+/* Contact Section */
+#contact {
+  padding: 100px 0;
+  position: relative;
+  color: white;
+}
+
+#contact::before {
+  content: '';
+  position: absolute;
+  background-image: url('/assets/images/map-image.png');
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: center center;
+  background-size: cover;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 1;
+}
+
+#contact .container {
+  position: relative;
+  z-index: 2;
+}
+
+#contact .section-heading {
+  color: white;
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-family: 'Pixelify Sans', serif;
+}
+
+#contact .section-subheading {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 70px;
+}
+
+.contact-form-wrapper {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 30px;
+  border-radius: 8px;
+}
+
+#contact .form-control {
+  padding: 1.375rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 5px;
+}
+
+#contact .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+#contact .form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+#contact textarea.form-control {
+  height: 193px;
+}
+
+#sendMessageButton {
+  padding: 15px 35px;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+}
+
+#sendMessageButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+footer {
+  padding: 25px 0;
+  text-align: center;
+}
+
+footer .social-buttons li a {
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  font-size: 16px;
+}
+
+footer .quicklinks {
+  margin-bottom: 0;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  header.masthead .intro-heading {
+    font-size: 36px;
+  }
+
+  header.masthead .intro-lead-in {
+    font-size: 20px;
+  }
+
+  #services,
+  #portfolio,
+  #about,
+  #team,
+  #contact {
+    padding: 60px 0;
+  }
+
+  .timeline:before {
+    left: 70px;
+  }
+
+  .timeline>li .timeline-image {
+    left: 70px;
+    margin-left: 0;
+    width: 100px;
+    height: 100px;
+  }
+
+  .timeline>li .timeline-panel {
+    width: calc(100% - 200px);
+    padding: 15px;
+    float: right;
+    text-align: left;
+  }
+
+  .timeline>li.timeline-inverted .timeline-panel {
+    float: right;
+    text-align: left;
+    padding: 15px;
+  }
+
+  .timeline>li .timeline-panel:before {
+    right: auto;
+    left: -15px;
+    border-right: 15px solid #ccc;
+    border-left: 0;
+  }
+}

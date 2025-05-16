@@ -15,28 +15,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.navbar {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.navbar-brand {
-  font-size: 1.25rem;
-  color: var(--primary-color);
-  letter-spacing: -0.025em;
-}
-
-.nav-link {
-  font-weight: 500;
-  color: var(--accent-color);
-  transition: color 0.2s ease;
-  padding: 0.5rem 1rem;
-}
-
-.nav-link:hover {
-  color: var(--primary-color);
-}
+/* Navbar styles have been moved to navbar.css */
 
 .display-4 {
   font-size: clamp(2.5rem, 5vw, 4rem);
@@ -357,15 +336,52 @@ footer a:hover {
 }
 
 /* Activity Log Styles */
+.activity-panel {
+  max-height: 336px;
+  min-height: 336px;
+  background-color: white;
+  border: 1px solid #212529;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
 .activity-timeline {
   position: relative;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.activity-timeline::-webkit-scrollbar {
+  width: 6px;
+}
+
+.activity-timeline::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.activity-timeline::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.activity-timeline::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .activity-item {
+  padding: 10px;
+  border-left: 3px solid #212529;
   background-color: #f8f9fa;
-  border-radius: 0.25rem;
-  margin-left: 12px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  transition: transform 0.2s;
+  position: relative;
 }
 
 .activity-item:hover {
@@ -376,61 +392,12 @@ footer a:hover {
 .activity-dot {
   position: absolute;
   left: -8px;
-  top: 22px;
+  top: 15px;
   width: 14px;
   height: 14px;
   background-color: #212529;
   border-radius: 50%;
   border: 2px solid #fff;
-}
-
-/* Task creation form styles */
-.info-box {
-  height: 100%;
-  transition: transform 0.3s ease;
-}
-
-.info-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #212529;
-  box-shadow: 0 0 0 0.25rem rgba(33, 37, 41, 0.25);
-}
-
-/* Profile page styles */
-.profile-avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  margin: 0 auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.stat-box {
-  transition: transform 0.2s;
-}
-
-.stat-box:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.quest-card {
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.quest-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.quest-description {
-  min-height: 60px;
 }
 
 .activity-details {
@@ -516,7 +483,6 @@ footer a:hover {
   vertical-align: middle;
 }
 
-
 /* Minimalist pagination styling */
 .pagination {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -566,4 +532,32 @@ footer a:hover {
   background-color: #000;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.taskEventCard {
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.taskEventCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.taskShowSventCard {
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.taskShowSventCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }

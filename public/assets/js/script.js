@@ -135,7 +135,7 @@ function toggleTaskStatus(taskId, checkbox) {
         checkbox.checked = false;
         
         // Show success toast
-        showTaskToast('Task marked as pending', 'success', taskTitle.textContent);
+        showTaskToast('Task marked as pending', 'pending', taskTitle.textContent);
       } else {
         // Task was marked as completed
         taskRow.classList.add('completed');
@@ -168,6 +168,7 @@ function toggleTaskStatus(taskId, checkbox) {
  */
 function taskRowClick(row, taskId) {
   const checkbox = row.querySelector('.task-check');
+  // checkbox.checked = !checkbox.checked;
   toggleTaskStatus(taskId, checkbox);
 }
 

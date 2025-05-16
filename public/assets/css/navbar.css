@@ -1,0 +1,242 @@
+/* Light Theme */
+body.theme-light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --card-bg: #ffffff;
+  --card-border: #dee2e6;
+  --navbar-bg: #ffffff;
+  --sidebar-bg: #f8f9fa;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Theme */
+body.theme-dark {
+  --bg-primary: #212529;
+  --bg-secondary: #343a40;
+  --text-primary: #f8f9fa;
+  --text-secondary: #ced4da;
+  --border-color: #495057;
+  --card-bg: #343a40;
+  --card-border: #495057;
+  --navbar-bg: #212529;
+  --sidebar-bg: #343a40;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Navbar specific styles */
+.navbar {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-brand {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  letter-spacing: -0.025em;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: var(--primary-color);
+  transition: color 0.2s ease;
+  padding: 0.5rem 1rem;
+}
+
+.nav-link:hover {
+  color: var(--accent-color);
+}
+
+/* Additional navbar styling */
+.navbar-toggler {
+  border: none;
+  padding: 0.5rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+/* Theme switcher in navbar */
+.theme-switcher .dropdown-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-switcher .dropdown-toggle:hover {
+  opacity: 0.8;
+}
+
+.theme-switcher .theme-icon {
+  transition: transform 0.3s ease;
+}
+
+.theme-switcher:hover .theme-icon {
+  transform: rotate(30deg);
+}
+
+.theme-switcher .dropdown-menu {
+  min-width: 8rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+}
+
+.theme-switcher .dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.theme-switcher .dropdown-item:hover {
+  background-color: rgba(var(--accent-color-rgb, 33, 37, 41), 0.1);
+}
+
+.theme-switcher .dropdown-item.active {
+  background-color: var(--accent-color-light);
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+/* Theme Toggle animation */
+@keyframes sun-burst {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes moon-glow {
+  0% {
+    text-shadow: 0 0 0px rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+
+  100% {
+    text-shadow: 0 0 0px rgba(255, 255, 255, 0);
+  }
+}
+
+body.theme-light .theme-switcher .fa-sun-o {
+  animation: sun-burst 0.5s ease-in-out;
+}
+
+body.theme-dark .theme-switcher .fa-moon-o {
+  animation: moon-glow 1s ease-in-out;
+}
+
+/* Extracted styles from navbar.php */
+/* Logo styles */
+.logo-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  padding-left: 0.25rem;
+  margin-left: 0.75rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+/* Brand styles */
+.rpg-brand {
+  color: var(--primary-color);
+  font-family: 'Pixelify Sans', serif;
+  font-size: 25px;
+  text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.5);
+  padding-left: 0.75rem;
+  padding-right: 0;
+  margin-right: 1rem;
+  margin-left: 0.25rem;
+}
+
+/* Text shadow for nav links */
+.nav-shadow {
+  text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.5);
+}
+
+/* Font family for navbar elements */
+.navbar-font {
+  font-family: 'Pixelify Sans', serif;
+}
+
+/* Logout link color */
+.logout-link {
+  color: red;
+  text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.5);
+}
+
+/* Theme icon style */
+.theme-icon {
+  color: var(--bs-dark);
+  text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.5);
+}
+
+/* Theme switcher positioning */
+.theme-toggle {
+  margin-right: 1rem;
+  margin-left: 1rem;
+}
+
+/* Mobile theme toggle button */
+.theme-toggle-btn {
+  color: var(--text-primary);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--accent-color);
+  background-color: rgba(var(--accent-color-rgb, 33, 37, 41), 0.05);
+}
+
+.theme-toggle-btn i {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle-btn:hover i {
+  transform: rotate(30deg);
+}
+
+.theme-toggle-btn.theme-toggled i {
+  animation: rotate-icon 0.5s ease-in-out;
+}
+
+@keyframes rotate-icon {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
