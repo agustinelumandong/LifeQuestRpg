@@ -12,7 +12,39 @@
               class="img-fluid rounded-circle " id="profile-avatar">
           </div>
           <h4 class="mb-0" style="font-family: 'Pixelify Sans', serif;"><?= $userStats['username'] ?></h4>
-          <div class="badge bg-dark">Level: <?= $userStats['level'] ?></div>
+          <div>
+            <?php foreach ($userStreaks as $type => $streak): ?>
+              <?php
+              $label = '';
+              switch ($type) {
+                case 'check_in':
+                  $label = 'Login';
+                  break;
+              }
+
+              // Determine flame class based on streak count
+              $flameClass = '';
+              if ($streak['current_streak'] >= 30) {
+                $flameClass = 'text-danger';
+              } else if ($streak['current_streak'] >= 7) {
+                $flameClass = 'text-warning';
+              } else {
+                $flameClass = 'text-white';
+              }
+              ?>
+              <?php if ($label == 'Login'): ?>
+                <div class="">
+                  <span class="streak-count">
+                    <div class="badge bg-dark">Level: <?= $userStats['level'] ?></div>
+
+                    <span class="badge bg-dark"> <i style="color: #fff ;" class="bi bi-fire <?= $flameClass ?>"></i>
+                      <?= $streak['current_streak'] ?> Streaks</span>
+                  </span>
+                </div>
+              <?php endif; ?>
+            <?php endforeach; ?>
+
+          </div>
         </div>
 
         <!-- Health Bar -->
@@ -53,56 +85,6 @@
 
         </div>
 
-        <?php if (!empty($userStreaks)): ?>
-          <!-- Streak Summary -->
-          <div class="stat-box mt-3">
-            <h5 class="mb-2"><i class="bi bi-lightning-fill text-warning"></i> Streaks</h5>
-            <div class="streak-summary">
-              <?php foreach ($userStreaks as $type => $streak): ?>
-                <?php
-                $label = '';
-                switch ($type) {
-                  case 'check_in':
-                    $label = 'Login';
-                    break;
-                  case 'task_completion':
-                    $label = 'Tasks';
-                    break;
-                  case 'dailtask_completion':
-                    $label = 'Daily';
-                    break;
-                  case 'GoodHabits_completion':
-                    $label = 'Habits';
-                    break;
-                  case 'journal_writing':
-                    $label = 'Journal';
-                    break;
-                }
-
-                // Determine flame class based on streak count
-                $flameClass = '';
-                if ($streak['current_streak'] > 30) {
-                  $flameClass = 'text-danger';
-                } else if ($streak['current_streak'] > 7) {
-                  $flameClass = 'text-warning';
-                } else {
-                  $flameClass = 'text-secondary';
-                }
-                ?>
-                <div class="d-flex justify-content-between align-items-center mb-1 streak-item">
-                  <span><?= $label ?></span>
-                  <span class="streak-count">
-                    <i class="bi bi-fire <?= $flameClass ?>"></i>
-                    <span class="badge bg-dark"><?= $streak['current_streak'] ?> days</span>
-                  </span>
-                </div>
-              <?php endforeach; ?>
-            </div>
-            <div class="text-center mt-2">
-              <a href="/streaks" class="btn btn-sm btn-outline-light">View All Streaks</a>
-            </div>
-          </div>
-        <?php endif; ?>
 
       </div>
 
