@@ -79,6 +79,15 @@ abstract class Auth
       throw new Exception('User not found or invalid');
     }
 
+    // Ensure theme settings are available
+    if (!isset($user['theme'])) {
+      $user['theme'] = 'light'; // Set default theme to light
+    }
+
+    if (!isset($user['color_scheme'])) {
+      $user['color_scheme'] = 'default'; // Set default color scheme
+    }
+
     $_SESSION['users'] = $user;
     self::$user = $user; // Cache the user
     session_regenerate_id(true);
@@ -92,7 +101,18 @@ abstract class Auth
   public static function logout()
   {
     self::$user = null;
-    session_destroy();
+    session_unset();     // Remove all session variables
+    session_destroy();   // Destroy the session
     session_regenerate_id(true);
+  }
+
+  /**
+   * Check if the user is logged in (alias for check())
+   * 
+   * @return bool
+   */
+  public static function isLoggedIn(): bool
+  {
+    return self::check();
   }
 }

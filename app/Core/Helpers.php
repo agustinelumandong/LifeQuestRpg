@@ -91,12 +91,19 @@ class Helpers
     $path = ltrim($path, '/');
     return self::url("assets/{$path}");  // Remove the duplicate "public/"
   }
-
   /**
    * Format date
    */
   public static function formatDate(string $date, string $format = 'Y-m-d H:i:s')
   {
     return date($format, strtotime($date));
+  }
+
+  /**
+   * Get site URL
+   */
+  public static function siteUrl(string $path = '')
+  {
+    return self::url($path);
   }
 }
