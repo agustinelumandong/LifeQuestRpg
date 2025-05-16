@@ -1,11 +1,21 @@
-<!-- // app/Views/layouts/main.php -->
 <?php include __DIR__ . '/header.php'; ?>
 
 <body>
 
   <?php include __DIR__ . '../include/navbar.php'; ?>
 
-  <div class="container mt-4">
+  <?php
+  $currentUser = App\Core\Auth::user();
+  if ($currentUser) {
+    $isLandingPage = false;
+  } else {
+    $currentPath = $_SERVER['REQUEST_URI'];
+    // Check if we're on the landing page
+    $isLandingPage = ($currentPath == '/' || $currentPath == '/index.php' || $currentPath == '/home');
+  }
+  ?>
+
+  <div class="<?= $isLandingPage ? 'landing-container full-width' : 'container mt-4' ?>">
     <!-- This is content -->
     <?= $content ?>
   </div>
