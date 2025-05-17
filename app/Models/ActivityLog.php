@@ -40,9 +40,21 @@ class ActivityLog extends Model
                 poke_timestamp AS log_timestamp 
             FROM view_poke_activity 
             WHERE target_user_id = ?
+            UNION ALL
+            SELECT 
+                log_id, 
+                user_id, 
+                event_name AS task_title, 
+                CAST('NA' AS CHAR) AS difficulty, 
+                CAST('Social' AS CHAR) AS category,
+                coins, 
+                xp, 
+                log_timestamp
+            FROM view_event_activity
+            WHERE user_id = ?
             ORDER BY log_timestamp DESC"
         )
-            ->bind([1 => $userId, 2 => $userId, 3 => $userId, 4 => $userId, 5 => $userId])
+            ->bind([1 => $userId, 2 => $userId, 3 => $userId, 4 => $userId, 5 => $userId, 6 => $userId])
             ->execute()
             ->fetchAll();
     }
@@ -76,6 +88,18 @@ class ActivityLog extends Model
                     poke_timestamp AS log_timestamp 
                 FROM view_poke_activity 
                 WHERE target_user_id = ?
+                UNION ALL
+                SELECT 
+                log_id, 
+                user_id, 
+                event_name AS task_title, 
+                CAST('NA' AS CHAR) AS difficulty,  
+                CAST('Social' AS CHAR) AS category,
+                coins, 
+                xp, 
+                log_timestamp
+            FROM view_event_activity
+            WHERE user_id = ?
             ) AS combined_activities
             ORDER BY {$orderBy} {$direction}
             LIMIT ?, ?"
@@ -86,18 +110,17 @@ class ActivityLog extends Model
                 3 => $userId,
                 4 => $userId,
                 5 => $userId,
-                6 => $offset,
-                7 => $perPage
+                6 => $userId,
+                7 => $offset,
+                8 => $perPage
             ])
             ->execute()
             ->fetchAll();
-    }    /**
-         * Paginate activity log results
-         */
+    }
+
+
     public function paginates($userId, $page = 1, $perPage = 10, $orderBy = 'log_timestamp', $direction = 'DESC')
     {
-        // Default to the current user if no user ID is provided
-
         // Validate page and perPage
         $page = max(1, (int) $page);
         $perPage = max(1, (int) $perPage);
@@ -115,9 +138,20 @@ class ActivityLog extends Model
                 UNION ALL
                 SELECT log_id FROM view_poke_activity 
                 WHERE target_user_id = ?
+                UNION ALL
+                SELECT log_id FROM view_event_activity WHERE user_id = ?
             ) AS count_query"
         )
-            ->bind([1 => $userId, 2 => $userId, 3 => $userId, 4 => $userId, 5 => $userId])
+            ->bind(
+                [
+                    1 => $userId,
+                    2 => $userId,
+                    3 => $userId,
+                    4 => $userId,
+                    5 => $userId,
+                    6 => $userId
+                ]
+            )
             ->execute()
             ->fetch();
 

@@ -1,0 +1,304 @@
+  .bs-icon {
+    --bs-icon-size: .75rem;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--bs-icon-size);
+    width: calc(var(--bs-icon-size) * 2);
+    height: calc(var(--bs-icon-size) * 2);
+    color: var(--bs-primary);
+  }
+
+  .bs-icon-rounded {
+    border-radius: .5rem;
+  }
+
+  .bs-icon-primary {
+    color: #fff;
+    background: #212529;
+  }
+
+  .card {
+    border: 1px solid #212529;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .habit-box {
+    border-radius: 6px;
+    border: 1px solid #212529;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: white;
+    text-decoration: none;
+    color: #343A40;
+  }
+
+  .habit-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .habit-icon {
+    font-size: 80px;
+    color: #212529;
+    margin-bottom: 15px;
+  }
+
+  .habit-label {
+    font-family: 'Pixelify Sans', serif;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .profile-panel {
+    background-color: white;
+    border: 1px solid #212529;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    /* height: 100%; */
+  }
+
+  .profile-panel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stat-box {
+    transition: transform 0.2s;
+    border: 1px solid #212529;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: white;
+  }
+
+  .stat-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .pomodoro-panel {
+    background-color: white;
+    border: 1px solid #212529;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .pomodoro-panel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 5px 15px tgba(0, 0, 0, 0.15);
+  }
+
+  .spotify {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .spotify:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .focus-btn {
+    background-color: #212529;
+    color: white;
+    border: none;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .focus-btn:hover {
+    background-color: #343A40;
+    transform: translateY(-2px);
+  }
+
+  .activity-panel {
+    max-height: 336px;
+    min-height: 336px;
+    background-color: white;
+    border: 1px solid #212529;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .activity-panel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .activity-timeline {
+    position: relative;
+  }
+
+  .activity-item {
+    padding: 10px;
+    border-left: 3px solid #212529;
+    background-color: #f8f9fa;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    transition: transform 0.2s;
+    position: relative;
+  }
+
+  .activity-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .activity-dot {
+    position: absolute;
+    left: -8px;
+    top: 15px;
+    width: 14px;
+    height: 14px;
+    background-color: #212529;
+    border-radius: 50%;
+    border: 2px solid #fff;
+  }
+
+  .quest-panel {
+    max-height: 440px;
+    min-height: 440px;
+    background-color: white;
+    border: 1px solid #212529;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    padding: 15px;
+  }
+
+  .quest-panel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .event-card {
+    background-color: #f8f9fa;
+    border: 1px solid #212529;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .event-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .event-card-btn {
+    color: #212529;
+    text-decoration: none;
+  }
+
+  .progress {
+    height: 10px;
+    border-radius: 5px;
+    margin-top: 5px;
+  }
+
+  .progress-bar {
+    background-color: #212529;
+  }
+
+  .badge.bg-dark {
+    background-color: #212529 !important;
+  }
+
+  .btn-dark {
+    background-color: #212529;
+    border-color: #212529;
+  }
+
+  .btn-dark:hover {
+    background-color: #000;
+    border-color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .hero-section {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .hero-section h2 {
+    font-family: 'Pixelify Sans', serif;
+    font-weight: bold;
+  }
+
+  .nav-link {
+    font-weight: 600;
+    transition: transform 0.2s;
+  }
+
+  .nav-link:hover {
+    transform: translateY(-2px);
+  }
+
+  .nav-link.active {
+    border-bottom: 2px solid #212529;
+  }
+
+  .box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 198px;
+  }
+
+  #profile-avatar {
+    width: 120px;
+    height: 120px;
+    background-size: auto;
+    background-position: center;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }

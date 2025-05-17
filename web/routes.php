@@ -17,6 +17,7 @@ use App\Controllers\DailyTaskController;
 use App\Controllers\GoodHabitsController;
 use App\Controllers\JournalController;
 use App\Controllers\ExamplePaginationController;
+use App\Controllers\PomodoroController;
 
 // Define routes
 $router->get('/', [HomeController::class, 'index']);
@@ -131,3 +132,6 @@ $router->put('/marketplace/purchase/{user_id}/{item_id}', [MarketplaceController
 $router->get('/streaks', [StreakController::class, 'index'], [AuthMiddleware::class]);
 $router->post('/streaks/record', [StreakController::class, 'recordActivity'], [AuthMiddleware::class]);
 $router->get('/streaks/{streakType}/{streakCount}/rewards', [StreakController::class, 'grantRewards'], [AuthMiddleware::class]);
+
+// Pomodoro routes
+$router->get('/pomodoro', [PomodoroController::class, 'index'], [AuthMiddleware::class]);

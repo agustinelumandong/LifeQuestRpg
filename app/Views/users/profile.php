@@ -1,5 +1,3 @@
-<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"> -->
 <link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/profile.css') ?>">
 
 <!-- Main Content -->
@@ -11,10 +9,7 @@
         <i class="bi bi-arrow-left"></i>
         Back to Dashboard
       </a>
-      <button type="button" class="edit-profile-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-        <i class="bi bi-pencil-square"></i>
-        Edit Profile
-      </button>
+      
     </div>
 
     <!-- User Profile -->
@@ -26,13 +21,17 @@
         <div class="row">
           <div class="col-md-4">
             <div class="character-profile d-flex flex-column align-items-center">
-              <img
-                src="https://cdn11.bigcommerce.com/s-7va6f0fjxr/images/stencil/1280x1280/products/59261/75500/Details-About-Truck-Car-Video-Games-Super-Mario-1Up-Toadstool-Mushroom-Decal__81968.1506656287.jpg?c=2"
-                alt="Character avatar" class="character-avatar" id="character-avatar">
+              <div class="profile-avatar" id="profile-avatar">
+                <?php $avatarId = isset($userStats['avatar_id']) ? $userStats['avatar_id'] : 1; ?>
+                <img src="/assets/images/avatars/avatar<?= $avatarId ?>.svg" alt="Character Avatar"
+                  class="img-fluid rounded-circle " id="profile-avatar">
+              </div>
 
               <div class="character-info">
-                <p class="mb-0 fw-bold"><?= $user['name'] ?> • Level <?= $userStats['level'] ?> • <?= $user['coins'] ?>
-                  Coins</p>
+                <p class="mb-0 fw-bold"><?= $user['username'] ?> • Level <?= $userStats['level'] ?> •
+                  <?= $user['coins'] ?>
+                  Coins
+                </p>
               </div>
 
               <!-- Health Bar -->

@@ -7,7 +7,6 @@ class UserEventCompletion extends Model
 {
   protected static $table = 'user_event_completions';
 
-
   public function recordCompletion($userId, $taskId)
   {
     // First check if the entry already exists
@@ -53,7 +52,6 @@ class UserEventCompletion extends Model
       ->execute()
       ->fetchAll();
   }
-
 
   public function updateUserExp($userId, $xp)
   {

@@ -279,7 +279,7 @@ body.theme-light svg {
 body.theme-light .profile-panel,
 body.theme-light .stat-box {
   background-color: var(--card-bg);
-  border-color: var(--border-color);
+  /* border-color: var(--border-color); */
 }
 
 body.theme-dark .profile-panel,
