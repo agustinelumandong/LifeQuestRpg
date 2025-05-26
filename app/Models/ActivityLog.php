@@ -221,4 +221,63 @@ class ActivityLog extends Model
         return (json_last_error() == JSON_ERROR_NONE);
     }
 
+    /**
+     * Get recent activity logs
+     * @param int $limit
+     * @return array
+     */
+    public function getRecent($limit = 10)
+    {
+        $sql = "SELECT * FROM " . self::$table . " ORDER BY log_timestamp DESC LIMIT :limit";
+        return self::$db->query($sql)
+            ->bind([':limit' => $limit])
+            ->execute()
+            ->fetchAll();
+    }
+
+    /**
+     * Get recent activities for a user
+     *
+     * @param int $userId User ID to get activities for
+     * @param int $limit Number of records to return
+     * @return array Recent user activities
+     */
+
+
+    /**
+     * Get count of active users since a given date
+     *
+     * @param string $date Date to count active users since
+     * @return int Count of active users
+     */
+    public function getActiveUserCountSince($date)
+    {
+        $sql = "SELECT COUNT(DISTINCT user_id) as count FROM " . self::$table . " WHERE log_timestamp >= :date";
+        $result = self::$db->query($sql)
+            ->bind([':date' => $date])
+            ->execute()
+            ->fetch();
+
+        return $result['count'] ?? 0;
+    }
+
+    /**
+     * Get daily user activity count for the last 30 days
+     *
+     * @return array Daily user counts
+     */
+    public function getDailyUserCountLast30Days()
+    {
+        $sql = "SELECT 
+                   DATE(log_timestamp) as date, 
+                   COUNT(DISTINCT user_id) as count 
+                FROM " . self::$table . " 
+                WHERE log_timestamp >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                GROUP BY DATE(log_timestamp)
+                ORDER BY DATE(log_timestamp)";
+
+        return self::$db->query($sql)
+            ->execute()
+            ->fetchAll();
+    }
 }
