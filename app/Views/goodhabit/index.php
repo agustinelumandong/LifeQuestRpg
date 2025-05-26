@@ -44,7 +44,7 @@
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
           <?php if (empty($goodHabits)): ?>
             <div class="col-12">
-              <div class="alert alert-info">
+              <div class="alert alert-dark">
                 <i class="bi bi-info-circle"></i> No good habits found. Create your first one!
               </div>
             </div>

@@ -87,45 +87,7 @@
     </div>
 
     <!-- Journal Stats Section -->
-    <div class="card border-dark mt-4 shadow">
-      <div class="card-header bg-white">
-        <h3 class="my-2" style="font-family: 'Pixelify Sans', serif;">
-          <i class="bi bi-graph-up"></i> Journal Stats
-        </h3>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <div class="stat-box border border-dark rounded p-3 text-center">
-              <h5 style="font-family: 'Pixelify Sans', serif;">Total Entries</h5>
-              <div class="stat-value"><?= count($journals) ?></div>
-              <div class="progress mt-2">
-                <div class="progress-bar bg-dark" role="progressbar"
-                  style="width: <?= min(count($journals) * 10, 100) ?>%" aria-valuenow="<?= count($journals) ?>"
-                  aria-valuemin="0" aria-valuemax="10"></div>
-              </div>
-              <small class="text-muted mt-1 d-block">Write more to level up!</small>
-            </div>
-          </div>
-          <div class="col-md-4 mb-3">
-            <div class="stat-box border border-dark rounded p-3 text-center">
-              <h5 style="font-family: 'Pixelify Sans', serif;">XP Earned</h5>
-              <div class="stat-value"><?= count($journals) * 15 ?> XP</div>
-              <i class="bi bi-stars fs-3 text-warning"></i>
-              <small class="text-muted mt-1 d-block">15 XP per journal entry</small>
-            </div>
-          </div>
-          <div class="col-md-4 mb-3">
-            <div class="stat-box border border-dark rounded p-3 text-center">
-              <h5 style="font-family: 'Pixelify Sans', serif;">Writing Streak</h5>
-              <div class="stat-value">3 Days</div>
-              <i class="bi bi-fire fs-3 text-danger"></i>
-              <small class="text-muted mt-1 d-block">Keep the streak going!</small>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
   </div>
 </div>
 

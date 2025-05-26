@@ -38,8 +38,14 @@
           </thead>
           <tbody>
             <?php foreach ($rankings as $index => $player): ?>
-              <tr class="<?= $index < 3 ? 'top-rank ' . ['first-place', 'second-place', 'third-place'][$index] : '' ?>"
-                onclick="window.location.href='/users/<?= $player['user_id'] ?>'" style="cursor: pointer;">
+              <?php
+              $currentUserId = \App\Core\Auth::getByUserId();
+              $isCurrentUser = $currentUserId && $currentUserId == $player['user_id'];
+              ?>
+              <tr
+                class="<?= $index < 3 ? 'top-rank ' . ['first-place', 'second-place', 'third-place'][$index] : '' ?> <?= $isCurrentUser ? 'current-user-row' : '' ?>"
+                <?= !$isCurrentUser ? "onclick=\"window.location.href='/users/{$player['user_id']}'\"" : '' ?>
+                style="cursor: <?= $isCurrentUser ? 'default' : 'pointer' ?>;">
                 <td class="ps-4 <?= $index < 3 ? ['first-row', 'second-row', 'third-row'][$index] : '' ?>">
                   <?php if ($index < 3): ?>
                     <div
@@ -63,6 +69,7 @@
                         class="mb-0 fw-bold <?= $index < 3 ? ['first-name', 'second-name', 'third-name'][$index] : '' ?>"
                         style="font-family: 'Pixelify Sans', serif;">
                         <?= htmlspecialchars($player['username'] ?? '') ?>
+                        <?= $isCurrentUser ? '<span class="text-muted ms-2">(You)</span>' : '' ?>
                       </h6>
                     </div>
                   </div>
