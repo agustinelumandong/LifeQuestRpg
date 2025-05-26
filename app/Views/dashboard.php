@@ -57,32 +57,26 @@
             <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $userStats['health'] ?>%"
               aria-valuenow="<?= $userStats['health'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
-        </div>
-
-        <!-- Level Progress -->
+        </div> <!-- Level Progress -->
         <div class="stat-box">
           <div class="d-flex justify-content-between align-items-center mb-1">
             <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-arrow-up-circle"></i>
               Level UP</span>
-            <span class="badge bg-dark"><?= $userStats['xp'] ?>/100</span>
+            <?php $xpThreshold = $userStats['level'] * 100; ?>
+            <span class="badge bg-dark"><?= $userStats['xp'] ?>/<?= $xpThreshold ?></span>
           </div>
           <div class="progress">
-            <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $userStats['xp'] ?>%"
-              aria-valuenow="<?= $userStats['xp'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
+            <?php $xpProgress = ($xpThreshold > 0) ? ($userStats['xp'] / $xpThreshold * 100) : 0; ?>
+            <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $xpProgress ?>%"
+              aria-valuenow="<?= $userStats['xp'] ?>" aria-valuemin="0" aria-valuemax="<?= $xpThreshold ?>"></div>
           </div>
-        </div>
-
-        <!-- Goal Completion -->
+        </div> <!-- Goal Information -->
         <div class="stat-box">
           <div class="d-flex justify-content-between align-items-center mb-1">
-            <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-flag-fill"></i> Goal</span>
-            <!-- <span class="badge bg-dark">10%</span> -->
+            <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-flag-fill"></i> My Goal</span>
           </div>
-
-          <h6><?= $userStats['objective'] ?></h6>
-          <!-- <div class="progress-bar bg-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0"
-              aria-valuemax="100"></div> -->
-
+          <h6 class="mb-0"><?= $userStats['objective'] ?></h6>
+          <small class="text-muted">Your personal objective</small>
         </div>
 
 
@@ -94,7 +88,13 @@
           <i class="bi bi-alarm me-2"></i> Pomodoro Timer
         </h5>
         <div class="d-flex flex-column align-items-center justify-content-center mb-3">
-          <h1 class="fw-bold text-center" style="font-family: 'Pixelify Sans', serif;">24:00</h1>
+          <h1 class="fw-bold text-center" style="font-family: 'Pixelify Sans', serif;" id="ph-time">
+            <?php
+            date_default_timezone_set('Asia/Manila');
+            echo date('H:i');
+            ?>
+          </h1>
+          <small class="text-muted mb-2">Philippine Time</small>
           <!-- <a href="#" class="focus-btn text-white ">FOCUS MODE</a> -->
           <button type="button" type="button" class="btn focus-btn text-white" data-bs-toggle="modal"
             data-bs-target="#exampleModalFullscreen"> FOCUS
@@ -157,8 +157,7 @@
                 </svg>
                 <p class="habit-label">Inventory</p>
               </a>
-            </div>
-            <div class="box col-md-4 d-flex justify-content-center">
+            </div>            <div class="box col-md-4 d-flex justify-content-center">
               <a href="/marketplace" class="habit-box">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -32 576 576" width="1em" height="1em"
                   fill="currentColor" style="font-size: 116px;color: var(--bs-dark);" class="mb-3">
@@ -334,6 +333,26 @@
 <!-- Modal -->
 <?php include __DIR__ . '/pomodoro/pomodoro.php'; ?>
 <!-- Modal -->
+
+<script>
+  // Update Philippine time every second
+  function updatePhilippineTime() {
+    const now = new Date();
+    // Convert to Philippine time (UTC+8)
+    const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
+    const hours = phTime.getHours().toString().padStart(2, '0');
+    const minutes = phTime.getMinutes().toString().padStart(2, '0');
+
+    const timeElement = document.getElementById('ph-time');
+    if (timeElement) {
+      timeElement.textContent = `${hours}:${minutes}`;
+    }
+  }
+
+  // Update time immediately and then every second
+  updatePhilippineTime();
+  setInterval(updatePhilippineTime, 1000);
+</script>
 
 <script src="<?= \App\Core\Helpers::asset('js/pomodoro.js') ?>"></script>
 
