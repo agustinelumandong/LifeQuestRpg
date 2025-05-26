@@ -8,133 +8,159 @@
     <div class="card border-dark mb-4 shadow">
       <div class="card-header bg-white">
         <div class="d-flex justify-content-between align-items-center">
-          <h2 class="my-2"><i class="bi bi-shop"></i> <?= $title ?></h2>
-          <?php if (\App\Core\Auth::isAdmin()): ?>
-            <a class="btn btn-dark shadow-sm" href="/marketplace/create">
-              <i class="bi bi-plus-circle"></i> Create Product
+          <h2 class="my-2"><i class="bi bi-shop"></i>
+            <?= $title ?></h2>
+          <div class="d-flex align-items-center">
+            <span class="badge bg-warning text-dark fs-6 me-2">
+              <i class="bi bi-coin"></i> <?= number_format($userCoins ?? 0) ?> Coins
+            </span>
+            <a href="/marketplace/inventory" class="btn btn-outline-dark btn-sm">
+              <i class="bi bi-bag"></i> My Inventory
             </a>
-          <?php endif; ?>
+          </div>
         </div>
       </div>
-
       <div class="card-body">
         <div class="mb-3 bg-light p-3 rounded border border-dark">
-          <p class="mb-0"><i class="bi bi-info-circle"></i> Available Items</p>
-        </div>
-
-        <?php if (!empty($items)): ?>
-          <?php if (\App\Core\Auth::isAdmin()): ?>
-            <div class="card border-dark shadow mb-4">
-              <div class="card-header bg-white d-flex justify-content-between align-items-center py-2">
-                <h3 class="my-2"><i class="bi bi-box-seam"></i> Product Inventory</h3>
-
-                <span class="badge bg-dark"><?= $paginator->getPageInfo()['totalItems'] ?> Items</span>
-              </div>
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                  <table class="table table-hover mb-0">
-                    <thead class="bg-dark text-white">
-                      <tr>
-                        <th class="ps-3">ID</th>
-                        <th>Product Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th class="text-end pe-3">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php foreach ($paginator->items() as $item): ?>
-                        <tr class="product-row">
-                          <td class="ps-3"><?= $item['item_id'] ?></td>
-                          <td>
-                            <div class="d-flex align-items-center">
-                              <i class="bi bi-box-seam me-2"></i>
-                              <strong><?= $item['item_name'] ?></strong>
-                            </div>
-                          </td>
-                          <td class="text-muted"><?= $item['item_description'] ?></td>
-                          <td>
-                            <div class="price-badge">
-                              <i class="bi bi-coin me-1"></i> <?= $item['item_price'] ?>
-                            </div>
-                          </td>
-                          <td class="text-end pe-3">
-                            <div class="btn-group" role="group">
-                              <a href="/marketplace/edit/<?= $item['item_id'] ?>" class="btn btn-sm btn-dark">
-                                <i class="bi bi-pencil"></i> Edit
-                              </a>
-                              <a href="/marketplace/delete/<?= $item['item_id'] ?>" class="btn btn-sm btn-outline-dark"
-                                onclick="return confirm('Are you sure you want to delete this item?')">
-                                <i class="bi bi-trash"></i> Delete
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                      <?php endforeach; ?>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Pagination -->
-              <div class="card-footer bg-white">
-                <?= $paginator->links() ?>
-              </div>
+          <div class="row">
+            <div class="col-md-6">
+              <p class="mb-0"><i class="bi bi-info-circle"></i> Available Items</p>
             </div>
-
-          <?php else: ?>
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-              <?php foreach ($paginator->items() as $item): ?>
-                <div class="col">
-                  <div class="marketplace-item border border-dark rounded shadow h-100">
-                    <div class="card-body d-flex flex-column p-3">
-                      <h5 class="card-title border-bottom border-dark pb-2">
-                        <i class="bi bi-box-seam"></i> <?= $item['item_name'] ?>
-                      </h5>
-                      <p class="card-text flex-grow-1"><?= $item['item_description'] ?></p>
-                      <div class="d-flex justify-content-between align-items-center mt-3">
-                        <div class="price-tag">
-                          <span class="fw-bold">
-                            <i class="bi bi-coin"></i> <?= $item['item_price'] ?>
-                          </span>
-                        </div>
-
-                        <?php
-                        $currentUserId = App\Core\Auth::getByUserId($currentUser);
-                        $isOwned = $currentUserId && in_array($item['item_id'], $ownedItemIds ?? []);
-                        ?>
-
-                        <?php if ($currentUserId): ?>
-                          <form action="/marketplace/purchase/<?= $currentUserId ?>/<?= $item['item_id'] ?>" method="post">
-                            <input type="hidden" name="_method" value="PUT">
-                            <?php if ($isOwned): ?>
-                              <button type="button" class="btn btn-secondary btn-sm" disabled>
-                                <i class="bi bi-check-circle"></i> Owned
-                              </button>
-                            <?php else: ?>
-                              <button type="submit" class="btn btn-dark btn-sm purchase-btn">
-                                <i class="bi bi-bag"></i> Buy
-                              </button>
-                            <?php endif; ?>
-                          </form>
-                        <?php else: ?>
-                          <a href="/login" class="btn btn-dark btn-sm">
-                            <i class="bi bi-key"></i> Login to Buy
-                          </a>
-                        <?php endif; ?>
-                      </div>
-                    </div>
-                  </div>
+            <div class="col-md-6">
+              <form id="categoryFilterForm" method="get" class="d-flex justify-content-end" action="/marketplace">
+                <div class="input-group">
+                  <label class="input-group-text" for="categoryFilter">Category</label>
+                  <select class="form-select" id="categoryFilter" name="category" onchange="this.form.submit()">
+                    <option value="all" <?= $selectedCategory == 'all' ? 'selected' : '' ?>>All Categories</option>
+                    <?php foreach ($categories as $category): ?>
+                      <option value="<?= $category['category_id'] ?>" <?= $selectedCategory == $category['category_id'] ? 'selected' : '' ?>>
+                        <?= $category['category_name'] ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
                 </div>
-              <?php endforeach; ?>
+                <!-- Hidden field to preserve page parameter when filtering -->
+                <?php if (isset($_GET['page']) && $_GET['page'] > 1): ?>
+                  <input type="hidden" name="page" value="<?= htmlspecialchars($_GET['page']) ?>">
+                <?php endif; ?>
+              </form>
             </div>
-            <?= $paginator->links() ?>
-          <?php endif; ?>
-        <?php else: ?>
+          </div>
+        </div><?php if (empty($items)): ?>
           <div class="alert alert-dark text-center" role="alert">
             <i class="bi bi-emoji-dizzy display-4 d-block mb-3"></i>
             <p class="mb-0">No items found in the marketplace. Check back later!</p>
           </div>
+        <?php else: ?>
+          <!-- Items Display Grid -->
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <?php foreach ($items as $item): ?>
+              <div class="col">
+                <div class="marketplace-item border border-dark rounded shadow h-100"
+                  data-item-id="<?= $item['item_id'] ?? '' ?>">
+                  <div class="card-body d-flex flex-column p-3">
+                    <!-- Item Header with Category Badge -->
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h5 class="card-title mb-0">
+                        <i class="bi bi-box-seam"></i> <?= $item['item_name'] ?>
+                      </h5>
+                      <?php if (!empty($item['category_name'])): ?>
+                        <span class="badge bg-dark rounded-pill">
+                          <?= $item['category_name'] ?>
+                        </span>
+                      <?php endif; ?>
+                    </div>
+
+                    <hr class="my-2">
+
+                    <!-- Item image if available -->
+                    <?php if (!empty($item['image_url'])): ?>
+                      <div class="text-center mb-2">
+                        <img src="<?= $item['image_url'] ?>" alt="<?= $item['item_name'] ?>" class="img-fluid item-image"
+                          style="max-height: 80px;">
+                      </div>
+                    <?php endif; ?>
+
+                    <!-- Item description -->
+                    <p class="card-text flex-grow-1"><?= $item['item_description'] ?? 'No description available' ?></p>
+                    <!-- Item type and effects -->
+                    <?php if (!empty($item['item_type'])): ?>
+                      <div class="small mb-2">
+                        <span class="badge bg-secondary">
+                          <?= ucfirst($item['item_type']) ?>
+                        </span>
+
+                        <!-- Add purchase type indicator -->
+                        <?php
+                        $itemType = $item['item_type'] ?? '';
+                        $isOneTime = in_array($itemType, ['collectible', 'equipment']);
+                        ?>
+                        <span class="badge <?= $isOneTime ? 'bg-warning text-dark' : 'bg-info' ?> ms-1">
+                          <?= $isOneTime ? 'One-time' : 'Multi-buy' ?>
+                        </span>
+
+                        <?php if (!empty($item['effect_type']) && !empty($item['effect_value'])): ?>
+                          <div class="mt-1 p-1 bg-light rounded">
+                            <strong><?= ucwords(str_replace('_', ' ', $item['effect_type'])) ?>:</strong>
+                            <?= $item['effect_value'] ?>
+                          </div>
+                        <?php endif; ?>
+                      </div>
+                    <?php endif; ?><!-- Price and Purchase Button -->
+                    <div class="mt-auto">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-warning text-dark fs-6">
+                          <i class="bi bi-coin"></i> <?= number_format($item['item_price'] ?? 0) ?>
+                        </span>
+                        <?php
+                        $isOwned = in_array($item['item_id'], $ownedItemIds ?? []);
+                        $itemType = $item['item_type'] ?? '';
+                        $isOneTimePurchase = in_array($itemType, ['collectible', 'equipment']);
+                        ?>
+
+                        <?php if ($isOwned && $isOneTimePurchase): ?>
+                          <span class="badge bg-success">Owned</span>
+                        <?php elseif ($isOwned && !$isOneTimePurchase): ?>
+                          <span class="badge bg-info">Owned (Can buy more)</span>
+                        <?php endif; ?>
+                      </div>
+
+                      <?php if (!$isOwned || !$isOneTimePurchase): ?>
+                        <?php if (!$isOneTimePurchase): ?>
+                          <!-- Show quantity selector for multi-purchase items -->
+                          <form action="/marketplace/purchase/<?= App\Core\Auth::getByUserId() ?>/<?= $item['item_id'] ?>"
+                            method="POST" class="d-flex gap-1">
+                            <input type="number" name="quantity" value="1" min="1" max="10" class="form-control form-control-sm"
+                              style="width: 60px;" title="Quantity">
+                            <button type="submit" class="btn btn-sm btn-primary flex-grow-1">
+                              <i class="bi bi-cart-plus"></i> Buy
+                            </button>
+                          </form>
+                        <?php else: ?>
+                          <!-- Simple purchase button for one-time items -->
+                          <a href="/marketplace/purchase/<?= App\Core\Auth::getByUserId() ?>/<?= $item['item_id'] ?>"
+                            class="btn btn-sm btn-primary w-100">
+                            <i class="bi bi-cart-plus"></i> Purchase
+                          </a>
+                        <?php endif; ?>
+                      <?php else: ?>
+                        <button class="btn btn-sm btn-secondary w-100" disabled>
+                          <i class="bi bi-check-circle"></i> Already Owned
+                        </button>
+                      <?php endif; ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+
+          <!-- Pagination -->
+          <?php if (isset($paginator) && method_exists($paginator, 'links')): ?>
+            <div class="mt-4">
+              <?= $paginator->links() ?>
+            </div>
+          <?php endif; ?>
         <?php endif; ?>
 
       </div>
@@ -144,61 +170,61 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', functi  on() {
     const contentContainer = document.getElementById('pagination-content');
 
     // Handle pagination clicks
-    contentContainer.addEventListener('click', function (e) {
+    contentContainer.add  EventListener('click', function(e) {
       const link = e.target.closest('a');
-      if (link && link.getAttribute('href').includes('page=')) {
+      if (link &  & link.getAttribute('href').includes('page=  ')) {
         e.preventDefault();
-        const url = link.getAttribute('href');
+        const url = link.getAttr  ibute('href');
 
-        // Show loading state
-        contentContainer.style.opacity = '0.5';
+        // Sh  ow loading state
+        contentContainer.style.o  pacity = '0.5';
 
-        // Fetch the new page content
+        // Fet  ch the new page content
         fetch(url)
           .then(response => response.text())
           .then(html => {
-            // Create a temporary element to parse the HTML
+            // Create a temporary element   to parse the HTML
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
 
-            // Extract just the pagination content
-            const newContent = tempDiv.querySelector('#pagination-content');
+            // Extract just the   pagination content
+            const ne  wContent = tempDiv.querySelector('#pagination-conten  t');
 
             if (newContent) {
-              // Replace only the content inside the container
+              // Replace only the content i  nside the container
               contentContainer.innerHTML = newContent.innerHTML;
             } else {
-              console.error('Could not find pagination content in response');
+              console.error('Could not find pagination   content in response');
             }
 
             contentContainer.style.opacity = '1';
 
-            // Update browser history
-            window.history.pushState({}, '', url);
+            // Update browse  r history
+            window.history.pushState({}, '  ', url);
           })
           .catch(error => {
             console.error('Error:', error);
-            contentContainer.style.opacity = '1';
+            contentContainer.style.opaci  ty = '1';
           });
       }
     });
 
-    // Handle browser back/forward buttons
-    window.addEventListener('popstate', function () {
-      fetch(window.location.href)
-        .then(response => response.text())
-        .then(html => {
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = html;
+  // Handle browser back/forward buttons
+  window.a  ddEventListener('popstat  e', functi  on() {
+    fetch(window.location.href)
+    .then(response => response.text())
+    .then(html => {
+      const tempDiv = document.createElement('div');
+          te  mpDiv.innerHTML = html;
 
-          const newContent = tempDiv.querySelector('#pagination-content');
-          if (newContent) {
-            contentContainer.innerHTML = newContent.innerHTML;
-          }
+      const newContent = tempDiv.querySelector('#pagin  ation-content');
+      if (newCont  ent) {
+    contentContainer.innerHTML = newContent.innerHTML;
+  }
         });
     });
   });
