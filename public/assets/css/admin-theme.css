@@ -1,0 +1,925 @@
+/* Admin Theme CSS - Matching LifeQuestRPG Theme */
+
+/* Admin Dashboard Styles */
+.admin-dashboard {
+  padding: 1.5rem;
+  min-height: calc(100vh - 56px);
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* Admin Navigation Bar */
+.admin-nav {
+  background-color: white !important;
+  border: 1px solid #212529;
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin-nav a {
+  padding: 0.75rem 1.25rem;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.admin-nav a.active {
+  background-color: #212529;
+  color: white;
+}
+
+.admin-nav a:not(.active) {
+  background-color: transparent;
+  color: #212529;
+}
+
+.admin-nav a:not(.active):hover {
+  background-color: #f8f9fa;
+  color: #212529;
+  transform: translateY(-3px);
+}
+
+/* Card Components */
+.admin-card {
+  background-color: white;
+  border: 1px solid #212529;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+}
+
+.admin-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+.admin-card h2,
+.admin-card h3 {
+  color: #212529;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-family: 'Pixelify Sans', serif;
+}
+
+/* Enhanced Stat Cards */
+.stat-card {
+  background-color: white;
+  color: #212529;
+  border-radius: 8px;
+  border: 1px solid #212529;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+.stat-card .stat-title {
+  font-family: 'Pixelify Sans', serif;
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.stat-card h3 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stat-card .stat-footer {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.stat-card .stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.stat-icon.bg-primary {
+  background-color: #0d6efd;
+}
+
+.stat-icon.bg-success {
+  background-color: #198754;
+}
+
+.stat-icon.bg-purple {
+  background-color: #6f42c1;
+}
+
+.stat-icon.bg-warning {
+  background-color: #ffc107;
+}
+
+/* Progress Bars */
+.progress-container {
+  margin-bottom: 1rem;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.progress {
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  border-radius: 5px;
+  transition: width 1s ease;
+}
+
+.progress-bar.blue {
+  background-color: #212529;
+}
+
+.progress-bar.green {
+  background-color: #10b981;
+}
+
+.progress-bar.yellow {
+  background-color: #ffc107;
+}
+
+.progress-bar.red {
+  background-color: #dc3545;
+}
+
+/* Tables */
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid #212529;
+  border-radius: 8px;
+}
+
+.admin-table th {
+  background-color: #f8f9fa;
+  color: #212529;
+  font-weight: 600;
+  font-family: 'Pixelify Sans', serif;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.025em;
+  text-align: left;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #212529;
+}
+
+.admin-table td {
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #212529;
+  vertical-align: middle;
+}
+
+.admin-table tbody tr {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+  background-color: rgba(243, 244, 246, 0.5);
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* RPG-style Tables */
+.rpg-table {
+  border: 1px solid #212529;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.rpg-table thead {
+  background-color: #212529;
+  color: white;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.rpg-table th {
+  border: none;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+}
+
+.rpg-table tbody tr {
+  transition: background-color 0.3s ease;
+}
+
+.rpg-table tbody tr:hover {
+  background-color: rgba(33, 37, 41, 0.05);
+}
+
+.rpg-table td {
+  vertical-align: middle;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.rpg-table .action-cell {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Quick Action Cards */
+.action-card {
+  padding: 1.5rem;
+  border: 1px solid #212529;
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 150px;
+  background-color: white;
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.action-card .icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.action-card .title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.action-card .subtitle {
+  font-size: 0.875rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* User Activity Feed */
+.activity-feed {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  padding: 10px;
+  border-left: 3px solid #212529;
+  background-color: #f8f9fa;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.activity-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.activity-dot {
+  position: absolute;
+  left: -8px;
+  top: 15px;
+  width: 14px;
+  height: 14px;
+  background-color: #212529;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+.activity-content {
+  flex-grow: 1;
+}
+
+.activity-title {
+  font-weight: 600;
+  margin: 0;
+}
+
+.activity-time {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* System Health Indicators */
+.health-indicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  transition: transform 0.2s;
+  border: 1px solid #212529;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: white;
+}
+
+.health-indicator:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.health-status {
+  display: flex;
+  align-items: center;
+}
+
+.health-status .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.health-status .dot.green {
+  background-color: #10b981;
+}
+
+.health-status .dot.yellow {
+  background-color: #ffc107;
+}
+
+.health-status .dot.red {
+  background-color: #dc3545;
+}
+
+/* Search and Filter */
+.admin-search {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.admin-search input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  border: 1px solid #212529;
+  border-radius: 8px;
+  background-color: white;
+  transition: box-shadow 0.3s ease;
+}
+
+.admin-search input:focus {
+  outline: none;
+  border-color: #212529;
+  box-shadow: 0 0 0 3px rgba(33, 37, 41, 0.2);
+}
+
+.admin-search .search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #212529;
+}
+
+/* Button Styles */
+.admin-btn {
+  background-color: #212529;
+  color: white;
+  border: none;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.admin-btn:hover {
+  background-color: #343A40;
+  transform: translateY(-2px);
+}
+
+/* RPG-style Buttons */
+.rpg-btn {
+  background-color: #212529;
+  color: white;
+  border: none;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-family: 'Pixelify Sans', serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.rpg-btn:hover {
+  background-color: #343A40;
+  transform: translateY(-2px);
+  color: white;
+}
+
+.rpg-btn-primary {
+  background-color: #0d6efd;
+}
+
+.rpg-btn-primary:hover {
+  background-color: #0b5ed7;
+}
+
+.rpg-btn-success {
+  background-color: #198754;
+}
+
+.rpg-btn-success:hover {
+  background-color: #157347;
+}
+
+.rpg-btn-danger {
+  background-color: #dc3545;
+}
+
+.rpg-btn-danger:hover {
+  background-color: #bb2d3b;
+}
+
+.rpg-btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.rpg-btn-warning:hover {
+  background-color: #ffca2c;
+  color: #212529;
+}
+
+.rpg-btn-outline {
+  background-color: transparent;
+  border: 1px solid #212529;
+  color: #212529;
+}
+
+.rpg-btn-outline:hover {
+  background-color: #212529;
+  color: white;
+}
+
+/* Form Elements */
+.rpg-form-control {
+  border: 1px solid #212529;
+  border-radius: 5px;
+  padding: 0.5rem 0.75rem;
+  font-family: 'Open Sans', sans-serif;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rpg-form-control:focus {
+  border-color: #6f42c1;
+  box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.25);
+  outline: none;
+}
+
+.rpg-form-label {
+  font-family: 'Pixelify Sans', serif;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.rpg-form-select {
+  border: 1px solid #212529;
+  border-radius: 5px;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 16px 12px;
+  appearance: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rpg-form-select:focus {
+  border-color: #6f42c1;
+  box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.25);
+  outline: none;
+}
+
+/* Modal Styling */
+.rpg-modal .modal-content {
+  border: 1px solid #212529;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.rpg-modal .modal-header {
+  background-color: #212529;
+  color: white;
+  font-family: 'Pixelify Sans', serif;
+  padding: 1rem 1.5rem;
+}
+
+.rpg-modal .modal-title {
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.rpg-modal .close {
+  color: white;
+  opacity: 1;
+  transition: transform 0.3s ease;
+}
+
+.rpg-modal .close:hover {
+  transform: rotate(90deg);
+}
+
+.rpg-modal .modal-body {
+  padding: 1.5rem;
+}
+
+.rpg-modal .modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #dee2e6;
+}
+
+/* Badge Styling */
+.rpg-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 4px;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.rpg-badge-primary {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.rpg-badge-success {
+  background-color: #198754;
+  color: white;
+}
+
+.rpg-badge-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.rpg-badge-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.rpg-badge-dark {
+  background-color: #212529;
+  color: white;
+}
+
+/* List Group Styling */
+.rpg-list-group {
+  border: 1px solid #212529;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.rpg-list-group-item {
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid #dee2e6;
+  padding: 0.75rem 1.25rem;
+  transition: background-color 0.3s ease;
+}
+
+.rpg-list-group-item:first-child {
+  border-top: none;
+}
+
+.rpg-list-group-item:hover {
+  background-color: rgba(33, 37, 41, 0.05);
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Analytics Page */
+.analytics-container {
+  background-color: white;
+  border: 1px solid #212529;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.analytics-container:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+.analytics-container h2 {
+  font-family: 'Pixelify Sans', serif;
+  color: #212529;
+  border-bottom: 1px solid #212529;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* User Management */
+.user-card {
+  background: white;
+  border: 1px solid #212529;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.user-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.badge {
+  background-color: #212529;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+}
+
+/* Content Management */
+.content-panel {
+  background: white;
+  border: 1px solid #212529;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.content-panel:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+.content-panel h3 {
+  font-family: 'Pixelify Sans', serif;
+  color: #212529;
+  margin-bottom: 1rem;
+}
+
+/* Marketplace Management */
+.item-card {
+  background: white;
+  border: 1px solid #212529;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.item-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+.item-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .admin-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-nav a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .grid-cols {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* TailwindCSS Legacy Compatibility (for content/user management pages) */
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.space-x-4>*+* {
+  margin-left: 1rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.bg-blue-500 {
+  background-color: #3b82f6;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.hover\:bg-blue-600:hover {
+  background-color: #2563eb;
+}
+
+.bg-blue-700 {
+  background-color: #1d4ed8;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+.space-x-2>*+* {
+  margin-left: 0.5rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.max-w-md {
+  max-width: 28rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Converting TailwindCSS elements to our theme */
+.px-3.py-2.bg-blue-500.text-white.rounded,
+.px-3.py-2.bg-blue-700.text-white.rounded {
+  background-color: #212529;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-family: 'Pixelify Sans', serif;
+  font-weight: 600;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.px-3.py-2.bg-blue-500.text-white.rounded:hover {
+  background-color: #343A40;
+  transform: translateY(-3px);
+}
+
+.bg-white.p-4.rounded-lg.shadow-sm {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #212529;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.min-w-full.divide-y.divide-gray-200 {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #212529;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bg-gray-50 th {
+  background-color: #f8f9fa;
+  color: #212529;
+  font-weight: 600;
+  font-family: 'Pixelify Sans', serif;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid #212529;
+}
