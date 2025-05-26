@@ -9,7 +9,7 @@
         <i class="bi bi-arrow-left"></i>
         Back to Dashboard
       </a>
-      
+
     </div>
 
     <!-- User Profile -->
@@ -44,30 +44,25 @@
                   <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $userStats['health'] ?>%"
                     aria-valuenow="<?= $userStats['health'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-              </div>
-              <!-- Goal Completion -->
+              </div> <!-- Goal Information -->
               <div class="stat-box">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-                  <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-flag-fill"></i> Goal
-                    Completion</span>
-                  <span class="badge bg-dark">10%</span>
+                  <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-flag-fill"></i> My Goal</span>
                 </div>
-                <div class="progress">
-                  <div class="progress-bar bg-dark" role="progressbar" style="width: 10%" aria-valuenow="10"
-                    aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-              <!-- Level Progress -->
+                <h6 class="mb-0"><?= $userStats['objective'] ?></h6>
+                <small class="text-muted">Your personal objective</small>
+              </div><!-- Level Progress -->
               <div class="stat-box">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                   <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-arrow-up-circle"></i>
                     Level UP</span>
-                  <span class="badge bg-dark"><?= $userStats['xp'] ?>/100</span>
+                  <?php $xpThreshold = $userStats['level'] * 100; ?>
+                  <span class="badge bg-dark"><?= $userStats['xp'] ?>/<?= $xpThreshold ?></span>
                 </div>
                 <div class="progress">
-                  <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $userStats['xp'] ?>%"
-                    aria-valuenow="<?= $userStats['xp'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                  <?php $xpProgress = ($xpThreshold > 0) ? ($userStats['xp'] / $xpThreshold * 100) : 0; ?>
+                  <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $xpProgress ?>%"
+                    aria-valuenow="<?= $userStats['xp'] ?>" aria-valuemin="0" aria-valuemax="<?= $xpThreshold ?>"></div>
                 </div>
               </div>
 

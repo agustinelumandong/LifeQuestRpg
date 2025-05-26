@@ -41,6 +41,11 @@ class HomeController extends Controller
     $events = $this->taskEventModel->getAllActiveEvents();
     $view = !$currentUser ? 'home' : 'dashboard';
 
+    if ($currentUser && Auth::isAdmin()) {
+      // If admin, redirect to admin dashboard
+      $this->redirect('/admin');
+    }
+
     // Only load user-specific data if logged in
     $userStats = null;
     $activities = [];

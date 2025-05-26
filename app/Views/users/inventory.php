@@ -12,15 +12,57 @@
 
       <div class="card-body">
         <?php if (!empty($items)): ?>
-          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            <?php foreach ($paginator->items() as $item): ?>
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4"> <?php foreach ($paginator->items() as $item): ?>
               <div class="col">
                 <div class="inventory-item border border-dark rounded shadow h-100">
                   <div class="card-body d-flex flex-column p-3">
-                    <h5 class="card-title border-bottom border-dark pb-2">
-                      <i class="bi bi-box-seam"></i> <?= $item['item_name'] ?>
-                    </h5>
+                    <!-- Item Header with Category Badge -->
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h5 class="card-title mb-0">
+                        <i class="bi bi-box-seam"></i> <?= $item['item_name'] ?>
+                      </h5>
+                      <?php if (!empty($item['category_name'])): ?>
+                        <span class="badge bg-dark rounded-pill">
+                          <?= $item['category_name'] ?>
+                        </span>
+                      <?php endif; ?>
+                    </div>
+
+                    <hr class="my-2">
+
+                    <!-- Item image if available -->
+                    <?php if (!empty($item['image_url'])): ?>
+                      <div class="text-center mb-3">
+                        <img src="<?= $item['image_url'] ?>" alt="<?= $item['item_name'] ?>" class="img-fluid item-image"
+                          style="max-height: 80px;">
+                      </div>
+                    <?php endif; ?>
+
+                    <!-- Item description -->
                     <p class="card-text flex-grow-1"><?= $item['item_description'] ?? 'No description available' ?></p>
+
+                    <!-- Item type and effects -->
+                    <?php if (!empty($item['item_type'])): ?>
+                      <div class="item-attributes small mb-2">
+                        <span class="item-type-badge item-type-<?= $item['item_type'] ?>">
+                          <?= ucfirst($item['item_type']) ?>
+                        </span>
+
+                        <?php if (!empty($item['effect_type']) && !empty($item['effect_value'])): ?>
+                          <div class="effect-display mt-1">
+                            <strong><?= ucwords(str_replace('_', ' ', $item['effect_type'])) ?>:</strong>
+                            <?= $item['effect_value'] ?>
+                          </div>
+                        <?php endif; ?>
+                      </div>
+                    <?php endif; ?>
+
+                    <!-- Use item button for appropriate item types -->
+                    <?php if (!empty($item['item_type']) && in_array($item['item_type'], ['consumable', 'boost', 'equipment'])): ?>
+                      <a href="/marketplace/use-item/<?= $item['inventory_id'] ?>" class="btn btn-sm btn-primary mt-2">
+                        <?= $item['item_type'] === 'equipment' ? 'Equip' : 'Use Item' ?>
+                      </a>
+                    <?php endif; ?>
                   </div>
                 </div>
               </div>
@@ -38,63 +80,3 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const contentContainer = document.getElementById('pagination-content');
-
-    // Handle pagination clicks
-    contentContainer.addEventListener('click', function (e) {
-      const link = e.target.closest('a');
-      if (link && link.getAttribute('href').includes('page=')) {
-        e.preventDefault();
-        const url = link.getAttribute('href');
-
-        // Show loading state
-        contentContainer.style.opacity = '0.5';
-
-        // Fetch the new page content
-        fetch(url)
-          .then(response => response.text())
-          .then(html => {
-            // Create a temporary element to parse the HTML
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-
-            // Extract just the pagination content
-            const newContent = tempDiv.querySelector('#pagination-content');
-
-            if (newContent) {
-              // Replace only the content inside the container
-              contentContainer.innerHTML = newContent.innerHTML;
-            } else {
-              console.error('Could not find pagination content in response');
-            }
-
-            contentContainer.style.opacity = '1';
-
-            // Update browser history
-            window.history.pushState({}, '', url);
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            contentContainer.style.opacity = '1';
-          });
-      }
-    });
-
-    // Handle browser back/forward buttons
-    window.addEventListener('popstate', function () {
-      fetch(window.location.href)
-        .then(response => response.text())
-        .then(html => {
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = html;
-
-          const newContent = tempDiv.querySelector('#pagination-content');
-          if (newContent) {
-            contentContainer.innerHTML = newContent.innerHTML;
-          }
-        });
-    });
-  });
-</script>
