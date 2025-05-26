@@ -101,4 +101,29 @@ class TaskEvent extends Model
       ->execute()
       ->rowCount();
   }
+  /**
+   * Get a count of all task events
+   * @return int
+   */
+  public function count()
+  {
+    $result = self::$db->query("SELECT COUNT(*) as count FROM " . static::$table)
+      ->execute()
+      ->fetch();
+    return $result ? (int) ($result['count'] ?? 0) : 0;
+  }
+
+  /**
+   * Get recent task events
+   * @param int $limit
+   * @return array
+   */
+  public function getRecent($limit = 5)
+  {
+    // Using start_date as the ordering column since it's likely to be present in task_events table
+    return self::$db->query("SELECT * FROM " . static::$table . " ORDER BY id DESC LIMIT ?")
+      ->bind([1 => $limit])
+      ->execute()
+      ->fetchAll();
+  }
 }
