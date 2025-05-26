@@ -52,8 +52,7 @@ class UserStats extends Model
 
         return self::$db->query($sql)
             ->bind([1 => $user_id])
-            ->execute()
-            ->fetch();
+            ->execute()->fetch();
     }
 
     /**

@@ -28,17 +28,21 @@ class UserController extends Controller
     $this->activityLogModel = new ActivityLog();
     $this->streakModel = new Streak();
   }
-
-
   public function index()
   {
+    // Get all users from the database
     $users = $this->userModel->all();
-    $email = $this->userModel->find($users[0]['id']) ?? null;
+
+    // Simple sorting - newest first
+    if (!empty($users)) {
+      usort($users, function ($a, $b) {
+        return $b['id'] - $a['id']; // Sort by ID descending
+      });
+    }
 
     return $this->view('users/index', [
-      'title' => 'Users',
-      'users' => $users,
-      'email' => $email
+      'title' => 'User Management',
+      'users' => $users
     ]);
   }
 
@@ -48,35 +52,126 @@ class UserController extends Controller
       'title' => 'Create User'
     ]);
   }
-
   public function store()
   {
+    // Validate required fields
+    if (!Input::post('name') || !Input::post('email') || !Input::post('password') || !Input::post('password_confirmation')) {
+      $_SESSION['error'] = 'All fields are required!';
+      $this->redirect('/users/create');
+      return;
+    }
+
+    // Check if the email already exists
+    if (Input::post('email') && $this->userModel->findByEmail(Input::post('email'))) {
+      $_SESSION['error'] = 'Email already exists!';
+      $this->redirect('/users/create');
+      return;
+    }
+
+    // Check if the password and confirmation match
+    if (Input::post('password') !== Input::post('password_confirmation')) {
+      $_SESSION['error'] = 'Passwords do not match!';
+      $this->redirect('/users/create');
+      return;
+    }    
+    // Get form data
+    $username = Input::post('username');
+    $role = Input::post('role');
+
+    // Only allow setting admin role if current user is admin
+    if ($role === 'admin' && !Auth::isAdmin()) {
+      $role = 'user'; // Force to user if not admin
+    }
+
+    // Create the user with provided data
     $data = Input::sanitize([
       'name' => Input::post('name'),
       'email' => Input::post('email'),
-      'password' => password_hash(Input::post('password'), PASSWORD_DEFAULT)
+      'role' => $role ?? 'user',
+      'username' => !empty($username) ? $username : Input::post('name'), // Use provided username or default to name
+      'password' => password_hash(Input::post('password'), PASSWORD_DEFAULT),
+      'coins' => 0, // Initial coins
+      'created_at' => date('Y-m-d H:i:s')
     ]);
 
     $userId = $this->userModel->create($data);
 
     if ($userId) {
+      // Initialize streak records for the new user
+      try {
+        $this->streakModel->initializeAllStreaks((int) $userId);
+      } catch (Exception $e) {
+        error_log("Failed to initialize streaks: " . $e->getMessage());
+        // Continue anyway, not critical
+      }
+
+      // Initialize user stats
+      try {
+        $this->initializeUserStats($userId);
+      } catch (Exception $e) {
+        error_log("Failed to initialize stats: " . $e->getMessage());
+        // Continue anyway, not critical
+      }
+
       $_SESSION['success'] = 'User created successfully!';
-      $this->redirect('/users');
+
+      // Determine if we're in the admin section or regular user management
+      $referrer = $_SERVER['HTTP_REFERER'] ?? '';
+      if (strpos($referrer, '/admin/') !== false) {
+        $this->redirect('/admin/users');
+      } else {
+        $this->redirect('/users');
+      }
     } else {
       $_SESSION['error'] = 'Failed to create user.';
       $this->redirect('/users/create');
     }
   }
-
   public function show($id)
   {
     $user = $this->userModel->find($id);
     $userStats = $this->userStatsModel->getUserStatsByUserId($id);
+    $currentUser = Auth::user();
 
-    if (!$user || !$userStats) {
+    if (!$user) {
       $_SESSION['error'] = 'User not found';
       header('Location: /leaderboard');
       exit;
+    }
+
+    // Get current user ID safely
+    $currentUserId = null;
+    if (is_array($currentUser)) {
+      $currentUserId = $currentUser['id'] ?? null;
+    } elseif (is_object($currentUser)) {
+      $currentUserId = $currentUser->id ?? null;
+    }
+
+    // Admin view shows a simplified version
+    if (Auth::isAdmin() && $currentUserId != $id) {
+      return $this->view('users/admin_show', [
+        'title' => 'View User',
+        'user' => $user,
+        'userStats' => $userStats
+      ]);
+    }
+
+    // If userStats is not found, try to handle it gracefully
+    if (!$userStats) {
+      $_SESSION['warning'] = 'User stats not found. Some data may be missing.';
+      $userStats = [
+        'physicalHealth' => 0,
+        'mentalWellness' => 0,
+        'personalGrowth' => 0,
+        'careerStudies' => 0,
+        'finance' => 0,
+        'homeEnvironment' => 0,
+        'relationshipsSocial' => 0,
+        'passionHobbies' => 0,
+        'level' => 1,
+        'xp' => 0,
+        'health' => 100
+      ];
     }
 
     // Format skills data for the chart
@@ -168,7 +263,6 @@ class UserController extends Controller
       'user' => $user
     ]);
   }
-
   public function update($id)
   {
     $data = Input::sanitize([
@@ -176,8 +270,18 @@ class UserController extends Controller
       'email' => Input::post('email')
     ]);
 
+    // Handle password update with confirmation
     if (Input::post('password')) {
-      $data['password'] = password_hash(Input::post('password'), PASSWORD_DEFAULT);
+      if (Input::post('password') !== Input::post('password_confirmation')) {
+        $_SESSION['error'] = 'Password and confirmation do not match.';
+        $this->redirect("/users/{$id}/edit");
+        return;
+      }
+
+      // Only update password if it's not empty and confirmation matches
+      if (strlen(Input::post('password')) > 0) {
+        $data['password'] = password_hash(Input::post('password'), PASSWORD_DEFAULT);
+      }
     }
 
     $updated = $this->userModel->update($id, $data);
@@ -211,47 +315,8 @@ class UserController extends Controller
 
   public function inventory()
   {
-    // Get the logged-in user
-    $user = Auth::user();
-
-    // Check if user exists
-    if (!$user) {
-      $_SESSION['error'] = 'User not found or not logged in.';
-      $this->redirect('/');
-      return;
-    }
-    // Get user ID more reliably
-    $userId = $user['id'] ?? $user->id ?? null;
-
-
-    if (!$userId) {
-      $_SESSION['error'] = 'Invalid user data.';
-      $this->redirect('/');
-      return;
-    }
-
-    try {
-      $currentPage = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-      // Implement pagination for inventory items
-      $paginator = $this->userInventoryModel->getPaginatedUserItemNames(
-        userId: $userId,
-        page: $currentPage,
-        perPage: 12,
-        orderBy: 'user_id',
-        direction: 'DESC'
-      );
-
-
-    } catch (Exception $e) {
-      $_SESSION['error'] = 'Failed to fetch user items: ' . $e->getMessage();
-      $paginator = null;
-    }
-
-    return $this->view('users/inventory', [
-      'title' => 'Inventory',
-      'items' => $paginator ? $paginator->items() : [],
-      'paginator' => $paginator,
-    ]);
+    // Redirect to MarketplaceController inventory
+    return $this->redirect('/marketplace/inventory');
   }
 
   public function profile()
@@ -541,5 +606,219 @@ class UserController extends Controller
       $_SESSION['error'] = 'Failed to delete account. Please try again.';
       $this->redirect('/settings');
     }
+  }  /**
+     * Initialize user stats for a new user
+     * 
+     * @param int $userId The user ID
+     * @return bool True if successful, false otherwise
+     */
+  private function initializeUserStats($userId)
+  {
+    $defaultStats = [
+      'user_id' => $userId,
+      'avatar_id' => 1,
+      'objective' => 'Become the best version of myself',
+      'level' => 1,
+      'xp' => 0,
+      'health' => 100,
+      'physicalHealth' => 20,
+      'mentalWellness' => 20,
+      'personalGrowth' => 20,
+      'careerStudies' => 20,
+      'finance' => 20,
+      'homeEnvironment' => 20,
+      'relationshipsSocial' => 20,
+      'passionHobbies' => 20
+    ];
+
+    try {
+      return $this->userStatsModel->createUserStats($defaultStats);
+    } catch (Exception $e) {
+      error_log("Failed to initialize user stats: " . $e->getMessage());
+      return false;
+    }
+  }
+
+  /**
+   * Reset a user's password to a random string and email it to them
+   * 
+   * @param int $id User ID
+   * @return void
+   */
+  public function resetPassword($id)
+  {
+    // Check if admin
+    if (!Auth::isAdmin()) {
+      http_response_code(403);
+      echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+      exit;
+    }
+
+    // Find the user
+    $user = $this->userModel->find($id);
+    if (!$user) {
+      http_response_code(404);
+      echo json_encode(['success' => false, 'message' => 'User not found']);
+      exit;
+    }
+
+    // Generate a random password
+    $newPassword = bin2hex(random_bytes(4)); // 8 character password
+
+    // Update the user's password
+    $updated = $this->userModel->update($id, [
+      'password' => password_hash($newPassword, PASSWORD_DEFAULT)
+    ]);
+
+    if ($updated) {
+      // In a real application, you would email the password to the user
+      // For demonstration purposes, we'll just return it in the response
+      echo json_encode([
+        'success' => true,
+        'message' => 'Password reset successfully',
+        'newPassword' => $newPassword
+      ]);
+    } else {
+      http_response_code(500);
+      echo json_encode(['success' => false, 'message' => 'Failed to reset password']);
+    }
+    exit;
+  }
+
+  /**
+   * Toggle a user's active status
+   * 
+   * @param int $id User ID
+   * @return void
+   */
+  public function toggleStatus($id)
+  {
+    // Check if admin
+    if (!Auth::isAdmin()) {
+      http_response_code(403);
+      echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+      exit;
+    }
+
+    // Find the user
+    $user = $this->userModel->find($id);
+    if (!$user) {
+      http_response_code(404);
+      echo json_encode(['success' => false, 'message' => 'User not found']);
+      exit;
+    }
+
+    // Don't allow toggling admin users (except by themselves)
+    if (isset($user['role']) && $user['role'] === 'admin') {
+      http_response_code(403);
+      $message = Auth::user()['id'] == $id ? 'Cannot disable your own admin account' : 'Cannot disable other admin accounts';
+      echo json_encode(['success' => false, 'message' => $message]);
+      exit;
+    }
+
+    // Toggle the status
+    $isCurrentlyActive = !isset($user['is_disabled']) || !$user['is_disabled'];
+    $updated = $this->userModel->update($id, [
+      'is_disabled' => $isCurrentlyActive ? 1 : 0
+    ]);
+
+    if ($updated) {
+      echo json_encode([
+        'success' => true,
+        'message' => $isCurrentlyActive ? 'User disabled successfully' : 'User enabled successfully',
+        'newStatus' => !$isCurrentlyActive
+      ]);
+    } else {
+      http_response_code(500);
+      echo json_encode(['success' => false, 'message' => 'Failed to update user status']);
+    }
+    exit;
+  }
+
+  /**
+   * Process bulk actions on users
+   * 
+   * @return void
+   */
+  public function bulkAction()
+  {
+    // Check if admin
+    if (!Auth::isAdmin()) {
+      http_response_code(403);
+      echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+      exit;
+    }
+
+    $action = Input::post('action');
+    $userIds = Input::post('user_ids');
+
+    if (empty($userIds) || !is_array($userIds)) {
+      http_response_code(400);
+      echo json_encode(['success' => false, 'message' => 'No users selected']);
+      exit;
+    }
+
+    $successCount = 0;
+    $failCount = 0;
+
+    switch ($action) {
+      case 'delete':
+        foreach ($userIds as $userId) {
+          // Skip admin users
+          $user = $this->userModel->find($userId);
+          if (!$user || (isset($user['role']) && $user['role'] === 'admin')) {
+            $failCount++;
+            continue;
+          }
+
+          $deleted = $this->userModel->delete($userId);
+          if ($deleted) {
+            $successCount++;
+          } else {
+            $failCount++;
+          }
+        }
+        break;
+
+      case 'enable':
+        foreach ($userIds as $userId) {
+          $updated = $this->userModel->update($userId, ['is_disabled' => 0]);
+          if ($updated) {
+            $successCount++;
+          } else {
+            $failCount++;
+          }
+        }
+        break;
+
+      case 'disable':
+        foreach ($userIds as $userId) {
+          // Skip admin users
+          $user = $this->userModel->find($userId);
+          if (!$user || (isset($user['role']) && $user['role'] === 'admin')) {
+            $failCount++;
+            continue;
+          }
+
+          $updated = $this->userModel->update($userId, ['is_disabled' => 1]);
+          if ($updated) {
+            $successCount++;
+          } else {
+            $failCount++;
+          }
+        }
+        break;
+
+      default:
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid action']);
+        exit;
+    }
+
+    echo json_encode([
+      'success' => true,
+      'message' => "Action completed: $successCount users processed successfully" . ($failCount > 0 ? ", $failCount failed" : "")
+    ]);
+    exit;
   }
 }
