@@ -93,7 +93,7 @@ INSERT INTO `user_inventory`(`user_id`, `item_id`)
 VALUES(p_user_id, p_item_id);
 COMMIT;
 SELECT 'Purchase successful!' AS message;
-END $$ CREATE DEFINER = `root` @`localhost` PROCEDURE `UseInventoryItem` (IN `p_inventory_id` INT, IN `p_user_id` INT) proc_label: BEGIN
+END $$ CREATE DEFINER = `root` @`localhost` PROCEDURE `UseInventoryItem`(IN `p_inventory_id` INT, IN `p_user_id` INT) proc_label: BEGIN
 DECLARE v_item_id INT;
 DECLARE v_item_type VARCHAR(50);
 DECLARE v_effect_type VARCHAR(50);
@@ -104,6 +104,7 @@ DECLARE v_item_name VARCHAR(255);
 DECLARE v_current_health INT;
 DECLARE v_error_message VARCHAR(255);
 DECLARE v_new_health INT;
+DECLARE v_current_quantity INT;
 DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
 ROLLBACK;
 SELECT CONCAT('SQL Error: ', v_error_message) AS message;
@@ -124,10 +125,12 @@ FROM userstats
 WHERE user_id = p_user_id;
 -- Verify inventory item exists and belongs to the user
 SELECT i.item_id,
+  i.quantity,
   m.item_type,
   m.effect_type,
   m.effect_value,
   m.item_name INTO v_item_id,
+  v_current_quantity,
   v_item_type,
   v_effect_type,
   v_effect_value,
@@ -154,7 +157,6 @@ LEAVE proc_label;
 END IF;
 -- Calculate new health value
 SET v_new_health = LEAST(v_current_health + v_effect_value, 100);
--- Update health
 UPDATE userstats
 SET health = v_new_health
 WHERE user_id = p_user_id;
@@ -175,9 +177,6 @@ SET v_effect_message = CONCAT(
   );
 END CASE
 ;
--- Remove consumable item after use
-DELETE FROM user_inventory
-WHERE inventory_id = p_inventory_id;
 WHEN 'boost' THEN -- Check if boost is already active
 IF EXISTS (
   SELECT 1
@@ -216,9 +215,22 @@ ELSE
 SET v_effect_message = CONCAT('Unknown item type: ', v_item_type);
 END CASE
 ;
--- Log the usage
+-- Handle quantity and logging properly for all item types
+IF v_item_type = 'consumable' THEN -- Always log the usage FIRST with the actual inventory_id (before any deletion)
 INSERT INTO item_usage_history (inventory_id, effect_applied)
 VALUES (p_inventory_id, v_effect_message);
+IF v_current_quantity > 1 THEN -- Reduce quantity by 1
+UPDATE user_inventory
+SET quantity = quantity - 1
+WHERE inventory_id = p_inventory_id;
+ELSE -- Delete the item if quantity is 1 or less
+DELETE FROM user_inventory
+WHERE inventory_id = p_inventory_id;
+END IF;
+ELSE -- For non-consumable items, log the usage normally
+INSERT INTO item_usage_history (inventory_id, effect_applied)
+VALUES (p_inventory_id, v_effect_message);
+END IF;
 -- Return success message
 SELECT 'Item used successfully' AS message,
   v_effect_message AS effect;

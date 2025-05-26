@@ -2,10 +2,41 @@
 
 ## Overview
 
-- ??
+LifeQuestRPG is a gamified task management system that helps users build productive habits through RPG mechanics.
 
 ## Key Features
-- ??
+- Task Management with RPG elements
+- Habit tracking with streaks
+- XP and level progression
+- Virtual marketplace with items and rewards
+- Database migration system
+
+## Database Migration System
+
+This project includes a database migration system that allows you to set up the database in a structured, version-controlled manner. Key features:
+
+- Split migrations by functionality (tables, data, triggers, etc.)
+- Track executed migrations in a dedicated table
+- Support for complex SQL (triggers, stored procedures)
+- Command-line tools for easy execution
+
+### Usage
+
+```bash
+# Create the database
+php create_database.php
+
+# Run all migrations
+php migrate.php run
+
+# Check migration status
+php migrate.php status
+
+# For complex migrations (triggers, procedures)
+php run_complex_migrations.php
+```
+
+See `database/MIGRATIONS_README.md` for more details.
 
 ## Installation
 
