@@ -42,4 +42,27 @@ class BadHabits extends Model
         return $result['count'] == 0;
     }
 
+    /**
+     * Get a count of all bad habits
+     * @return int
+     */
+    public function count()
+    {
+        $result = self::$db->query("SELECT COUNT(*) as count FROM " . static::$table)
+            ->execute()
+            ->fetch();
+        return $result ? (int) ($result['count'] ?? 0) : 0;
+    }
+
+    /**
+     * Get count of avoided bad habits
+     * @return int
+     */
+    public function getAvoidedCount()
+    {
+        $result = self::$db->query("SELECT COUNT(*) as count FROM " . static::$table . " WHERE avoided > 0")
+            ->execute()
+            ->fetch();
+        return $result ? (int) ($result['count'] ?? 0) : 0;
+    }
 }

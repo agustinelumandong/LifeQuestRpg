@@ -57,32 +57,26 @@
             <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $userStats['health'] ?>%"
               aria-valuenow="<?= $userStats['health'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
-        </div>
-
-        <!-- Level Progress -->
+        </div> <!-- Level Progress -->
         <div class="stat-box">
           <div class="d-flex justify-content-between align-items-center mb-1">
             <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-arrow-up-circle"></i>
               Level UP</span>
-            <span class="badge bg-dark"><?= $userStats['xp'] ?>/100</span>
+            <?php $xpThreshold = $userStats['level'] * 100; ?>
+            <span class="badge bg-dark"><?= $userStats['xp'] ?>/<?= $xpThreshold ?></span>
           </div>
           <div class="progress">
-            <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $userStats['xp'] ?>%"
-              aria-valuenow="<?= $userStats['xp'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
+            <?php $xpProgress = ($xpThreshold > 0) ? ($userStats['xp'] / $xpThreshold * 100) : 0; ?>
+            <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $xpProgress ?>%"
+              aria-valuenow="<?= $userStats['xp'] ?>" aria-valuemin="0" aria-valuemax="<?= $xpThreshold ?>"></div>
           </div>
-        </div>
-
-        <!-- Goal Completion -->
+        </div> <!-- Goal Information -->
         <div class="stat-box">
           <div class="d-flex justify-content-between align-items-center mb-1">
-            <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-flag-fill"></i> Goal</span>
-            <!-- <span class="badge bg-dark">10%</span> -->
+            <span style="font-family: 'Pixelify Sans', serif;"><i class="bi bi-flag-fill"></i> My Goal</span>
           </div>
-
-          <h6><?= $userStats['objective'] ?></h6>
-          <!-- <div class="progress-bar bg-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0"
-              aria-valuemax="100"></div> -->
-
+          <h6 class="mb-0"><?= $userStats['objective'] ?></h6>
+          <small class="text-muted">Your personal objective</small>
         </div>
 
 
@@ -94,7 +88,13 @@
           <i class="bi bi-alarm me-2"></i> Pomodoro Timer
         </h5>
         <div class="d-flex flex-column align-items-center justify-content-center mb-3">
-          <h1 class="fw-bold text-center" style="font-family: 'Pixelify Sans', serif;">24:00</h1>
+          <h1 class="fw-bold text-center" style="font-family: 'Pixelify Sans', serif;" id="ph-time">
+            <?php
+            date_default_timezone_set('Asia/Manila');
+            echo date('H:i');
+            ?>
+          </h1>
+          <small class="text-muted mb-2">Philippine Time</small>
           <!-- <a href="#" class="focus-btn text-white ">FOCUS MODE</a> -->
           <button type="button" type="button" class="btn focus-btn text-white" data-bs-toggle="modal"
             data-bs-target="#exampleModalFullscreen"> FOCUS
@@ -157,8 +157,7 @@
                 </svg>
                 <p class="habit-label">Inventory</p>
               </a>
-            </div>
-            <div class="box col-md-4 d-flex justify-content-center">
+            </div>            <div class="box col-md-4 d-flex justify-content-center">
               <a href="/marketplace" class="habit-box">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -32 576 576" width="1em" height="1em"
                   fill="currentColor" style="font-size: 116px;color: var(--bs-dark);" class="mb-3">
@@ -205,7 +204,7 @@
                     d="M352 0c53 0 96 43 96 96V416c0 53-43 96-96 96H64 32c-17.7 0-32-14.3-32-32s14.3-32 32-32V384c-17.7 0-32-14.3-32-32V32C0 14.3 14.3 0 32 0H64 352zm0 384H96v64H352c17.7 0 32-14.3 32-32s-14.3-32-32-32zM138.7 208l13.9 24H124.9l13.9-24zm-13.9-24L97.1 232c-6.2 10.7 1.5 24 13.9 24h55.4l27.7 48c6.2 10.7 21.6 10.7 27.7 0l27.7-48H305c12.3 0 20-13.3 13.9-24l-27.7-48 27.7-48c6.2-10.7-1.5-24-13.9-24H249.6L221.9 64c-6.2-10.7-21.6-10.7-27.7 0l-27.7 48H111c-12.3 0-20 13.3-13.9 24l27.7 48zm27.7 0l27.7-48h55.4l27.7 48-27.7 48H180.3l-27.7-48zm0-48l-13.9 24-13.9-24h27.7zm41.6-24L208 88l13.9 24H194.1zm69.3 24h27.7l-13.9 24-13.9-24zm13.9 72l13.9 24H263.4l13.9-24zm-55.4 48L208 280l-13.9-24h27.7z">
                   </path>
                 </svg>
-                <fu class="habit-label">Profile</fu>
+                <p class="habit-label">Profile</p>
               </a>
             </div>
             <div class="box col-md-4 d-flex justify-content-center">
@@ -328,309 +327,33 @@
   </div>
 </div>
 
-<style>
-  .bs-icon {
-    --bs-icon-size: .75rem;
-    display: flex;
-    flex-shrink: 0;
-    justify-content: center;
-    align-items: center;
-    font-size: var(--bs-icon-size);
-    width: calc(var(--bs-icon-size) * 2);
-    height: calc(var(--bs-icon-size) * 2);
-    color: var(--bs-primary);
+
+<link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/dashboard.css') ?>">
+
+<!-- Modal -->
+<?php include __DIR__ . '/pomodoro/pomodoro.php'; ?>
+<!-- Modal -->
+
+<script>
+  // Update Philippine time every second
+  function updatePhilippineTime() {
+    const now = new Date();
+    // Convert to Philippine time (UTC+8)
+    const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
+    const hours = phTime.getHours().toString().padStart(2, '0');
+    const minutes = phTime.getMinutes().toString().padStart(2, '0');
+
+    const timeElement = document.getElementById('ph-time');
+    if (timeElement) {
+      timeElement.textContent = `${hours}:${minutes}`;
+    }
   }
 
-  .bs-icon-rounded {
-    border-radius: .5rem;
-  }
+  // Update time immediately and then every second
+  updatePhilippineTime();
+  setInterval(updatePhilippineTime, 1000);
+</script>
 
-  .bs-icon-primary {
-    color: #fff;
-    background: #212529;
-  }
+<script src="<?= \App\Core\Helpers::asset('js/pomodoro.js') ?>"></script>
 
-  .card {
-    border: 1px solid #212529;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  }
-
-  .habit-box {
-    border-radius: 6px;
-    border: 1px solid #212529;
-    width: 200px;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: white;
-    text-decoration: none;
-    color: #343A40;
-  }
-
-  .habit-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  }
-
-  .habit-icon {
-    font-size: 80px;
-    color: #212529;
-    margin-bottom: 15px;
-  }
-
-  .habit-label {
-    font-family: 'Pixelify Sans', serif;
-    font-weight: bold;
-    margin: 0;
-  }
-
-  .profile-panel {
-    background-color: white;
-    border: 1px solid #212529;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    /* height: 100%; */
-  }
-
-  .profile-panel:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  }
-
-  .profile-avatar {
-    width: 120px;
-    height: 120px;
-    background-size: cover;
-    background-position: center;
-    overflow: hidden;
-    border-radius: 50%;
-    margin: 0 auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .stat-box {
-    transition: transform 0.2s;
-    border: 1px solid #212529;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: white;
-  }
-
-  .stat-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .pomodoro-panel {
-    background-color: white;
-    border: 1px solid #212529;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-  }
-
-  .pomodoro-panel:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 5px 15px tgba(0, 0, 0, 0.15);
-  }
-
-  .spotify {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-  }
-
-  .spotify:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
-  }
-
-  .focus-btn {
-    background-color: #212529;
-    color: white;
-    border: none;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-
-  .focus-btn:hover {
-    background-color: #343A40;
-    transform: translateY(-2px);
-  }
-
-  .activity-panel {
-    max-height: 336px;
-    min-height: 336px;
-    background-color: white;
-    border: 1px solid #212529;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    padding: 15px;
-    margin-bottom: 20px;
-  }
-
-  .activity-panel:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  }
-
-  .activity-timeline {
-    position: relative;
-  }
-
-  .activity-item {
-    padding: 10px;
-    border-left: 3px solid #212529;
-    background-color: #f8f9fa;
-    border-radius: 0 4px 4px 0;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    transition: transform 0.2s;
-    position: relative;
-  }
-
-  .activity-item:hover {
-    transform: translateX(5px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-
-  .activity-dot {
-    position: absolute;
-    left: -8px;
-    top: 15px;
-    width: 14px;
-    height: 14px;
-    background-color: #212529;
-    border-radius: 50%;
-    border: 2px solid #fff;
-  }
-
-  .quest-panel {
-    max-height: 440px;
-    min-height: 440px;
-    background-color: white;
-    border: 1px solid #212529;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    padding: 15px;
-  }
-
-  .quest-panel:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  }
-
-  .event-card {
-    background-color: #f8f9fa;
-    border: 1px solid #212529;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 15px;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .event-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .event-card-btn {
-    color: #212529;
-    text-decoration: none;
-  }
-
-  .progress {
-    height: 10px;
-    border-radius: 5px;
-    margin-top: 5px;
-  }
-
-  .progress-bar {
-    background-color: #212529;
-  }
-
-  .badge.bg-dark {
-    background-color: #212529 !important;
-  }
-
-  .btn-dark {
-    background-color: #212529;
-    border-color: #212529;
-  }
-
-  .btn-dark:hover {
-    background-color: #000;
-    border-color: #000;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .hero-section {
-    text-align: center;
-    padding: 20px 0;
-  }
-
-  .hero-section h2 {
-    font-family: 'Pixelify Sans', serif;
-    font-weight: bold;
-  }
-
-  .nav-link {
-    font-weight: 600;
-    transition: transform 0.2s;
-  }
-
-  .nav-link:hover {
-    transform: translateY(-2px);
-  }
-
-  .nav-link.active {
-    border-bottom: 2px solid #212529;
-  }
-
-  .box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 198px;
-  }
-
-  #profile-avatar {
-    width: 120px;
-    height: 120px;
-    background-size: auto;
-    background-position: center;
-    overflow: hidden;
-    border-radius: 50%;
-    margin: 0 auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-</style>
+<link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/pomodoro.css') ?>">

@@ -19,7 +19,6 @@ class TaskEventController extends Controller
   {
     $this->TaskEventModel = new TaskEvent();
     $this->UserEventCompletionModel = new UserEventCompletion();
-
     $this->updateStatusEvents();
   }
 
@@ -212,14 +211,20 @@ class TaskEventController extends Controller
 
     $completeTask = $this->UserEventCompletionModel->recordCompletion($userId, $task_id);
     if ($completeTask) {
-      $this->UserEventCompletionModel->updateUserStats(
+
+      $this->UserEventCompletionModel->updateUserExp(
         $userId,
-        $taskReward['reward_xp'],
+        $taskReward['reward_xp']
+      );
+
+      $this->UserEventCompletionModel->updateUserCoins(
+        $userId,
         $taskReward['reward_coins']
       );
+
       $_SESSION['success'] = 'Congratulations! You have completed the task and claimed your rewards!';
     } else {
-      $_SESSION['error'] = 'Failed to complete the task.';
+      $_SESSION['error'] = 'Failed to complete the task event.';
     }
 
     return $this->redirect("/");

@@ -74,9 +74,30 @@ if ($currentUser) {
         <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
           <?php if (App\Core\Auth::check()): ?>
             <?php if (App\Core\Auth::isAdmin()): ?>
-              <!-- <li class="nav-item"><a class="nav-link fw-bold nav-shadow" href="/">Home</a></li>
-              <li class="nav-item"><a class="nav-link fw-bold nav-shadow" href="/users">Users</a></li>
-              <li class="nav-item"><a class="nav-link fw-bold nav-shadow" href="#">Nothing</a></li> -->
+              <li class="nav-item nav-link fw-bold nav-shadow">
+                <a href="/admin" <?= strpos($_SERVER['REQUEST_URI'], '/admin') === 0 && strlen($_SERVER['REQUEST_URI']) < 8 ? 'class="active"' : '' ?> style="color: black; text-decoration: none;">
+                  Dashboard
+                </a>
+              </li>
+              <li class="nav-item nav-link fw-bold nav-shadow">
+                <a href="/admin/content" <?= strpos($_SERVER['REQUEST_URI'], '/admin/content') === 0 ? 'class="active"' : '' ?>
+                  style="color: black; text-decoration: none;">Content
+                  Management
+                </a>
+              </li>
+              <li class="nav-item nav-link fw-bold nav-shadow">
+                <a href="/admin/marketplace" <?= strpos($_SERVER['REQUEST_URI'], '/admin/marketplace') === 0 ? 'class="active"' : '' ?> style="color: black; text-decoration: none;">Marketplace
+                </a>
+              </li>
+              <li class="nav-item nav-link fw-bold nav-shadow">
+                <a href="/admin/users" <?= strpos($_SERVER['REQUEST_URI'], '/admin/users') === 0 ? 'class="active"' : '' ?>
+                  style="color: black; text-decoration: none;">User
+                  Management</a>
+              </li>
+              <li class="nav-item nav-link fw-bold nav-shadow">
+                <a href="/admin/analytics" <?= strpos($_SERVER['REQUEST_URI'], '/admin/analytics') === 0 ? 'class="active"' : '' ?> style="color: black; text-decoration: none;">Analytics</a>
+              </li>
+
             <?php endif; ?>
             <li class="nav-item"><a class="nav-link fw-bold logout-link" href="/logout">
                 <i class="bi bi-door-open me-1"></i>Logout</a></li>

@@ -1,0 +1,130 @@
+  /* Add custom styles for the gamified timer */
+  .pomodoro-modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: #f8f9fa;
+    /* Light background for contrast */
+  }
+
+  .pomodoro-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 2px solid black;
+    /* Black border */
+    width: 100%;
+    max-width: 400px;
+    /* Limit width */
+  }
+
+  .pomodoro-container h1,
+  .pomodoro-container h2,
+  .pomodoro-container .btn {
+    color: black !important;
+    font-family: 'Pixelify Sans', sans-serif;
+  }
+
+  .pomodoro-timer-display {
+    font-size: 8rem;
+    font-weight: bold;
+    margin: 20px 0;
+    color: black;
+  }
+
+  .pomodoro-btn-group .btn {
+    margin: 5px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+  }
+
+  .pomodoro-btn-group .btn:hover,
+  .pomodoro-btn-group .btn.active {
+    background-color: black;
+    color: white !important;
+  }
+
+  .pomodoro-controls .btn {
+    margin: 10px 5px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border: 1px solid black;
+  }
+
+  .pomodoro-controls .btn-dark {
+    background-color: black;
+    color: white !important;
+  }
+
+  .pomodoro-controls .btn-light {
+    background-color: white;
+    color: black !important;
+  }
+
+  .pomodoro-controls .btn-secondary {
+    background-color: #6c757d;
+    /* Bootstrap secondary */
+    color: white !important;
+    border-color: #6c757d;
+  }
+
+  #edit-view {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 2px solid black;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  #edit-view h3 {
+    font-family: 'Pixelify Sans', sans-serif;
+    margin-bottom: 20px;
+    font-size: 2rem;
+  }
+
+  #timeInput {
+    font-size: 3rem;
+    text-align: center;
+    font-family: 'Pixelify Sans', sans-serif;
+    max-width: 150px;
+    margin: 0 auto;
+    border: 2px solid black;
+    border-radius: 10px;
+  }
+
+  .middle-colon {
+    font-size: 8rem;
+    font-family: 'Pixelify Sans', sans-serif;
+    margin: 0 10px;
+    color: black;
+    font-weight: bold;
+    margin-top: -20px
+  }
+
+  #mTimeInput {
+    width: 100px;
+    height: 118px;
+    font-size: 2.5rem;
+    font-weight: bold;
+
+  }
+
+  #sTimeInput {
+    height: 118px;
+    width: 100px;
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    color: white !important;
+    border: 1px solid black;
+  }

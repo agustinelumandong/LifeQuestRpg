@@ -76,13 +76,18 @@ class AuthController extends Controller
 
       // Check if user has completed character creation
       $userStats = $this->userStats->getUserStatsByUserId($userId);
-
       if (!$userStats || empty($userStats['avatar_id'])) {
         // If not, redirect to character creation stepper
         $this->redirect('/character/stepper');
       } else {
-        // Otherwise, redirect to dashboard
-        $this->redirect('/');
+        // Check if the user is an admin
+        if (Auth::isAdmin()) {
+          // If admin, redirect to admin dashboard
+          $this->redirect('/admin');
+        } else {
+          // Otherwise, redirect to regular dashboard
+          $this->redirect('/');
+        }
       }
     } else {
       $_SESSION['error'] = 'Invalid email or password!';

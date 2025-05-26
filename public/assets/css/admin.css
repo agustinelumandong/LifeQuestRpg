@@ -1,0 +1,428 @@
+/* Admin Dashboard Styles */
+/* Enhanced Admin Dashboard UI - Themed to match LifeQuestRPG */
+
+@import url('admin-theme.css');
+
+:root {
+  --admin-primary: #212529;
+  --admin-secondary: #343A40;
+  --admin-success: #10b981;
+  --admin-danger: #dc3545;
+  --admin-warning: #ffc107;
+  --admin-info: #0dcaf0;
+  --admin-dark: #212529;
+  --admin-light: #f8f9fa;
+  --admin-bg: #fff;
+  --admin-border: #212529;
+  --admin-card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --admin-hover-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  --admin-transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* General Admin Layout */
+.admin-dashboard {
+  padding: 1.5rem;
+  min-height: calc(100vh - 56px);
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* Admin Navigation Bar */
+.admin-nav {
+  background-color: white !important;
+  border: 1px solid var(--admin-dark);
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: var(--admin-card-shadow);
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin-nav a {
+  padding: 0.75rem 1.25rem;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: var(--admin-transition);
+  text-decoration: none;
+  font-family: 'Pixelify Sans', serif;
+}
+
+.admin-nav a.active {
+  background-color: var(--admin-dark);
+  color: white;
+}
+
+.admin-nav a:not(.active) {
+  background-color: transparent;
+  color: var(--admin-dark);
+}
+
+.admin-nav a:not(.active):hover {
+  background-color: #f8f9fa;
+  color: var(--admin-primary);
+  transform: translateY(-3px);
+}
+
+/* Card Components */
+.admin-card {
+  background-color: white;
+  border: 1px solid var(--admin-dark);
+  border-radius: 8px;
+  box-shadow: var(--admin-card-shadow);
+  padding: 1.5rem;
+  transition: var(--admin-transition);
+  height: 100%;
+}
+
+.admin-card:hover {
+  box-shadow: var(--admin-hover-shadow);
+  transform: translateY(-5px);
+}
+
+.admin-card h2,
+.admin-card h3 {
+  color: var(--admin-dark);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-family: 'Pixelify Sans', serif;
+}
+
+/* Stat Cards */
+.stat-card {
+  background-color: white;
+  color: var(--admin-dark);
+  border-radius: 8px;
+  border: 1px solid var(--admin-dark);
+  box-shadow: var(--admin-card-shadow);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: var(--admin-transition);
+}
+
+.stat-card:hover {
+  box-shadow: var(--admin-hover-shadow);
+  transform: translateY(-5px);
+}
+
+.stat-card p {
+  font-family: 'Pixelify Sans', serif;
+}
+
+.stat-card.primary {
+  --gradient-start: #4a6cf7;
+  --gradient-end: #6571ff;
+}
+
+.stat-card.success {
+  --gradient-start: #10b981;
+  --gradient-end: #34d399;
+}
+
+.stat-card.warning {
+  --gradient-start: #f59e0b;
+  --gradient-end: #fbbf24;
+}
+
+.stat-card.danger {
+  --gradient-start: #ef4444;
+  --gradient-end: #f87171;
+}
+
+.stat-card h3 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+}
+
+.stat-card p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.stat-card .badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.stat-card .icon {
+  position: absolute;
+  bottom: -1rem;
+  right: -1rem;
+  opacity: 0.5;
+  font-size: 5rem;
+  color: var(--admin-dark);
+}
+
+/* Progress Bars */
+.progress-container {
+  margin-bottom: 1rem;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.progress {
+  height: 0.5rem;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  border-radius: 9999px;
+  transition: width 1s ease;
+}
+
+.progress-bar.blue {
+  background-color: var(--admin-primary);
+}
+
+.progress-bar.green {
+  background-color: var(--admin-success);
+}
+
+.progress-bar.yellow {
+  background-color: var(--admin-warning);
+}
+
+.progress-bar.red {
+  background-color: var(--admin-danger);
+}
+
+/* Tables */
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+
+.admin-table th {
+  background-color: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.025em;
+  text-align: left;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-table td {
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--admin-border);
+  vertical-align: middle;
+}
+
+.admin-table tbody tr {
+  transition: var(--admin-transition);
+}
+
+.admin-table tbody tr:hover {
+  background-color: rgba(243, 244, 246, 0.5);
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Quick Action Cards */
+.action-card {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  transition: var(--admin-transition);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 150px;
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--admin-hover-shadow);
+}
+
+.action-card .icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.action-card .title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.action-card .subtitle {
+  font-size: 0.875rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .admin-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-nav a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .grid-cols {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Dashboard Analytics */
+.analytics-card {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: var(--admin-card-shadow);
+  padding: 1.5rem;
+  transition: var(--admin-transition);
+}
+
+.analytics-card:hover {
+  box-shadow: var(--admin-hover-shadow);
+}
+
+.analytics-chart {
+  width: 100%;
+  height: 250px;
+}
+
+/* System Health Indicators */
+.health-indicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.health-status {
+  display: flex;
+  align-items: center;
+}
+
+.health-status .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.health-status .dot.green {
+  background-color: var(--admin-success);
+}
+
+.health-status .dot.yellow {
+  background-color: var(--admin-warning);
+}
+
+.health-status .dot.red {
+  background-color: var(--admin-danger);
+}
+
+/* User Activity Feed */
+.activity-feed {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activity-content {
+  flex-grow: 1;
+}
+
+.activity-title {
+  font-weight: 600;
+  margin: 0;
+}
+
+.activity-time {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Search and Filter */
+.admin-search {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.admin-search input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 0.5rem;
+  background-color: white;
+  transition: var(--admin-transition);
+}
+
+.admin-search input:focus {
+  outline: none;
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.12);
+}
+
+.admin-search .search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

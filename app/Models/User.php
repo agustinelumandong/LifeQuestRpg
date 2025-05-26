@@ -32,7 +32,7 @@ class User extends Model
    */
   public static function findByEmail(string $email)
   {
-    return self::$db->query("SELECT * FROM " . static::$table . " WHERE email = ?")
+    return self::$db->query("SELECT * FROM " . static::$table . " WHERE LOWER(email) = LOWER(?)")
       ->bind([1 => $email])
       ->execute()
       ->fetch();
@@ -103,5 +103,114 @@ class User extends Model
     return $this->update($user['id'], [
       'coins' => $newCoins
     ]);
+  }
+
+  /**
+   * Get a count of all users
+   * @return int
+   */
+  public function count()
+  {
+    $result = self::$db->query("SELECT COUNT(*) as count FROM " . static::$table)
+      ->execute()
+      ->fetch();
+    return $result ? (int) ($result['count'] ?? 0) : 0;
+  }
+
+  /**
+   * Get recent users
+   * @param int $limit
+   * @return array
+   */
+  public function getRecent($limit = 5)
+  {
+    return self::$db->query("SELECT * FROM " . static::$table . " ORDER BY created_at DESC LIMIT ?")
+      ->bind([1 => $limit])
+      ->execute()
+      ->fetchAll();
+  }
+
+  /**
+   * Get count of users created before a specific date
+   * @param string $date
+   * @return int
+   */
+  public function getCountBefore($date)
+  {
+    $result = self::$db->query("SELECT COUNT(*) as count FROM " . static::$table . " WHERE created_at < ?")
+      ->bind([1 => $date])
+      ->execute()
+      ->fetch();
+    return $result ? (int) ($result['count'] ?? 0) : 0;
+  }
+
+  /**
+   * Get count of users created since a specific date
+   * @param string $date
+   * @return int
+   */
+  public function getCountSince($date)
+  {
+    $result = self::$db->query("SELECT COUNT(*) as count FROM " . static::$table . " WHERE created_at >= ?")
+      ->bind([1 => $date])
+      ->execute()
+      ->fetch();
+    return $result ? (int) ($result['count'] ?? 0) : 0;
+  }
+
+  /**
+   * Get count of users created between two dates
+   * @param string $startDate
+   * @param string $endDate
+   * @return int
+   */
+  public function getCountBetween($startDate, $endDate)
+  {
+    $result = self::$db->query("SELECT COUNT(*) as count FROM " . static::$table . " WHERE created_at >= ? AND created_at <= ?")
+      ->bind([1 => $startDate, 2 => $endDate])
+      ->execute()
+      ->fetch();
+    return $result ? (int) ($result['count'] ?? 0) : 0;
+  }
+  /**
+   * Paginate users
+   * @param int $page
+   * @param int $perPage
+   * @param string|null $orderBy
+   * @param string $direction
+   * @param array $conditions
+   * @param string $pageName
+   * @param array|null $columns
+   * @return array
+   */
+  public function paginate(
+    int $page = 1,
+    int $perPage = 10,
+    ?string $orderBy = 'created_at',
+    string $direction = 'DESC',
+    array $conditions = [],
+    string $pageName = 'page',
+    ?array $columns = null
+  ) {
+    $offset = ($page - 1) * $perPage;
+
+    $totalResult = self::$db->query("SELECT COUNT(*) as count FROM " . static::$table)
+      ->execute()
+      ->fetch();
+
+    $total = $totalResult ? (int) ($totalResult['count'] ?? 0) : 0;
+
+    $items = self::$db->query("SELECT * FROM " . static::$table . " ORDER BY {$orderBy} {$direction} LIMIT ? OFFSET ?")
+      ->bind([1 => $perPage, 2 => $offset])
+      ->execute()
+      ->fetchAll();
+
+    return [
+      'items' => $items,
+      'total' => $total,
+      'per_page' => $perPage,
+      'current_page' => $page,
+      'last_page' => ceil($total / $perPage)
+    ];
   }
 }

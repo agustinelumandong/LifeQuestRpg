@@ -52,7 +52,7 @@ header.masthead {
   background-attachment: scroll;
   background-position: center center;
   background-size: cover;
-  background-image: url('../images/light background.jpg');
+  background-image: url('../images/light%20background.jpg');
   padding: 300px 0 250px;
   position: relative;
 }

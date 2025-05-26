@@ -13,28 +13,30 @@ class AdminMiddleware extends Middleware
   public function handle($request, Closure $next)
   {
     // Check if user is logged in
-    if (!isset($_SESSION['users'])) {
+    if (!Auth::check()) {
       $_SESSION['error'] = 'You must be logged in to access this page';
       header('Location: /login');
       exit;
     }
 
-    // Get the user ID from the session array/object
-    $userId = $_SESSION['users']['id'] ?? $_SESSION['users']->id ?? null;
+    // Get the user data
+    $user = Auth::user();
 
-    if ($userId === null) {
-      // Should not happen if AuthMiddleware ran first, but good practice
+    if (!$user) {
       $_SESSION['error'] = 'User session data is invalid.';
       header('Location: /login');
       exit;
     }
 
-    // Use Auth service for authentication checks
-    $userId = Auth::user();
+    if (Auth::check() && Auth::isAdmin()) {
+      // If admin is trying to access regular dashboard, redirect to admin
+      if ($request === '/' || $request === 'dashboard') {
+        header('Location: /admin');
+      }
+    }
 
     // Check if user is admin
-    $userIsAdmin = Auth::isAdmin();
-    if (!$userIsAdmin) {
+    if (!Auth::isAdmin()) {
       $_SESSION['error'] = 'You do not have permission to access this page';
       header('Location: /');
       exit;

@@ -7,7 +7,6 @@ use Exception;
 abstract class Auth
 {
   protected static $user = null;
-
   /**
    * Check if a user is logged in
    * 
@@ -15,9 +14,8 @@ abstract class Auth
    */
   public static function check()
   {
-    return isset($_SESSION['users']);
+    return isset($_SESSION['users']) && !empty($_SESSION['users']);
   }
-
   /**
    * Get the currently logged-in user
    * 
@@ -27,7 +25,16 @@ abstract class Auth
   {
     if (self::$user === null && self::check()) {
       $sessionUser = $_SESSION['users'];
-      $userId = is_array($sessionUser) ? ($sessionUser['id'] ?? null) : ($sessionUser->id ?? null);
+      $userId = null;
+
+      // Handle both array and object formats
+      if (is_array($sessionUser)) {
+        $userId = $sessionUser['id'] ?? null;
+      } elseif (is_object($sessionUser)) {
+        $userId = $sessionUser->id ?? null;
+      } elseif (is_numeric($sessionUser)) {
+        $userId = $sessionUser;
+      }
 
       if ($userId) {
         self::$user = User::find($userId);
@@ -50,7 +57,6 @@ abstract class Auth
 
     return is_array($user) ? ($user['id'] ?? null) : ($user->id ?? null);
   }
-
   /**
    * Check if the current user is an admin
    * 
@@ -62,7 +68,15 @@ abstract class Auth
     if (!$user)
       return false;
 
-    $role = is_array($user) ? ($user['role'] ?? '') : ($user->role ?? '');
+    $role = null;
+
+    // Handle different user data formats
+    if (is_array($user)) {
+      $role = $user['role'] ?? '';
+    } elseif (is_object($user)) {
+      $role = $user->role ?? '';
+    }
+
     return $role === 'admin';
   }
 
@@ -115,4 +129,6 @@ abstract class Auth
   {
     return self::check();
   }
+
+  
 }

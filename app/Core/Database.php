@@ -110,13 +110,24 @@ class Database
     return $this->statement->columnCount();
   }
 
-
   /**
    * Get last insert ID
    */
   public function lastInsertId()
   {
     return $this->pdo->lastInsertId();
+  }
+
+  /**
+   * Close the cursor for the current statement
+   * Needed after executing stored procedures to prevent "Cannot execute queries while there are pending result sets" error
+   */
+  public function closeCursor()
+  {
+    if ($this->statement) {
+      $this->statement->closeCursor();
+    }
+    return $this;
   }
 }
 ?>

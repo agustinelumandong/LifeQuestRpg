@@ -16,12 +16,21 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/fonts.css') ?>">
-
   <link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/bootstrap.min.css') ?>">
   <link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/bootstrap-icons.css') ?>" />
   <link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/style.css') ?>">
   <link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/navbar.css') ?>">
   <link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/themes.css') ?>">
+  <?php if (strpos($_SERVER['REQUEST_URI'], '/admin') === 0): ?>
+    <link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/admin.css') ?>">
+    <?php if (strpos($_SERVER['REQUEST_URI'], '/admin/marketplace') !== false): ?>
+      <link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/marketplace.css') ?>">
+    <?php endif; ?>
+  <?php endif; ?>
+  <?php if (strpos($_SERVER['REQUEST_URI'], '/marketplace') === 0): ?>
+    <link rel="stylesheet" href="<?= \App\Core\Helpers::asset('css/marketplace.css') ?>">
+    <script src="<?= \App\Core\Helpers::asset('js/marketplace.js') ?>" defer></script>
+  <?php endif; ?>
 </head>
 
 <link rel="stylesheet" href="<?php echo \App\Core\Helpers::asset('css/login.css'); ?>">

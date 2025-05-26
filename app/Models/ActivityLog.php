@@ -40,9 +40,21 @@ class ActivityLog extends Model
                 poke_timestamp AS log_timestamp 
             FROM view_poke_activity 
             WHERE target_user_id = ?
+            UNION ALL
+            SELECT 
+                log_id, 
+                user_id, 
+                event_name AS task_title, 
+                CAST('NA' AS CHAR) AS difficulty, 
+                CAST('Social' AS CHAR) AS category,
+                coins, 
+                xp, 
+                log_timestamp
+            FROM view_event_activity
+            WHERE user_id = ?
             ORDER BY log_timestamp DESC"
         )
-            ->bind([1 => $userId, 2 => $userId, 3 => $userId, 4 => $userId, 5 => $userId])
+            ->bind([1 => $userId, 2 => $userId, 3 => $userId, 4 => $userId, 5 => $userId, 6 => $userId])
             ->execute()
             ->fetchAll();
     }
@@ -76,6 +88,18 @@ class ActivityLog extends Model
                     poke_timestamp AS log_timestamp 
                 FROM view_poke_activity 
                 WHERE target_user_id = ?
+                UNION ALL
+                SELECT 
+                log_id, 
+                user_id, 
+                event_name AS task_title, 
+                CAST('NA' AS CHAR) AS difficulty,  
+                CAST('Social' AS CHAR) AS category,
+                coins, 
+                xp, 
+                log_timestamp
+            FROM view_event_activity
+            WHERE user_id = ?
             ) AS combined_activities
             ORDER BY {$orderBy} {$direction}
             LIMIT ?, ?"
@@ -86,18 +110,17 @@ class ActivityLog extends Model
                 3 => $userId,
                 4 => $userId,
                 5 => $userId,
-                6 => $offset,
-                7 => $perPage
+                6 => $userId,
+                7 => $offset,
+                8 => $perPage
             ])
             ->execute()
             ->fetchAll();
-    }    /**
-         * Paginate activity log results
-         */
+    }
+
+
     public function paginates($userId, $page = 1, $perPage = 10, $orderBy = 'log_timestamp', $direction = 'DESC')
     {
-        // Default to the current user if no user ID is provided
-
         // Validate page and perPage
         $page = max(1, (int) $page);
         $perPage = max(1, (int) $perPage);
@@ -115,9 +138,20 @@ class ActivityLog extends Model
                 UNION ALL
                 SELECT log_id FROM view_poke_activity 
                 WHERE target_user_id = ?
+                UNION ALL
+                SELECT log_id FROM view_event_activity WHERE user_id = ?
             ) AS count_query"
         )
-            ->bind([1 => $userId, 2 => $userId, 3 => $userId, 4 => $userId, 5 => $userId])
+            ->bind(
+                [
+                    1 => $userId,
+                    2 => $userId,
+                    3 => $userId,
+                    4 => $userId,
+                    5 => $userId,
+                    6 => $userId
+                ]
+            )
             ->execute()
             ->fetch();
 
@@ -187,4 +221,63 @@ class ActivityLog extends Model
         return (json_last_error() == JSON_ERROR_NONE);
     }
 
+    /**
+     * Get recent activity logs
+     * @param int $limit
+     * @return array
+     */
+    public function getRecent($limit = 10)
+    {
+        $sql = "SELECT * FROM " . self::$table . " ORDER BY log_timestamp DESC LIMIT :limit";
+        return self::$db->query($sql)
+            ->bind([':limit' => $limit])
+            ->execute()
+            ->fetchAll();
+    }
+
+    /**
+     * Get recent activities for a user
+     *
+     * @param int $userId User ID to get activities for
+     * @param int $limit Number of records to return
+     * @return array Recent user activities
+     */
+
+
+    /**
+     * Get count of active users since a given date
+     *
+     * @param string $date Date to count active users since
+     * @return int Count of active users
+     */
+    public function getActiveUserCountSince($date)
+    {
+        $sql = "SELECT COUNT(DISTINCT user_id) as count FROM " . self::$table . " WHERE log_timestamp >= :date";
+        $result = self::$db->query($sql)
+            ->bind([':date' => $date])
+            ->execute()
+            ->fetch();
+
+        return $result['count'] ?? 0;
+    }
+
+    /**
+     * Get daily user activity count for the last 30 days
+     *
+     * @return array Daily user counts
+     */
+    public function getDailyUserCountLast30Days()
+    {
+        $sql = "SELECT 
+                   DATE(log_timestamp) as date, 
+                   COUNT(DISTINCT user_id) as count 
+                FROM " . self::$table . " 
+                WHERE log_timestamp >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                GROUP BY DATE(log_timestamp)
+                ORDER BY DATE(log_timestamp)";
+
+        return self::$db->query($sql)
+            ->execute()
+            ->fetchAll();
+    }
 }

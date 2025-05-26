@@ -1,6 +1,7 @@
 <?php
 
 use App\Controllers\ActivityLogController;
+use App\Controllers\AdminController;
 use App\Controllers\CharacterController;
 use App\Controllers\HomeController;
 use App\Controllers\LeaderboardController;
@@ -17,6 +18,7 @@ use App\Controllers\DailyTaskController;
 use App\Controllers\GoodHabitsController;
 use App\Controllers\JournalController;
 use App\Controllers\ExamplePaginationController;
+use App\Controllers\PomodoroController;
 
 // Define routes
 $router->get('/', [HomeController::class, 'index']);
@@ -97,8 +99,8 @@ $router->post('/journal/{id}/toggle', [JournalController::class, 'toggle'], [Aut
 // Activity Log routes
 $router->get('/activityLog/index', [ActivityLogController::class, 'index'], [AuthMiddleware::class]);
 
-// Inventroy routes
-$router->get('/inventory', [UserController::class, 'inventory'], [AuthMiddleware::class]);
+// Inventory routes - redirects to marketplace inventory
+$router->get('/inventory', [MarketplaceController::class, 'inventory'], [AuthMiddleware::class]);
 
 // Profile routes
 $router->get('/profile', [UserController::class, 'profile'], [AuthMiddleware::class]);
@@ -125,9 +127,29 @@ $router->get('/marketplace/create', [MarketplaceController::class, 'create'], [A
 $router->post('/marketplace/store', [MarketplaceController::class, 'store'], [AdminMiddleware::class]);
 $router->get('/marketplace/edit/{id}', [MarketplaceController::class, 'edit'], [AdminMiddleware::class]);
 $router->put('/marketplace/{id}', [MarketplaceController::class, 'update'], [AdminMiddleware::class]);
+$router->delete('/marketplace/{id}/delete', [MarketplaceController::class, 'delete'], [AdminMiddleware::class]);
+$router->get('/marketplace/purchase/{user_id}/{item_id}', [MarketplaceController::class, 'purchase'], [AuthMiddleware::class]);
+$router->post('/marketplace/purchase/{user_id}/{item_id}', [MarketplaceController::class, 'purchase'], [AuthMiddleware::class]);
 $router->put('/marketplace/purchase/{user_id}/{item_id}', [MarketplaceController::class, 'purchase'], [AuthMiddleware::class]);
+$router->get('/marketplace/inventory', [MarketplaceController::class, 'inventory'], [AuthMiddleware::class]);
+$router->post('/marketplace/use-item/{inventory_id}', [MarketplaceController::class, 'useItem'], [AuthMiddleware::class]);
 
 // Streak routes
 $router->get('/streaks', [StreakController::class, 'index'], [AuthMiddleware::class]);
 $router->post('/streaks/record', [StreakController::class, 'recordActivity'], [AuthMiddleware::class]);
 $router->get('/streaks/{streakType}/{streakCount}/rewards', [StreakController::class, 'grantRewards'], [AuthMiddleware::class]);
+
+
+// Admin routes
+$router->get('/admin', [AdminController::class, 'index'], [AdminMiddleware::class]);
+$router->get('/admin/content', [AdminController::class, 'contentManagement'], [AdminMiddleware::class]);
+$router->get('/admin/marketplace', [AdminController::class, 'marketplaceManagement'], [AdminMiddleware::class]);
+$router->get('/admin/users', [AdminController::class, 'userManagement'], [AdminMiddleware::class]);
+$router->get('/admin/analytics', [AdminController::class, 'analytics'], [AdminMiddleware::class]);
+
+// Admin user management routes
+$router->get('/admin/users/create', [UserController::class, 'create'], [AdminMiddleware::class]);
+$router->post('/admin/users', [UserController::class, 'store'], [AdminMiddleware::class]);
+$router->post('/admin/users/{id}/reset-password', [UserController::class, 'resetPassword'], [AdminMiddleware::class]);
+$router->post('/admin/users/{id}/toggle-status', [UserController::class, 'toggleStatus'], [AdminMiddleware::class]);
+$router->post('/admin/users/bulk-action', [UserController::class, 'bulkAction'], [AdminMiddleware::class]);
