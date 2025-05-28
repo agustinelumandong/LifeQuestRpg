@@ -84,17 +84,22 @@ class AdminController extends Controller
       'recentActivity' => $recentActivity,
       'title' => 'Admin Dashboard'
     ]);
-  }
-  /**
-   * Display the content management page
-   */
+  }  /**
+     * Display the content management page
+     */
   public function contentManagement()
   {
-    // Get task events (quests/missions)
-    $taskEvents = $this->taskEventModel->all();
+    // Get paginated task events (quests/missions)
+    $paginator = $this->taskEventModel->paginate(
+      page: \App\Core\Input::get('page', 1),
+      perPage: 10,
+      orderBy: 'id',
+      direction: 'DESC'
+    );
 
     return $this->view('admin/content_management', [
-      'taskEvents' => $taskEvents,
+      'taskEvents' => $paginator->items(),
+      'paginator' => $paginator,
       'title' => 'Content Management'
     ]);
   }
