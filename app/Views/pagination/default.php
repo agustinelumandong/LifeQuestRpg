@@ -8,7 +8,8 @@
       </div>
       <ul class="pagination pagination-sm mb-0">
         <li class="page-item <?= ($pagination['currentPage'] <= 1) ? 'disabled' : '' ?>">
-          <a class="page-link" href="<?= $paginator->getPageUrl($paginator->previousPage()) ?>" aria-label="Previous">
+          <a class="page-link pagination-link" href="<?= $paginator->getPageUrl($paginator->previousPage()) ?>"
+            aria-label="Previous">
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
@@ -25,11 +26,12 @@
         for ($i = $startPage; $i <= $endPage; $i++):
           ?>
           <li class="page-item <?= ($i == $pagination['currentPage']) ? 'active' : '' ?>">
-            <a class="page-link" href="<?= $paginator->getPageUrl($i) ?>"><?= $i ?></a>
+            <a class="page-link pagination-link" href="<?= $paginator->getPageUrl($i) ?>"><?= $i ?></a>
           </li>
         <?php endfor; ?>
         <li class="page-item <?= ($pagination['currentPage'] >= $pagination['totalPages']) ? 'disabled' : '' ?>">
-          <a class="page-link" href="<?= $paginator->getPageUrl($paginator->nextPage()) ?>" aria-label="Next">
+          <a class="page-link pagination-link" href="<?= $paginator->getPageUrl($paginator->nextPage()) ?>"
+            aria-label="Next">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>

@@ -213,4 +213,73 @@ class User extends Model
       'last_page' => ceil($total / $perPage)
     ];
   }
+  /**
+   * Get paginated users with proper database-level pagination
+   * @param int $page Current page number
+   * @param int $perPage Number of users per page
+   * @param string $orderBy Column to order by
+   * @param string $direction Sort direction
+   * @param array $conditions Where conditions
+   * @param string $search Search term
+   * @return \App\Core\Paginator
+   */
+  public function getPaginatedUsers($page = 1, $perPage = 10, $orderBy = 'created_at', $direction = 'DESC', $conditions = [], $search = '')
+  {
+    // Build the base SQL
+    $sql = "SELECT * FROM " . static::$table;
+    $countSql = "SELECT COUNT(*) as count FROM " . static::$table;
+
+    $params = [];
+    $whereConditions = [];
+
+    // Add WHERE conditions if any
+    if (!empty($conditions)) {
+      foreach ($conditions as $key => $value) {
+        $whereConditions[] = "{$key} = :{$key}";
+        $params[$key] = $value;
+      }
+    }
+
+    // Add search functionality
+    if (!empty($search)) {
+      $whereConditions[] = "(name LIKE :search OR email LIKE :search OR username LIKE :search)";
+      $params['search'] = "%{$search}%";
+    }
+
+    // Apply WHERE clause if we have conditions
+    if (!empty($whereConditions)) {
+      $whereClause = " WHERE " . implode(' AND ', $whereConditions);
+      $sql .= $whereClause;
+      $countSql .= $whereClause;
+    }
+
+    // Add ordering and pagination
+    $sql .= " ORDER BY {$orderBy} {$direction} LIMIT :limit OFFSET :offset";
+
+    $offset = ($page - 1) * $perPage;
+    $params['limit'] = $perPage;
+    $params['offset'] = $offset;
+
+    // Get the users
+    $users = self::$db->query($sql)
+      ->bind($params)
+      ->execute()
+      ->fetchAll();
+
+    // Get total count (without pagination params)
+    $countParams = array_filter($params, function ($key) {
+      return !in_array($key, ['limit', 'offset']);
+    }, ARRAY_FILTER_USE_KEY);
+
+    $totalCount = self::$db->query($countSql)
+      ->bind($countParams)
+      ->execute()
+      ->fetch()['count'];
+
+    // Create and return paginator
+    $paginator = new \App\Core\Paginator($perPage);
+    return $paginator->setData($users, $totalCount)
+      ->setOrderBy($orderBy, $direction)
+      ->setPage($page);
+  }
 }

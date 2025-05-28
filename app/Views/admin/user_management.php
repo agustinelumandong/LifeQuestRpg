@@ -1,231 +1,255 @@
-<div class="admin-dashboard">
-  <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center">
-      <h1 class="display-5 fw-bold mb-4 fade-in" style="font-family: 'Pixelify Sans', serif;">User Management</h1>
+<div id="pagination-content">
+  <div class="admin-dashboard">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1 class="display-5 fw-bold mb-4 fade-in" style="font-family: 'Pixelify Sans', serif;">User Management</h1>
 
-    </div>
+      </div>
 
 
-    <!-- User Stats Cards -->
-    <div class="row mb-4">
-      <!-- Total Users -->
-      <div class="col-md-3 mb-3">
-        <div class="stat-card">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <p class="stat-title">Total Users</p>
-              <h3><?= count($users) ?></h3>
-            </div>
-            <div class="stat-icon bg-primary">
-              <i class="bi bi-people-fill"></i>
+      <!-- User Stats Cards -->
+      <div class="row mb-4">
+        <!-- Total Users -->
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="stat-title">Total Users</p>
+                <h3><?= isset($paginator) ? $paginator->getPageInfo()['totalItems'] : count($users) ?></h3>
+              </div>
+              <div class="stat-icon bg-primary">
+                <i class="bi bi-people-fill"></i>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Admins -->
-      <div class="col-md-3 mb-3">
-        <div class="stat-card">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <p class="stat-title">Admin Users</p>
-              <?php
-              $adminCount = 0;
-              foreach ($users as $user) {
-                if (isset($user['role']) && $user['role'] === 'admin') {
-                  $adminCount++;
+        <!-- Admins -->
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="stat-title">Admin Users</p>
+                <?php
+                $adminCount = 0;
+                foreach ($users as $user) {
+                  if (isset($user['role']) && $user['role'] === 'admin') {
+                    $adminCount++;
+                  }
                 }
-              }
-              ?>
-              <h3><?= $adminCount ?></h3>
-            </div>
-            <div class="stat-icon bg-purple">
-              <i class="bi bi-shield-fill-check"></i>
+                ?>
+                <h3><?= $adminCount ?></h3>
+              </div>
+              <div class="stat-icon bg-purple">
+                <i class="bi bi-shield-fill-check"></i>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Active Users -->
-      <div class="col-md-3 mb-3">
-        <div class="stat-card">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <p class="stat-title">Active Users</p>
-              <?php
-              $activeCount = 0;
-              foreach ($users as $user) {
-                if (!isset($user->is_disabled) || !$user->is_disabled) {
-                  $activeCount++;
+        <!-- Active Users -->
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="stat-title">Active Users</p>
+                <?php
+                $activeCount = 0;
+                foreach ($users as $user) {
+                  if (!isset($user->is_disabled) || !$user->is_disabled) {
+                    $activeCount++;
+                  }
                 }
-              }
-              ?>
-              <h3><?= $activeCount ?></h3>
-            </div>
-            <div class="stat-icon bg-success">
-              <i class="bi bi-check-circle-fill"></i>
+                ?>
+                <h3><?= $activeCount ?></h3>
+              </div>
+              <div class="stat-icon bg-success">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Inactive Users -->
-      <div class="col-md-3 mb-3">
-        <div class="stat-card">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <p class="stat-title">Inactive Users</p>
-              <?php
-              $inactiveCount = 0;
-              foreach ($users as $user) {
-                if (isset($user->is_disabled) && $user->is_disabled) {
-                  $inactiveCount++;
+        <!-- Inactive Users -->
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="stat-title">Inactive Users</p>
+                <?php
+                $inactiveCount = 0;
+                foreach ($users as $user) {
+                  if (isset($user->is_disabled) && $user->is_disabled) {
+                    $inactiveCount++;
+                  }
                 }
-              }
-              ?>
-              <h3><?= $inactiveCount ?></h3>
-            </div>
-            <div class="stat-icon bg-danger">
-              <i class="bi bi-x-circle-fill"></i>
+                ?>
+                <h3><?= $inactiveCount ?></h3>
+              </div>
+              <div class="stat-icon bg-danger">
+                <i class="bi bi-x-circle-fill"></i>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div> <!-- Search and Filter Controls -->
-    <div class="admin-card mb-4">
-      <div class="row">
-        <div class="col-md-8 mb-3 mb-md-0">
-          <form action="/admin/users" method="GET" class="d-flex align-items-center">
-            <div class="input-group me-2">
-              <span class="input-group-text">
-                <i class="bi bi-search"></i>
-              </span>
-              <input type="text" name="search"
-                value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>"
-                placeholder="Search users..." class="form-control rpg-form-control">
-            </div>
-            <button type="submit" class="rpg-btn rpg-btn-primary">Search</button>
-          </form>
-        </div>
-        <div class="col-md-4">
-          <div class="d-flex gap-2 flex-wrap">
-            <form action="/admin/users" method="GET" class="me-2">
-              <select name="role" onChange="this.form.submit()" class="form-select rpg-form-select">
-                <option value="">All Roles</option>
-                <option value="admin" <?= isset($_GET['role']) && $_GET['role'] === 'admin' ? 'selected' : '' ?>>Admin
-                </option>
-                <option value="user" <?= isset($_GET['role']) && $_GET['role'] === 'user' ? 'selected' : '' ?>>User
-                </option>
-              </select>
-            </form>
-
-            <form action="/admin/users" method="GET">
-              <select name="status" onChange="this.form.submit()" class="form-select rpg-form-select">
-                <option value="">All Status</option>
-                <option value="active" <?= isset($_GET['status']) && $_GET['status'] === 'active' ? 'selected' : '' ?>>
-                  Active
-                </option>
-                <option value="inactive" <?= isset($_GET['status']) && $_GET['status'] === 'inactive' ? 'selected' : '' ?>>
-                  Inactive</option>
-              </select>
+      </div> <!-- Search and Filter Controls -->
+      <div class="admin-card mb-4">
+        <div class="row">
+          <div class="col-md-8 mb-3 mb-md-0">
+            <form action="/admin/users" method="GET" class="d-flex align-items-center">
+              <div class="input-group me-2">
+                <span class="input-group-text">
+                  <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="search"
+                  value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>"
+                  placeholder="Search users..." class="form-control rpg-form-control">
+              </div>
+              <button type="submit" class="rpg-btn rpg-btn-primary">Search</button>
+              <!-- Hidden field to preserve pagination when searching -->
+              <input type="hidden" name="page" value="1">
             </form>
           </div>
-        </div>
-      </div>
-      <div class="d-flex justify-content-between align-items-center mt-3">
-        <div id="bulkActionContainer" class="d-none">
-          <div class="d-flex align-items-center">
-            <select id="bulkAction" class="form-select rpg-form-select me-2">
-              <option value="">Bulk Actions</option>
-              <option value="enable">Enable Selected</option>
-              <option value="disable">Disable Selected</option>
-              <option value="delete">Delete Selected</option>
-            </select>
-            <button type="button" id="applyBulkAction" class="rpg-btn rpg-btn-primary">Apply</button>
+          <div class="col-md-4">
+            <div class="d-flex gap-2 flex-wrap">
+              <form action="/admin/users" method="GET" class="me-2">
+                <select name="role" onChange="this.form.submit()" class="form-select rpg-form-select">
+                  <option value="">All Roles</option>
+                  <option value="admin" <?= isset($_GET['role']) && $_GET['role'] === 'admin' ? 'selected' : '' ?>>Admin
+                  </option>
+                  <option value="user" <?= isset($_GET['role']) && $_GET['role'] === 'user' ? 'selected' : '' ?>>User
+                  </option>
+                </select>
+                <!-- Hidden field to preserve other filters -->
+                <?php if (isset($_GET['search'])): ?>
+                  <input type="hidden" name="search" value="<?= htmlspecialchars($_GET['search']) ?>">
+                <?php endif; ?>
+                <?php if (isset($_GET['status'])): ?>
+                  <input type="hidden" name="status" value="<?= htmlspecialchars($_GET['status']) ?>">
+                <?php endif; ?>
+                <input type="hidden" name="page" value="1">
+              </form>
+
+              <form action="/admin/users" method="GET">
+                <select name="status" onChange="this.form.submit()" class="form-select rpg-form-select">
+                  <option value="">All Status</option>
+                  <option value="active" <?= isset($_GET['status']) && $_GET['status'] === 'active' ? 'selected' : '' ?>>
+                    Active
+                  </option>
+                  <option value="inactive" <?= isset($_GET['status']) && $_GET['status'] === 'inactive' ? 'selected' : '' ?>>
+                    Inactive</option>
+                </select>
+                <!-- Hidden field to preserve other filters -->
+                <?php if (isset($_GET['search'])): ?>
+                  <input type="hidden" name="search" value="<?= htmlspecialchars($_GET['search']) ?>">
+                <?php endif; ?>
+                <?php if (isset($_GET['role'])): ?>
+                  <input type="hidden" name="role" value="<?= htmlspecialchars($_GET['role']) ?>">
+                <?php endif; ?>
+                <input type="hidden" name="page" value="1">
+              </form>
+            </div>
           </div>
         </div>
-
-      </div>
-    </div> <!-- Users Table -->
-    <div class="card">
-      <div class="card-header">
-        <div class="d-flex justify-content-between align-items-center">
-          <h2 class="mb-0"><?= $title ?? 'User Management' ?></h2>
-          <a href="#" class="rpg-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">
-            <i class="bi bi-person-plus-fill me-1"></i> Add New User
-          </a>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div id="bulkActionContainer" class="d-none">
+            <div class="d-flex align-items-center">
+              <select id="bulkAction" class="form-select rpg-form-select me-2">
+                <option value="">Bulk Actions</option>
+                <option value="enable">Enable Selected</option>
+                <option value="disable">Disable Selected</option>
+                <option value="delete">Delete Selected</option>
+              </select>
+              <button type="button" id="applyBulkAction" class="rpg-btn rpg-btn-primary">Apply</button>
+            </div>
+          </div>
 
         </div>
-      </div>
-      <div class="card-body">
-        <?php if (empty($users)): ?>
-          <div class="alert alert-info">No users found.</div>
-        <?php else: ?>
-          <div class="table-responsive">
-            <table class="table table-striped table-hover">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Username</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Created At</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php foreach ($users as $user): ?>
+      </div> <!-- Users Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mb-0"><?= $title ?? 'User Management' ?></h2>
+            <a href="#" class="rpg-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">
+              <i class="bi bi-person-plus-fill me-1"></i> Add New User
+            </a>
+
+          </div>
+        </div>
+        <div class="card-body">
+          <?php if (empty($users)): ?>
+            <div class="alert alert-info">No users found.</div>
+          <?php else: ?>
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
                   <tr>
-                    <td><?= $user['id'] ?></td>
-                    <td><?= htmlspecialchars($user['name']) ?></td>
-                    <td><?= htmlspecialchars($user['username'] ?? $user['name']) ?></td>
-                    <td><?= htmlspecialchars($user['email']) ?></td>
-                    <td>
-                      <?php if (isset($user['role']) && $user['role'] === 'admin'): ?>
-                        <span class="badge bg-danger">Admin</span>
-                      <?php else: ?>
-                        <span class="badge bg-info">User</span>
-                      <?php endif; ?>
-                    </td>
-                    <td><?= isset($user['created_at']) ? \App\Core\Helpers::formatDate($user['created_at']) : '-' ?></td>
-                    <td>
-                      <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm btn-info show-user-btn" data-bs-toggle="modal"
-                          data-bs-target="#showUserModal" data-user-id="<?= $user['id'] ?>"
-                          data-user-name="<?= htmlspecialchars($user['name']) ?>"
-                          data-user-username="<?= htmlspecialchars($user['username'] ?? $user['name']) ?>"
-                          data-user-email="<?= htmlspecialchars($user['email']) ?>"
-                          data-user-role="<?= $user['role'] ?? 'user' ?>"
-                          data-user-created="<?= isset($user['created_at']) ? \App\Core\Helpers::formatDate($user['created_at']) : '-' ?>">
-                          <i class="bi bi-eye"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-warning edit-user-btn" data-bs-toggle="modal"
-                          data-bs-target="#editUserModal" data-user-id="<?= $user['id'] ?>"
-                          data-user-name="<?= htmlspecialchars($user['name']) ?>"
-                          data-user-username="<?= htmlspecialchars($user['username'] ?? $user['name']) ?>"
-                          data-user-email="<?= htmlspecialchars($user['email']) ?>"
-                          data-user-role="<?= $user['role'] ?? 'user' ?>">
-                          <i class="bi bi-pencil"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger delete-user-btn" data-bs-toggle="modal"
-                          data-bs-target="#deleteUserModal" data-user-id="<?= $user['id'] ?>"
-                          data-user-name="<?= htmlspecialchars($user['name']) ?>">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </div>
-                    </td>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
                   </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
-          </div>
-        <?php endif; ?>
+                </thead>
+                <tbody>
+                  <?php foreach ($users as $user): ?>
+                    <tr>
+                      <td><?= $user['id'] ?></td>
+                      <td><?= htmlspecialchars($user['name']) ?></td>
+                      <td><?= htmlspecialchars($user['username'] ?? $user['name']) ?></td>
+                      <td><?= htmlspecialchars($user['email']) ?></td>
+                      <td>
+                        <?php if (isset($user['role']) && $user['role'] === 'admin'): ?>
+                          <span class="badge bg-danger">Admin</span>
+                        <?php else: ?>
+                          <span class="badge bg-info">User</span>
+                        <?php endif; ?>
+                      </td>
+                      <td><?= isset($user['created_at']) ? \App\Core\Helpers::formatDate($user['created_at']) : '-' ?></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-sm btn-info show-user-btn" data-bs-toggle="modal"
+                            data-bs-target="#showUserModal" data-user-id="<?= $user['id'] ?>"
+                            data-user-name="<?= htmlspecialchars($user['name']) ?>"
+                            data-user-username="<?= htmlspecialchars($user['username'] ?? $user['name']) ?>"
+                            data-user-email="<?= htmlspecialchars($user['email']) ?>"
+                            data-user-role="<?= $user['role'] ?? 'user' ?>"
+                            data-user-created="<?= isset($user['created_at']) ? \App\Core\Helpers::formatDate($user['created_at']) : '-' ?>">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-warning edit-user-btn" data-bs-toggle="modal"
+                            data-bs-target="#editUserModal" data-user-id="<?= $user['id'] ?>"
+                            data-user-name="<?= htmlspecialchars($user['name']) ?>"
+                            data-user-username="<?= htmlspecialchars($user['username'] ?? $user['name']) ?>"
+                            data-user-email="<?= htmlspecialchars($user['email']) ?>"
+                            data-user-role="<?= $user['role'] ?? 'user' ?>">
+                            <i class="bi bi-pencil"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-danger delete-user-btn" data-bs-toggle="modal"
+                            data-bs-target="#deleteUserModal" data-user-id="<?= $user['id'] ?>"
+                            data-user-name="<?= htmlspecialchars($user['name']) ?>">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div> <?php endif; ?>
+
+          <!-- Pagination -->
+          <?php if (isset($paginator) && method_exists($paginator, 'links')): ?>
+            <div class="mt-4">
+              <?= $paginator->links() ?>
+            </div>
+          <?php endif; ?>
+        </div>
       </div>
+
     </div>
-
-    <!-- Pagination -->
-
   </div>
 
   <!-- Add User Modal -->
@@ -563,6 +587,66 @@
             alert('An error occurred while updating user status');
           });
       });
+    });
+  });
+</script>
+
+<!-- Pagination AJAX Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const contentContainer = document.getElementById('pagination-content');    // Handle pagination clicks
+    contentContainer.addEventListener('click', function (e) {
+      const link = e.target.closest('a.pagination-link');
+      if (link && !link.parentElement.classList.contains('disabled')) {
+        e.preventDefault();
+        const url = link.getAttribute('href');
+
+        // Show loading state
+        contentContainer.style.opacity = '0.5';
+
+        // Fetch the new page content
+        fetch(url)
+          .then(response => response.text())
+          .then(html => {
+            // Create a temporary element to parse the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            // Extract just the pagination content
+            const newContent = tempDiv.querySelector('#pagination-content');
+
+            if (newContent) {
+              // Replace only the content inside the container
+              contentContainer.innerHTML = newContent.innerHTML;
+            } else {
+              console.error('Could not find pagination content in response');
+            }
+
+            contentContainer.style.opacity = '1';
+
+            // Update browser history
+            window.history.pushState({}, '', url);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            contentContainer.style.opacity = '1';
+          });
+      }
+    });
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function () {
+      fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+
+          const newContent = tempDiv.querySelector('#pagination-content');
+          if (newContent) {
+            contentContainer.innerHTML = newContent.innerHTML;
+          }
+        });
     });
   });
 </script>

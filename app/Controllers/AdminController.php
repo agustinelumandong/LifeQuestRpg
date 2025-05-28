@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Auth;
 use App\Core\Controller;
+use App\Core\Input;
 use App\Models\User;
 use App\Models\TaskEvent;
 use App\Models\Tasks;
@@ -116,24 +117,47 @@ class AdminController extends Controller
       'items' => $items,
       'title' => 'Marketplace Management'
     ]);
-  }
-
-  /**
-   * Display the user management page
-   */
+  }  /**
+     * Display the user management page
+     */
   public function userManagement()
   {
     // Get current page from query parameter
-    $currentPage = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+    $currentPage = Input::get('page', 1);
 
-    // Get all users with pagination
-    // $users = $this->userModel->paginate(10, $currentPage);
+    // Get search and filter parameters
+    $search = Input::get('search', '');
+    $roleFilter = Input::get('role', '');
+    $statusFilter = Input::get('status', '');
 
-    $users = $this->userModel->all();
+    // Build conditions array for filtering
+    $conditions = [];
 
+    // Add role filter
+    if ($roleFilter && in_array($roleFilter, ['admin', 'user'])) {
+      $conditions['role'] = $roleFilter;
+    }
+
+    // Add status filter
+    if ($statusFilter === 'active') {
+      $conditions['is_disabled'] = 0;
+    } elseif ($statusFilter === 'inactive') {
+      $conditions['is_disabled'] = 1;
+    }
+
+    // Get paginated users with search and filters
+    $paginator = $this->userModel->getPaginatedUsers(
+      page: $currentPage,
+      perPage: 10,
+      orderBy: 'created_at',
+      direction: 'DESC',
+      conditions: $conditions,
+      search: $search
+    );
 
     return $this->view('admin/user_management', [
-      'users' => $users,
+      'users' => $paginator->items(),
+      'paginator' => $paginator,
       'title' => 'User Management'
     ]);
   }
