@@ -157,7 +157,8 @@
                 </svg>
                 <p class="habit-label">Inventory</p>
               </a>
-            </div>            <div class="box col-md-4 d-flex justify-content-center">
+            </div>
+            <div class="box col-md-4 d-flex justify-content-center">
               <a href="/marketplace" class="habit-box">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -32 576 576" width="1em" height="1em"
                   fill="currentColor" style="font-size: 116px;color: var(--bs-dark);" class="mb-3">
@@ -301,7 +302,13 @@
             <i class="bi bi-map me-2"></i> Community Quests
           </h5>
         </a>
-        <?php foreach ($events as $event): ?>
+        <?php
+        $count = 0;
+        foreach ($events as $event):
+          if ($count >= 3)
+            break; // Limit to 2 most recent activities
+          $count++;
+          ?>
           <a href="/taskevents/<?= $event['id'] ?>" class="event-card-btn">
             <div class="event-card">
               <div class="fw-bold mb-1" style="font-family: 'Pixelify Sans', serif;">

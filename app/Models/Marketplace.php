@@ -189,6 +189,41 @@ class Marketplace extends Model
       return 'Purchase failed: ' . $e->getMessage();
     }
   }
+
+  /**
+   * Purchase item using stored procedure
+   * @param int $userId
+   * @param int $itemId  
+   * @param int $quantity
+   * @return string
+   */
+  public function purchaseItemUsingStoredProcedure($userId, $itemId, $quantity = 1)
+  {
+    try {
+      // Ensure quantity is at least 1
+      $quantity = max(1, (int) $quantity);
+
+      // Call the stored procedure
+      $result = self::$db->query("CALL PurchaseMarketplaceItem(:user_id, :item_id, :quantity)")
+        ->bind([
+          'user_id' => $userId,
+          'item_id' => $itemId,
+          'quantity' => $quantity
+        ])
+        ->execute()
+        ->fetch();
+
+      // Close cursor to prevent "Commands out of sync" error
+      self::$db->closeCursor();
+
+      // Return the message from stored procedure
+      return $result['message'] ?? 'Unknown error occurred';
+
+    } catch (Exception $e) {
+      return 'Purchase failed: ' . $e->getMessage();
+    }
+  }
+
   public function getItemDetails($itemId)
   {
     return self::$db->query("
@@ -213,8 +248,6 @@ class Marketplace extends Model
       ->execute()
       ->fetchAll();
   }
-
-
 
   public function update(int $item_id, array $data)
   {
