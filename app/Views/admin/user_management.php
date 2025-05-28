@@ -479,7 +479,7 @@
         const userRole = this.getAttribute('data-user-role');
 
         // Set form action
-        document.getElementById('editUserForm').action = `/admin/users/${userId}`;
+        document.getElementById('editUserForm').action = `/users/${userId}`;
 
         // Populate the edit form
         document.getElementById('edit_name').value = userName;
