@@ -109,12 +109,15 @@ class Paginator
   {
     return min($this->totalPages, $this->currentPage + 1);
   }
-
   public function getPageUrl(int $page): string
   {
     $params = $this->preserveQuery ? $this->queryParams : [];
     $params[$this->pageName] = $page;
-    return '?' . http_build_query($params);
+
+    // Get current path without query string
+    $currentPath = strtok($_SERVER['REQUEST_URI'], '?');
+
+    return $currentPath . '?' . http_build_query($params);
   }
 
   public function getPageInfo(): array
