@@ -1,4 +1,3 @@
-<?php require_once VIEWS_PATH . 'layouts/header.php'; ?>
 <div class="admin-dashboard">
   <div class="container-fluid">
     <h1 class="display-5 fw-bold mb-4 fade-in" style="font-family: 'Pixelify Sans', serif;">Content Management</h1>
@@ -10,9 +9,7 @@
       <a href="#achievements">Achievements</a>
       <a href="#badges">Badges & Rewards</a>
       <a href="#quest-templates">Quest Templates</a>
-    </div>
-
-    <!-- Task Events Section -->
+    </div> <!-- Task Events Section -->
     <div id="task-events" class="mb-4">
       <div class="admin-card">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -25,108 +22,104 @@
           </button>
         </div>
 
-        <!-- Search & Filter Controls -->
-        <div class="row mb-3">
-          <div class="col-md-8 mb-3 mb-md-0">
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="bi bi-search"></i>
-              </span>
-              <input type="text" class="form-control rpg-form-control" placeholder="Search events...">
-              <button class="rpg-btn">Search</button>
+        <div id="pagination-content">
+          <!-- Search & Filter Controls -->
+          <div class="row mb-3">
+            <div class="col-md-8 mb-3 mb-md-0">
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-search"></i>
+                </span>
+                <input type="text" class="form-control rpg-form-control" placeholder="Search events...">
+                <button class="rpg-btn">Search</button>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select rpg-form-select">
+                <option>All Event Types</option>
+                <option>Daily Quest</option>
+                <option>Weekly Challenge</option>
+                <option>Special Event</option>
+                <option>Seasonal Quest</option>
+              </select>
             </div>
           </div>
-          <div class="col-md-4">
-            <select class="form-select rpg-form-select">
-              <option>All Event Types</option>
-              <option>Daily Quest</option>
-              <option>Weekly Challenge</option>
-              <option>Special Event</option>
-              <option>Seasonal Quest</option>
-            </select>
-          </div>
-        </div> <!-- Task Events Table -->
-        <div class="table-responsive game-table">
-          <table class="table rpg-table table-hover">
-            <thead class="table-light border-bottom border-dark">
-              <tr>
-                <th>Quest ID</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Starts</th>
-                <th>Ends</th>
-                <th><i class="bi bi-stars"></i> XP</th>
-                <th><i class="bi bi-coin"></i> Coins</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php if (count($taskEvents) > 0): ?>
-                <?php foreach ($taskEvents as $event): ?>
-                  <tr class="event-row">
-                    <td class="fw-bold">#<?= $event['id'] ?></td>
-                    <td class="fw-bold"><?= $event['event_name'] ?></td>
-                    <td>
-                      <div class="description-cell">
-                        <?= (mb_strlen($event['event_description']) > 10) ? mb_substr($event['event_description'], 0, 10) . '...' : $event['event_description'] ?>
+
+          <!-- Task Events Table -->
+          <div class="table-responsive game-table">
+            <table class="table rpg-table table-hover">
+              <thead class="table-light border-bottom border-dark">
+                <tr>
+                  <th>Quest ID</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Starts</th>
+                  <th>Ends</th>
+                  <th><i class="bi bi-stars"></i> XP</th>
+                  <th><i class="bi bi-coin"></i> Coins</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php if (count($taskEvents) > 0): ?>
+                  <?php foreach ($taskEvents as $event): ?>
+                    <tr class="event-row">
+                      <td class="fw-bold">#<?= $event['id'] ?></td>
+                      <td class="fw-bold"><?= $event['event_name'] ?></td>
+                      <td>
+                        <div class="description-cell">
+                          <?= (mb_strlen($event['event_description']) > 10) ? mb_substr($event['event_description'], 0, 10) . '...' : $event['event_description'] ?>
+                        </div>
+                      </td>
+                      <td><?= date('m-d-y', strtotime($event['start_date'])) ?></td>
+                      <td><?= date('m-d-y', strtotime($event['end_date'])) ?></td>
+                      <td class="fw-bold text-success">+<?= $event['reward_xp'] ?></td>
+                      <td class="fw-bold text-warning">+<?= $event['reward_coins'] ?></td>
+                      <td>
+                        <?php if ($event['status'] == 'active'): ?>
+                          <span class="badge bg-success pulse-animation">Active</span>
+                        <?php else: ?>
+                          <span class="badge bg-danger">Inactive</span>
+                        <?php endif; ?>
+                      </td>
+                      <td>
+                        <?= isset($event['created_at']) ? \App\Core\Helpers::formatDate($event['created_at']) : '-' ?>
+                      </td>
+                      <td class="action-buttons">
+                        <a href="/taskevents/<?= $event['id'] ?>/edit" class="btn btn-sm btn-outline-dark action-btn"><i
+                            class="bi bi-pencil"></i></a>
+                        <form action="/taskevents/<?= $event['id'] ?>" method="post" class="d-inline"
+                          onsubmit="return confirm('Are you sure you want to delete this quest?')">
+                          <input type="hidden" name="_method" value="DELETE">
+                          <button type="submit" class="btn btn-sm btn-outline-danger action-btn"><i
+                              class="bi bi-trash"></i></button>
+                        </form>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <tr>
+                    <td colspan="10" class="text-center">
+                      <div class="alert alert-info text-center p-4">
+                        <div class="mb-3"><i class="bi bi-search fs-3"></i></div>
+                        <p class="mb-0">No quests found. New adventures will appear here soon!</p>
                       </div>
                     </td>
-                    <td><?= date('m-d-y', strtotime($event['start_date'])) ?></td>
-                    <td><?= date('m-d-y', strtotime($event['end_date'])) ?></td>
-                    <td class="fw-bold text-success">+<?= $event['reward_xp'] ?></td>
-                    <td class="fw-bold text-warning">+<?= $event['reward_coins'] ?></td>
-                    <td>
-                      <?php if ($event['status'] == 'active'): ?>
-                        <span class="badge bg-success pulse-animation">Active</span>
-                      <?php else: ?>
-                        <span class="badge bg-danger">Inactive</span>
-                      <?php endif; ?>
-                    </td>
-                    <td>
-                      <?= isset($event['created_at']) ? \App\Core\Helpers::formatDate($event['created_at']) : '-' ?>
-                    </td>
-                    <td class="action-buttons">
-                      <a href="/taskevents/<?= $event['id'] ?>/edit" class="btn btn-sm btn-outline-dark action-btn"><i
-                          class="bi bi-pencil"></i></a>
-                      <form action="/taskevents/<?= $event['id'] ?>" method="post" class="d-inline"
-                        onsubmit="return confirm('Are you sure you want to delete this quest?')">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="btn btn-sm btn-outline-danger action-btn"><i
-                            class="bi bi-trash"></i></button>
-                      </form>
-                    </td>
                   </tr>
-                <?php endforeach; ?>
-              <?php else: ?>
-                <tr>
-                  <td colspan="10" class="text-center">
-                    <div class="alert alert-info text-center p-4">
-                      <div class="mb-3"><i class="bi bi-search fs-3"></i></div>
-                      <p class="mb-0">No quests found. New adventures will appear here soon!</p>
-                    </div>
-                  </td>
-                </tr>
-              <?php endif; ?>
-            </tbody>
-          </table>
-        </div>
+                <?php endif; ?>
+              </tbody>
+            </table>
+          </div>
 
-        <!-- Pagination -->
-        <nav class="mt-3">
-          <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-              <a class="page-link rpg-btn-outline" href="#" tabindex="-1">Previous</a>
-            </li>
-            <li class="page-item active"><a class="page-link rpg-btn" href="#">1</a></li>
-            <li class="page-item"><a class="page-link rpg-btn-outline" href="#">2</a></li>
-            <li class="page-item"><a class="page-link rpg-btn-outline" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link rpg-btn-outline" href="#">Next</a>
-            </li>
-          </ul>
-        </nav>
+          <!-- Pagination -->
+          <?php if (isset($paginator) && method_exists($paginator, 'links')): ?>
+            <div class="mt-4">
+              <?= $paginator->setTheme('game')->links() ?>
+            </div>
+          <?php endif; ?>
+        </div>
       </div>
     </div>
 
@@ -802,4 +795,63 @@
   </div>
 </div>
 
-<?php require_once VIEWS_PATH . 'layouts/footer.php'; ?>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const contentContainer = document.getElementById('pagination-content');
+
+    // Handle pagination clicks
+    contentContainer.addEventListener('click', function (e) {
+      const link = e.target.closest('a');
+      if (link && link.getAttribute('href') && link.getAttribute('href').includes('page=')) {
+        e.preventDefault();
+        const url = link.getAttribute('href');
+
+        // Show loading state
+        contentContainer.style.opacity = '0.5';
+
+        // Fetch the new page content
+        fetch(url)
+          .then(response => response.text())
+          .then(html => {
+            // Create a temporary element to parse the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            // Extract just the pagination content
+            const newContent = tempDiv.querySelector('#pagination-content');
+
+            if (newContent) {
+              // Replace only the content inside the container
+              contentContainer.innerHTML = newContent.innerHTML;
+            } else {
+              console.error('Could not find pagination content in response');
+            }
+
+            contentContainer.style.opacity = '1';
+
+            // Update browser history
+            window.history.pushState({}, '', url);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            contentContainer.style.opacity = '1';
+          });
+      }
+    });
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function () {
+      fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+
+          const newContent = tempDiv.querySelector('#pagination-content');
+          if (newContent) {
+            contentContainer.innerHTML = newContent.innerHTML;
+          }
+        });
+    });
+  });
+</script>

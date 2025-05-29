@@ -152,9 +152,9 @@ function getDifficultyClass($difficulty)
 function getDifficultyPoints($difficulty)
 {
   return [
-    'easy' => 5,
-    'medium' => 10,
-    'hard' => 15
+    'easy' => 10,
+    'medium' => 20,
+    'hard' => 30
   ][$difficulty] ?? 5;
 }
 ?>

@@ -44,7 +44,7 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
           <?php if (empty($badHabits)): ?>
             <div class="col-12">
-              <div class="alert alert-info">
+              <div class="alert alert-dark">
                 <i class="bi bi-info-circle"></i> No bad habits found. Create your first one!
               </div>
             </div>
@@ -98,9 +98,15 @@
                       </span>
                     </div>
                     <form action="/badhabit/<?= $badHabit['id'] ?>/toggle" method="POST">
-                      <button type="submit" class="btn btn-dark w-100">
-                        <?= $badHabit['status'] === 'completed' ? 'MARK AS PENDING' : 'CRAP I DID...' ?>
-                      </button>
+                      <?php if ($badHabit['status'] === 'completed'): ?>
+                        <button type="submit" class="btn btn-dark w-100" disabled>
+                          <?= $badHabit['status'] === 'completed' ? 'COMPLETED' : 'CRAP I DID...' ?>
+                        </button>
+                      <?php else: ?>
+                        <button type="submit" class="btn btn-dark w-100">
+                          <?= $badHabit['status'] === 'completed' ? 'COMPLETED' : 'CRAP I DID...' ?>
+                        </button>
+                      <?php endif; ?>
                     </form>
                   </div>
                 </div>

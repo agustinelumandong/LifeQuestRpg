@@ -152,4 +152,4 @@ $router->get('/admin/users/create', [UserController::class, 'create'], [AdminMid
 $router->post('/admin/users', [UserController::class, 'store'], [AdminMiddleware::class]);
 $router->post('/admin/users/{id}/reset-password', [UserController::class, 'resetPassword'], [AdminMiddleware::class]);
 $router->post('/admin/users/{id}/toggle-status', [UserController::class, 'toggleStatus'], [AdminMiddleware::class]);
-$router->post('/admin/users/bulk-action', [UserController::class, 'bulkAction'], [AdminMiddleware::class]);
+

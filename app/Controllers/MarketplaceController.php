@@ -122,12 +122,12 @@ class MarketplaceController extends Controller
       $this->redirect('/login');
     }
 
-    if (!$user_id && empty($user_id)) {
+    if (!$user_id || empty($user_id)) {
       $_SESSION['error'] = 'User not found.';
       $this->redirect('/marketplace');
     }
 
-    if (!$item_id && empty($item_id)) {
+    if (!$item_id || empty($item_id)) {
       $_SESSION['error'] = 'Invalid item ID.';
       $this->redirect('/marketplace');
     }

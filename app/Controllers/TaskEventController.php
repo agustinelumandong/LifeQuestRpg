@@ -52,10 +52,17 @@ class TaskEventController extends Controller
 
     $userHasCompleted = $this->UserEventCompletionModel->hasUserCompleted($currentUser['id'], $taskEventsId);
 
+    $paginator = $this->TaskEventModel->paginate(
+      page: 1,
+      perPage: 5,
+      orderBy: 'id',
+      direction: 'DESC',
+    )->setTheme('game');
 
     return $this->view('taskevents/index', [
       'title' => 'Task Events',
-      'taskEvents' => $taskEvents,
+      'taskEvents' => $paginator->items(),
+      'paginator' => $paginator,
       'userTaskEventCompleted' => $userTaskEventCompleted,
       'userHasCompleted' => $userHasCompleted,
     ]);
