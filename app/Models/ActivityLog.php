@@ -58,6 +58,7 @@ class ActivityLog extends Model
             ->execute()
             ->fetchAll();
     }
+
     public function getAllActivities($userId, $page = 1, $perPage = 10, $orderBy = 'log_timestamp', $direction = 'DESC')
     {
         // Calculate offset for pagination
